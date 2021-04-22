@@ -1,0 +1,25 @@
+{
+  "name": "theloop",
+  "version": "1.0.0",
+  "description": "\u0016A meetup group communication application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alecclyde/TheLoop.git"
+  },
+  "keywords": [
+    "git",
+    "github",
+    "circleci",
+    "graphql"
+  ],
+  "author": "Alec Chappell",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alecclyde/TheLoop/issues"
+  },
+  "homepage": "https://github.com/alecclyde/TheLoop#readme"
+}
