@@ -1,36 +1,7 @@
 version: 2.1
-
 orbs:
-  heroku: circleci/heroku@0.0.10. # Invoke the Heroku orb
-
+  heroku: circleci/heroku@0.0.10
 workflows:
   heroku_deploy:
     jobs:
-      - build
-      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
-          requires:
-            - build
-          filters:
-            branches:
-              only: sequential-branch-filter
-jobs:
-  build:
-    docker:
-      - image: circleci/ruby:2.4-node
-        auth:
-          username: alecclyde
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-      - image: circleci/postgres:9.4.12-alpine
-        auth:
-          username: alecclyde
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-    working_directory: ~/circleci-demo-workflows
-    steps:
-      - checkout
-      # Bundle install dependencies
-      - run: bundle install --path vendor/bundle
-      # Database setup
-      - run: bundle exec rake db:create db:schema:load
-      - run:
-          name: Run tests
-          command: rake
+      - heroku/deploy-via-git
