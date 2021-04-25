@@ -31,96 +31,158 @@
 #   node:
 #     jobs:
 #       - node
+version: 2.1
 jobs:
-  analyse_js:
-    executor: rn/linux_js
-    steps:
-      - attach_workspace:
-          at: .
-      - rn/yarn_install
-      - run:
-          command: yarn eslint
-          name: Run ESLint
-      - run:
-          command: yarn flow
-          name: Flow
-      - run:
-          command: yarn jest
-          name: Jest
-  checkout_code:
-    executor:
-      name: rn/linux_js
-      node_version: '12'
+  node:
+    working_directory: ~/demo-react-native
+    docker:
+      - image: cimg/node:12.16
+
     steps:
       - checkout
+
+      - restore_cache:
+          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
+
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+
+      - run: yarn install
+
+      - save_cache:
+          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
+          paths:
+            - ~/.cache/yarn
+
+      - save_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+          paths:
+            - node_modules
+
+      - run:
+          name: jest tests
+          command: |
+            mkdir -p test-results/jest
+            yarn run test
+          environment:
+            JEST_JUNIT_OUTPUT: test-results/jest/junit.xml
+
       - persist_to_workspace:
-          paths: .
-          root: .
-  fastlane_android_release:
-    executor: rn/linux_js
+          root: ~/demo-react-native
+          paths:
+            - node_modules
+
+      - store_test_results:
+          path: test-results
+
+      - store_artifacts:
+          path: test-results
+
+  macos-build-and-test:
+    working_directory: ~/demo-react-native
+    macos:
+      xcode: 11.3.0
+    environment:
+      FL_OUTPUT_DIR: output
+      FASTLANE_LANE: test
+
     steps:
-      - attach_workspace:
-          at: .
-      - rn/yarn_install
+      - checkout
+      - restore_cache:
+          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
+
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+
+      - run: yarn install
+
+      - save_cache:
+          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
+          paths:
+            - ~/.cache/yarn
+
+      - save_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+          paths:
+            - node_modules
+
+      - restore_cache:
+          key: bundle-v1-{{ checksum "ios/Gemfile.lock" }}-{{ arch }}
+
+      #Pods directory is ignored to match default RN setup, but can also check them into source control
+      #https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
+      - restore_cache:
+          key: pods-v1-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
+
+      - run: 
+          command: pod install
+          working_directory: ios
+
+      - run: 
+          command: bundle install
+          working_directory: ios
+
+      - save_cache:
+          key: bundle-v1-{{ checksum "ios/Gemfile.lock" }}-{{ arch }}
+          paths:
+            - vendor/bundle
+
+      - save_cache:
+          key: pods-v1-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
+          paths:
+            - ios/Pods
+
       - run:
-          command: echo
-          name: Run Fastlane
-  fastlane_ios_release:
-    executor: rn/linux_js
+          name: Fastlane
+          command: bundle exec fastlane $FASTLANE_LANE
+          working_directory: ios
+
+      - store_artifacts:
+          path: output
+          
+      - store_test_results:
+          path: output/scan
+            
+  android-build-and-test:
+    working_directory: ~/demo-react-native/android
+    docker:
+      - image: circleci/android:api-29-node
     steps:
+      - checkout:
+          path: ~/demo-react-native
+
       - attach_workspace:
-          at: .
-      - rn/yarn_install
+          at: ~/demo-react-native
+
+      - restore_cache:
+          key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
+
+      - run: bundle install
+
+      - save_cache:
+          key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
+          paths:
+            - vendor/bundle
+
       - run:
-          command: echo 1
-          name: Run Fastlane
-orbs:
-  rn: react-native-community/react-native@1.0.0
-version: 2.1
+          name: fastlane tests
+          command: |
+            mkdir -p test-results/fastlane
+            bundle exec fastlane test
+            mv fastlane/report.xml test-results/fastlane
+      - store_test_results:
+          path: test-results
+
+      - store_artifacts:
+          path: test-results
+
 workflows:
-  test:
+  node-android-ios:
     jobs:
-      - checkout_code
-      - analyse_js:
+      - node
+      - android-build-and-test:
           requires:
-            - checkout_code
-      - rn/android_build:
-          build_type: debug
-          name: build_android_debug
-          project_path: android
+            - node
+      - macos-build-and-test:
           requires:
-            - analyse_js
-      - rn/android_build:
-          build_type: release
-          name: build_android_release
-          project_path: android
-          requires:
-            - analyse_js
-      - rn/android_test:
-          detox_configuration: android.emu.release
-          requires:
-            - build_android_release
-      - rn/ios_build:
-          build_configuration: Release
-          device: iPhone X
-          name: build_ios_release
-          node_version: '12'
-          project_path: ios/Example.xcodeproj
-          requires:
-            - analyse_js
-          scheme: Example
-      - rn/ios_build_and_test:
-          build_configuration: Release
-          detox_configuration: ios.sim.release
-          device: iPhone X
-          node_version: '12'
-          project_path: ios/Example.xcodeproj
-          requires:
-            - analyse_js
-          scheme: Example
-      - fastlane_android_release:
-          requires:
-            - rn/android_test
-      - fastlane_ios_release:
-          requires:
-            - rn/ios_build_and_test
+            - node
