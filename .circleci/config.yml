@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   react-native: react-native-community/react-native@5.1.0
+  node: circleci/node@3.0.0
 workflows:
   node-tests:
     jobs:
