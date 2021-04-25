@@ -5,4 +5,5 @@ orbs:
 workflows:
   node-tests:
     jobs:
+      - react-native/test
       - node/test
