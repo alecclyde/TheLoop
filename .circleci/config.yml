@@ -2,13 +2,6 @@ version: 2.1
 orbs:
   react-native: react-native-community/react-native@5.1.0
 workflows:
-  version: 2
-  build-deploy:
+  node-tests:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              only: main
+      - node/test
