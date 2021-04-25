@@ -2,8 +2,12 @@ version: 2.1
 orbs:
   react-native: react-native-community/react-native@5.1.0
 jobs:
+  react-native:
+    
   node:
     working_directory: ~/demo-react-native
+    docker:
+      - image: cimg/node:12.16
 
     steps:
       - checkout
@@ -27,6 +31,7 @@ jobs:
       - store_artifacts:
           path: test-results
 
+          
 workflows:
   node:
     jobs:
