@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  react-native: react-native-community/react-native@5.1.0
 jobs:
   node:
     working_directory: ~/demo-react-native
@@ -26,103 +28,7 @@ jobs:
 
       - store_artifacts:
           path: test-results
-
-  macos-build-and-test:
-    working_directory: ~/demo-react-native
-    macos:
-      xcode: 11.3.0
-    environment:
-      FL_OUTPUT_DIR: output
-      FASTLANE_LANE: test
-
-    steps:
-      - checkout
-
-      - restore_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-
-      - save_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-          paths:
-            - node_modules
-
-      - restore_cache:
-          key: bundle-v1-{{ checksum "ios/Gemfile.lock" }}-{{ arch }}
-
-      #Pods directory is ignored to match default RN setup, but can also check them into source control
-      #https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-      - restore_cache:
-          key: pods-v1-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
-
-      - run: 
-          command: pod install
-          working_directory: ios
-
-      - run: 
-          command: bundle install
-          working_directory: ios
-
-      - save_cache:
-          key: bundle-v1-{{ checksum "ios/Gemfile.lock" }}-{{ arch }}
-          paths:
-            - vendor/bundle
-
-      - save_cache:
-          key: pods-v1-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
-          paths:
-            - ios/Pods
-
-      - run:
-          name: Fastlane
-          command: bundle exec fastlane $FASTLANE_LANE
-          working_directory: ios
-
-      - store_artifacts:
-          path: output
-          
-      - store_test_results:
-          path: output/scan
-            
-  android-build-and-test:
-    working_directory: ~/demo-react-native/android
-    docker:
-      - image: circleci/android:api-29-node
-    steps:
-      - checkout:
-          path: ~/demo-react-native
-
-      - attach_workspace:
-          at: ~/demo-react-native
-
-      - restore_cache:
-          key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
-
-      - run: bundle install
-
-      - save_cache:
-          key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
-          paths:
-            - vendor/bundle
-
-      - run:
-          name: fastlane tests
-          command: |
-            mkdir -p test-results/fastlane
-            bundle exec fastlane test
-            mv fastlane/report.xml test-results/fastlane
-      - store_test_results:
-          path: test-results
-
-      - store_artifacts:
-          path: test-results
-
 workflows:
-  node-android-ios:
+  node:
     jobs:
       - node
-      - android-build-and-test:
-          requires:
-            - node
-      - macos-build-and-test:
-          requires:
-            - node
