@@ -31,7 +31,7 @@ jobs:
           command: |
             mkdir -p test-results/jest
             yarn run test
-            -u
+            q
           environment:
             JEST_JUNIT_OUTPUT: test-results/jest/junit.xml
 
