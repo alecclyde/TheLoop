@@ -17,6 +17,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: 'large',
   },
+  textFontSize: {
+    fontSize: 48,
+  }
 });
