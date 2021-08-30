@@ -7,6 +7,11 @@ import * as firebase from 'firebase';
 import { signIn } from './shared/firebaseMethods';
 import SignUp from './screens/signUp';
 
+import { LogBox } from 'react-native';
+//https://github.com/firebase/firebase-js-sdk/issues/97
+//https://github.com/facebook/react-native/issues/12981
+LogBox.ignoreLogs(['Setting a timer'])
+
 const firebaseConfig = {
   apiKey: API_KEY,
   authDomain: AUTH_DOMAIN,
