@@ -3,7 +3,10 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { API_KEY, AUTH_DOMAIN, DATABASE_URL, PROJECT_ID,
   STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID, MEASUREMENT_ID} from '@env';
-  
+import * as firebase from 'firebase';
+import { signIn } from './shared/firebaseMethods';
+import SignUp from './screens/signUp';
+
 const firebaseConfig = {
   apiKey: API_KEY,
   authDomain: AUTH_DOMAIN,
@@ -23,10 +26,7 @@ if (!firebase.apps.length) {
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SignUp/>
   );
 }
 
