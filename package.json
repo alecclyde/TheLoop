@@ -5,7 +5,11 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "jest-expo"
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.2",
@@ -22,7 +26,8 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
-    "babel-preset-expo": "8.3.0"
+    "babel-preset-expo": "8.3.0",
+    "jest-expo": "^42.1.0"
   },
   "private": true
 }
