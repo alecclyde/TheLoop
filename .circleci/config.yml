@@ -5,3 +5,15 @@ workflows:
   example-workflow:
     jobs:
       - node/test
+
+jobs:
+  example-job:
+    docker:
+      # replace with your preferred image
+      - image: cimg/base:stable
+    steps:
+      - node/install-npm
+workflows:
+  example-workflow:
+    jobs:
+      - example-job
