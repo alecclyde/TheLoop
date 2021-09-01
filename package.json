@@ -7,7 +7,6 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "test": "jest",
-    "test:ci": "NODE_ENV=test mocha ./tests/**/*.test.js"
   },
   "jest": {
     "preset": "jest-expo"

@@ -1,15 +1,7 @@
-ncies-{{ checksum "package.json" }}
-
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
+orbs:
+  node: circleci/node@4.7.0
 
 workflows:
-  version: 2
-  core:
+  example-workflow:
     jobs:
-      - core:
-          filters:
-            branches:
-              ##only:
-                ##- master
+      - node/test
