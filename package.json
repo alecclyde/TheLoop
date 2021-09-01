@@ -6,7 +6,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest"
+    "run": "node server.js",
+    "test": "exit 0"
   },
   "jest": {
     "preset": "jest-expo"
