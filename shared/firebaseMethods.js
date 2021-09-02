@@ -28,7 +28,7 @@ export async function signIn(email, password, navigation) {
   try {
    await firebase.auth().signInWithEmailAndPassword(email, password);
       if(firebase.auth().currentUser !== null){
-        navigation.navigate('Home');
+        //navigation.navigate('Home');
       }
   } catch (err) {
     console.log(err);
