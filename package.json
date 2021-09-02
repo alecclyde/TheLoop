@@ -23,7 +23,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-dotenv": "^3.2.0",
     "react-native-gesture-handler": "~1.10.2",
-    "react-native-web": "~0.13.12",
+    "react-native-web": "^0.17.1",
     "yup": "^0.32.9"
   },
   "devDependencies": {
