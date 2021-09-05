@@ -1,4 +1,5 @@
-# TheLoop ![The Loop Logo. A Knot with "The Loop" in text underneath.](assets/The%20Loop%20Logo%20Cropped.jpg)
+# TheLoop  
+![The Loop Logo. A Knot with "The Loop" in text underneath.](assets/The%20Loop%20Logo%20Cropped.jpg)
 
 *A group communication application.*
 
