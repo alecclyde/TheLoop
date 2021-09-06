@@ -5,7 +5,9 @@ orbs:
   node: circleci/node@4.7.0
   android: circleci/android@1.0.3
 workflows:
-  example-workflow:
+  node-run workflow:
     jobs:
       - node/run
+  android-ui-test workflow:
+    jobs:
       - android/run-ui-tests
