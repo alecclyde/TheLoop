@@ -3,7 +3,9 @@ version: 2.1
 # Use a package of configuration called an orb.
 orbs:
   node: circleci/node@4.7.0
+  android: circleci/android@1.0.3
 workflows:
   example-workflow:
     jobs:
       - node/run
+      - android/run-ui-tests
