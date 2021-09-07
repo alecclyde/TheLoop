@@ -1,8 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
 import EventCreation from '../screens/eventCreation';
-import EventCreationForm from '../screen/EventCreationForm';
-
+import EventCreationForm from '../screens/eventCreationForm';
+import React from 'react';
 
 
 //Screens in the Event Creation tab

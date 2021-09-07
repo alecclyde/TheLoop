@@ -1,7 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
 import Home from '../screens/home'
-
+import React from 'react';
 
 
 //Screens in the Home tab

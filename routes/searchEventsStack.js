@@ -1,7 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
 import SearchPage from '../screens/searchPage';
-
+import React from 'react';
 
 
 //Screens in the search tab

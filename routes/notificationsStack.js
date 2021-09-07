@@ -1,7 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
 import NotificationPage from '../screens/notificationPage';
-
+import React from 'react';
 
 
 //Screens in the notifications tab

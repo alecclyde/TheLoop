@@ -1,7 +1,6 @@
-import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as firebase from 'firebase';
-
+import React from 'react';
 
 // stacks
 import HomeStack from './homeStack';
@@ -12,7 +11,6 @@ import SearchEventsStack from './searchEventsStack';
 
 const Tab = createBottomTabNavigator();
 export default function RootStack() {
-  //There has to be a better way to do this but I couldn't find it
     return (
       <Tab.Navigator
         initialRouteName="Home"
