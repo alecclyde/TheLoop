@@ -1,55 +1,46 @@
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as firebase from 'firebase';
 
 
 // stacks
 import HomeStack from './homeStack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import EventCreationStack from './eventCreationStack';
+import NotificationsStack from './notificationsStack';
+import ProfileStack from './profileStack';
+import SearchEventsStack from './searchEventsStack';
 
-const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
 export default function RootStack() {
   //There has to be a better way to do this but I couldn't find it
     return (
-      <Drawer.Navigator
+      <Tab.Navigator
         initialRouteName="Home"
-        drawerContent={(props) => <CustomDrawerContent {...props}/>}
-        screenOptions={{ headerShown: false, drawerPosition: 'right' }}
+        screenOptions={{ headerShown: false}}
       >
-        <Drawer.Screen
-          name='Authentication'
-          component={AuthenticationStack}
-        />
-        <Drawer.Screen
+        <Tab.Screen
           name='Home'
           component={HomeStack}
-          options={{title: 'Home'}}
         />
-        <Drawer.Screen
-          name='BrainBreaks'
-          component={BrainBreakStack}
-          options={{title: 'Brain Breaks'}}
+        <Tab.Screen
+          name='Profile'
+          component={ProfileStack}
         />
-        <Drawer.Screen
-          name='Favorites'
-          component={FavoriteStack}
-          options={{title: 'Favorites'}}
+        <Tab.Screen
+          name='EventCreation'
+          component={EventCreationStack}
+          options={{title: 'Create Event'}}
         />
-        <Drawer.Screen
-          name='Personal'
-          component={PersonalStack}
-          options={{title: 'My Brain Breaks'}}
+        <Tab.Screen
+          name='SearchEvents'
+          component={SearchEventsStack}
+          options={{title: 'Search Events'}}
         />
-        <Drawer.Screen
-          name='Book'
-          component={BookStack}
-          options={{title: 'About The Book'}}
+        <Tab.Screen
+          name='Notifications'
+          component={NotificationsStack}
+          options={{title: 'Notifications'}}
         />
-        <Drawer.Screen
-          name='About'
-          component={AboutStack}
-          options={{title: 'About NeuroLogic®'}}
-        />
-      </Drawer.Navigator>
+      </Tab.Navigator>
     );
 }
