@@ -6,6 +6,7 @@ import { API_KEY, AUTH_DOMAIN, DATABASE_URL, PROJECT_ID,
 import * as firebase from 'firebase';
 import { signIn } from './shared/firebaseMethods';
 import SignUp from './screens/signUp';
+import Home from './screens/home';
 
 import { LogBox } from 'react-native';
 //https://github.com/firebase/firebase-js-sdk/issues/97
@@ -31,7 +32,7 @@ if (!firebase.apps.length) {
 
 export default function App() {
   return (
-    <SignUp/>
+    <Home/>
   );
 }
 
