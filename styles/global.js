@@ -96,6 +96,7 @@ export const globalStyles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
+    backgroundColor: '#ddd',
     padding: 10,
     fontSize: 18,
     marginBottom: 10,

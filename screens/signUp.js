@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, ScrollView, Keyboard ,StyleSheet, SafeAreaView} from 'react-native';
+import { ImageBackground, View, Text, TextInput, ScrollView, Keyboard ,StyleSheet, SafeAreaView} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registration } from '../shared/firebaseMethods';
 import { globalStyles } from '../styles/global';
@@ -49,6 +49,8 @@ export default function SignUp({ navigation }) {
   return (
     <SafeAreaView style={globalStyles.container}>
      <View>
+     <ImageBackground source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6JwPaFY0B1vbLzXu6HUGW6Ix4TReDfz_mXA&usqp=CAU'}} resizeMode="cover" style={{width: '100%', height: '100%'}}>
+
      <Formik
         initialValues={{firstName: '', lastName: '', email: '', password: '', password2: ''}}
         validationSchema={SignUpSchema}
@@ -101,6 +103,7 @@ export default function SignUp({ navigation }) {
             </ScrollView></>
     )}
        </Formik>
+       </ImageBackground>
      </View>
     </SafeAreaView>
   );
