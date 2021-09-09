@@ -8,6 +8,15 @@
 
 This app is still in the process of being developed and has the expected public launch date of **February 2022**. Once the app becomes public, we will update this README with information on how to become apart of our testing and feedback team.
 
+## Contributing
+In general, we follow the "fork-and-pull" Git workflow. Please follow the GitHub contributing guidelines, and document your Pull request thoroughly.  
+
+1. Fork the repo on GitHub
+2. Clone the project to your own machine
+3. Commit changes to your own branch
+4. Push your work back up to your fork
+5. Submit a Pull request so that we can review your changes
+
 
 ## Description
 
