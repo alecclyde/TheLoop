@@ -32,7 +32,7 @@ if (!firebase.apps.length) {
 
 export default function App() {
   return (
-    <SignUp/>
+    <Home/>
   );
 }
 
