@@ -1,4 +1,3 @@
-import { BlurView } from 'expo';
 import { StyleSheet } from 'react-native';
 
 export const globalStyles = StyleSheet.create({
@@ -15,47 +14,6 @@ export const globalStyles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 30,
     paddingRight: 20,
-  },
-  H1: {
-    color: '#162d4d',
-    fontSize: 22,
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  H2: {
-    color: '#162d4d',
-    fontSize: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  P: {
-    color: '#162d4d',
-    fontSize: 16,
-    marginVertical: 0,
-    lineHeight: 22,
-    paddingBottom: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  A: {
-    color: "#0364a0",
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginVertical: 0,
-    lineHeight: 22,
-    paddingBottom: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  socialLink: {
-    flex: 1,
-    color: "#0364a0",
-    fontSize: 16,
-    marginVertical: 0,
-  },
-  HR: {
-    margin: 20,
   },
   paragraph: {
     marginVertical: 8,

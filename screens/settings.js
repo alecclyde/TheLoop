@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native';
 import React from 'react';
 
-export default function NotificationPage({ navigation }) {
+export default function Settings({ navigation }) {
     return (
         <View>
             <Text>
-                Notification Page
+                Settings
             </Text>
         </View>
     );
