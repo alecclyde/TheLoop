@@ -1,4 +1,5 @@
 import * as firebase from "firebase";
+import * as firestore from "firebase/firestore"
 import {Alert} from "react-native";
 import { StackActions } from '@react-navigation/native';
 
@@ -24,10 +25,12 @@ export async function registration(email, password, lastName, firstName, navigat
     }
   }
 
+
 export async function signIn(email, password, navigation) {
   try {
    await firebase.auth().signInWithEmailAndPassword(email, password);
       if(firebase.auth().currentUser !== null){
+        console.log("User signed in successfully!");
         //navigation.navigate('Home');
       }
   } catch (err) {
@@ -40,8 +43,20 @@ export async function signIn(email, password, navigation) {
 export async function loggingOut(navigation) {
   try {
     await firebase.auth().signOut();
-    navigation.navigate("Authentication")
+    // navigation.navigate("Authentication")
   } catch (err) {
     Alert.alert('There is something wrong!', err.message);
+  }
+}
+
+// Grabs a single user's data
+export async function getUserData(userID) {
+  try {
+    const user = await firebase.firestore().collection('users').doc(userID).get();
+    return user.data();
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert('Something went wrong!', err.message);
   }
 }
