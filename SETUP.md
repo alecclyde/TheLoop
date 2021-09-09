@@ -8,7 +8,7 @@ JavaScript (ES6) code snippets
 ## Install Node.js on your computer
 https://nodejs.org/en/download/
 
-## After downloading Node.js run this in the terminal while in the brain-breaks file in the terminal
+## After downloading Node.js run this in the terminal while in the TheLoop file in the terminal
 ```
 npm install
 ```
