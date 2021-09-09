@@ -1,7 +1,7 @@
 ## Download some kind of IDE
 #### I used VSCode
 https://code.visualstudio.com/download
-#### It might help to download some of these extentions in VSCode 
+#### It might help to download some of these extensions in VSCode 
 Simple React Snippets
 JavaScript (ES6) code snippets
 
@@ -22,5 +22,5 @@ https://youtu.be/pflXnUNMsNk?list=PL4cUxeGkcC9ixPU-QkScoRBVxtPPzVjrQ&t=502
 ```
 expo start
 ```
-#### This will open the expo page in your browser.
-#### Click Run on Android device/emulator while an emulator is running to run the app.
+- This will open the expo page in your browser.
+- Click Run on Android device/emulator while an emulator is running to run the app.

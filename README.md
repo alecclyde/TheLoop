@@ -15,6 +15,8 @@ The app is being developed through [Messiah University](https://www.messiah.edu/
 
 This app is meant to be the connecting medium between people by facilitating meaningful groups and activities for all. 
 
+## Setup
+To see how to set up application in dev environment, go to [SETUP.md](SETUP.md) for instructions.
 
 ## Team
 We are a team of five: [Robbie](https://github.com/airgo32), [Caden](https://github.com/NedacNostrebor), [Joe](https://github.com/Jmtonnies), [Tim](https://github.com/Tim12-code), and [Alec](https://github.com/alecclyde).
