@@ -1,7 +1,12 @@
 import { Text, View } from 'react-native';
+import React from 'react';
 
-<View>
-    <Text>
-        Profile
-    </Text>
-</View>
+export default function Profile({ navigation }) {
+    return (
+        <View>
+            <Text>
+                Profile
+            </Text>
+        </View>
+    );
+}

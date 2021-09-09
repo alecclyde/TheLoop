@@ -3,6 +3,7 @@ import React from 'react';
 import Profile from '../screens/profile';
 import Settings from '../screens/settings';
 import AboutUs from '../screens/aboutUs';
+import SignUp from '../screens/signUp';
 
 
 
@@ -13,7 +14,7 @@ const Stack = createStackNavigator();
 export default function ProfileStack(){
   return(
     <Stack.Navigator
-      initialRouteName='Profile'
+      initialRouteName='SignUp'
       screenOptions={{ headerShown: false}}
     >
       <Stack.Screen 
@@ -27,6 +28,10 @@ export default function ProfileStack(){
        <Stack.Screen 
         name='AboutUs'
         component={AboutUs}
+      />
+       <Stack.Screen 
+        name='SignUp'
+        component={SignUp}
       />
 
     </Stack.Navigator>

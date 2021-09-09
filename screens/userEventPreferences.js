@@ -1,7 +1,12 @@
 import { Text, View } from 'react-native';
+import React from 'react';
 
-<View>
-    <Text>
-        User Event Preferences
-    </Text>
-</View>
+export default function UserEventPreferences({ navigation }) {
+    return (
+        <View>
+            <Text>
+                User Event Preferences
+            </Text>
+        </View>
+    );
+}

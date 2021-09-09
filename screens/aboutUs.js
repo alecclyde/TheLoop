@@ -1,7 +1,13 @@
 import { Text, View } from 'react-native';
+import React from 'react';
 
-<View>
-    <Text>
-        About Us
-    </Text>
-</View>
+export default function AboutUs({ navigation }) {
+    return (
+        <View>
+            <Text>
+                About Us
+            </Text>
+        </View>
+    );
+}
+

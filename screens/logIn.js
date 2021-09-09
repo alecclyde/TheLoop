@@ -1,7 +1,12 @@
 import { Text, View } from 'react-native';
+import React from 'react';
 
-<View>
-    <Text>
-        Log In
-    </Text>
-</View>
+export default function LogIn({ navigation }) {
+    return (
+        <View>
+            <Text>
+                Log In
+            </Text>
+        </View>
+    );
+}

@@ -1,7 +1,12 @@
 import { Text, View } from 'react-native';
+import React from 'react';
 
-<View>
-    <Text>
-        Settings
-    </Text>
-</View>
+export default function Settings({ navigation }) {
+    return (
+        <View>
+            <Text>
+                Settings
+            </Text>
+        </View>
+    );
+}

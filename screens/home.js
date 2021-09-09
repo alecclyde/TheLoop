@@ -1,7 +1,12 @@
 import { Text, View } from 'react-native';
+import React from 'react';
 
-<View>
-    <Text>
-        Home
-    </Text>
-</View>
+export default function Home({ navigation }) {
+    return (
+        <View>
+            <Text>
+                Home
+            </Text>
+        </View>
+    );
+}

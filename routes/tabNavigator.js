@@ -17,15 +17,17 @@ export default function RootStack() {
         screenOptions={{ headerShown: false}}
       >
         <Tab.Screen
-          name='Home'
+          name='HomeStack'
           component={HomeStack}
+          options={{title: 'Home'}}
         />
         <Tab.Screen
-          name='Profile'
+          name='ProfileStack'
           component={ProfileStack}
+          options={{title: 'Profile'}}
         />
         <Tab.Screen
-          name='EventCreation'
+          name='EventCreationStack'
           component={EventCreationStack}
           options={{title: 'Create Event'}}
         />
