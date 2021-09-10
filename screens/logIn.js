@@ -9,7 +9,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { signIn, loggingOut, getUserData } from "../shared/firebaseMethods";
+import { signIn, getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
@@ -23,30 +23,32 @@ const LoginSchema = yup.object({
 });
 
 export default function Login({ navigation }) {
+  const [user, setUser] = useState();
+  const [welcomeText, setWelcomeText] = useState("");
 
-    const [user, setUser] = useState();
-    const [welcomeText, setWelcomeText] = useState('');
-
-    // Handle user state changes
+  // Handle user state changes
   function AuthStateChangedListener(user) {
-      setUser(user);
+    setUser(user);
 
-      if (user) {
-          console.log(user.uid);
-          const account = getUserData(user.uid).then(user => setWelcomeText("Welcome " + user.firstName + '!'));
-
-          
-      } else {
-          setWelcomeText('');
-      }
-
+    // go to profile page if already logged in
+    if (user) {
+        navigation.navigate("Profile");
+    }
   }
 
   // sets the function to trigger when the listener fires
-  firebase.auth().onAuthStateChanged(AuthStateChangedListener);
+  useEffect(() => {
+    const unsubscriber = firebase
+      .auth()
+      .onAuthStateChanged(AuthStateChangedListener);
+
+    return unsubscriber;
+    
+  });
 
   return (
     <SafeAreaView style={globalStyles.container}>
+      <View style={{ flex: 1 }} />
       <View>
         <Formik
           initialValues={{ email: "", password: "" }}
@@ -100,15 +102,12 @@ export default function Login({ navigation }) {
           )}
         </Formik>
       </View>
-      <View style={{flex: 1}}/>
-      <View>
-          <TouchableOpacity
-          style={styles.button}
-          onPress={loggingOut}
-          >
-            <Text style={styles.buttonText}>Sign Out</Text>
-          </TouchableOpacity>
-      </View>
+      <View style={{ flex: 1 }} />
+      {/* <View>
+        <TouchableOpacity style={styles.button} onPress={loggingOut}>
+          <Text style={styles.buttonText}>Sign Out</Text>
+        </TouchableOpacity>
+      </View> */}
     </SafeAreaView>
   );
 }

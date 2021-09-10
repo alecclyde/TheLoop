@@ -18,7 +18,7 @@ export async function registration(email, password, lastName, firstName, navigat
         });
     //   navigation.dispatch(StackActions.pop(1));
     //   if(firebase.auth().currentUser !== null){
-    //     navigation.navigate('Home');
+        navigation.navigate('Profile');
     //   }
     } catch (err) {
       Alert.alert("There is something wrong!", err.message);
@@ -31,7 +31,7 @@ export async function signIn(email, password, navigation) {
    await firebase.auth().signInWithEmailAndPassword(email, password);
       if(firebase.auth().currentUser !== null){
         console.log("User signed in successfully!");
-        //navigation.navigate('Home');
+        navigation.navigate('Profile');
       }
   } catch (err) {
     console.log(err);
@@ -43,7 +43,7 @@ export async function signIn(email, password, navigation) {
 export async function loggingOut(navigation) {
   try {
     await firebase.auth().signOut();
-    // navigation.navigate("Authentication")
+    navigation.navigate('LogIn');
   } catch (err) {
     Alert.alert('There is something wrong!', err.message);
   }
