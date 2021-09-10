@@ -4,6 +4,7 @@ import Profile from '../screens/profile';
 import Settings from '../screens/settings';
 import AboutUs from '../screens/aboutUs';
 import SignUp from '../screens/signUp';
+import LogIn from '../screens/logIn';
 
 
 
@@ -32,6 +33,10 @@ export default function ProfileStack(){
        <Stack.Screen 
         name='SignUp'
         component={SignUp}
+      />
+      <Stack.Screen
+        name='LogIn'
+        component={LogIn}
       />
 
     </Stack.Navigator>
