@@ -53,8 +53,7 @@ export async function loggingOut(navigation) {
 // Grabs a single user's data
 export async function getUserData(userID) {
   try {
-    await firebase.firestore().collection('users').doc(userID).get().then(user =>
-      console.log('Total users: ', user.data().firstName));
+    const user = await firebase.firestore().collection('users').doc(userID).get()
     
     return user.data();
 
