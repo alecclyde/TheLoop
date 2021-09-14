@@ -7,6 +7,7 @@ export async function registration(email, password, lastName, firstName, navigat
     try {
       await firebase.auth().createUserWithEmailAndPassword(email, password);
       const currentUser = firebase.auth().currentUser;
+      const userData = getUserData(currentUser).then((user) => displayUserData(user));
   
       const db = firebase.firestore();
       db.collection("users")
@@ -18,7 +19,7 @@ export async function registration(email, password, lastName, firstName, navigat
         });
     //   navigation.dispatch(StackActions.pop(1));
     //   if(firebase.auth().currentUser !== null){
-        navigation.navigate('Profile', {user: firebase.auth().currentUser});
+        navigation.navigate('Profile', {user: userData});
     //   }
     } catch (err) {
       Alert.alert("There is something wrong!", err.message);
@@ -30,7 +31,8 @@ export async function signIn(email, password, navigation) {
   try {
    await firebase.auth().signInWithEmailAndPassword(email, password);
       if(firebase.auth().currentUser !== null){
-        navigation.navigate('RootStack');
+        const userData = getUserData(firebase.auth().currentUser).then((user) => displayUserData(user));
+        navigation.navigate('RootStack', {user: userData});
       }
   } catch (err) {
     console.log(err);
