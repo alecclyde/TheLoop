@@ -30,7 +30,7 @@ export async function signIn(email, password, navigation) {
   try {
    await firebase.auth().signInWithEmailAndPassword(email, password);
       if(firebase.auth().currentUser !== null){
-        navigation.navigate('Profile');
+        navigation.navigate('RootStack');
       }
   } catch (err) {
     console.log(err);

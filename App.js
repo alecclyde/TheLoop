@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { API_KEY, AUTH_DOMAIN, DATABASE_URL, PROJECT_ID,
   STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID, MEASUREMENT_ID} from '@env';
 import * as firebase from 'firebase';
-import RootStack from './routes/tabNavigator';
+import LoginStack from './routes/loginStack';
 
 import { LogBox } from 'react-native';
 //https://github.com/firebase/firebase-js-sdk/issues/97
@@ -29,7 +29,7 @@ if (!firebase.apps.length) {
 export default function App() {
   return (
   <NavigationContainer>
-    <RootStack/>
+    <LoginStack/>
   </NavigationContainer>
   );
 }

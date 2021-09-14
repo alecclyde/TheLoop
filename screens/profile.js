@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
-  ScrollView,
-  Keyboard,
   StyleSheet,
-  SafeAreaView,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { loggingOut, getUserData } from "../shared/firebaseMethods";
@@ -14,38 +10,10 @@ import { globalStyles } from "../styles/global";
 import * as firebase from "firebase";
 
 export default function Profile({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
 
-  // Listener to update user data
-  function AuthStateChangedListener(user) {
-    if (user) {
-      const userData = getUserData(user.uid).then((user) =>
-        displayUserData(user)
-      );
-    } else {
-      setEmail("");
-      setFirstName("");
-      setLastName("");
-    }
-  }
-
-  function displayUserData(user) {
-    setEmail(user.email);
-    setFirstName(user.firstName);
-    setLastName(user.lastName);
-  }
-
-  useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-
-    return () => {
-      unsubscriber;
-    };
-  }, []);
+  const email = firebase.auth().currentUser.email;
+  const firstName = firebase.auth().currentUser.firstName;
+  const lastName = firebase.auth().currentUser.lastName;
 
   return (
     <View style={{flex: 1 }}>

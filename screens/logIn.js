@@ -23,28 +23,11 @@ const LoginSchema = yup.object({
 });
 
 export default function Login({ navigation }) {
-  const [user, setUser] = useState();
   const [welcomeText, setWelcomeText] = useState("");
 
-  // Handle user state changes
-  function AuthStateChangedListener(user) {
-    setUser(user);
-
-    // go to profile page if already logged in
-    if (user) {
-        navigation.navigate("Profile");
-    }
+  if(firebase.auth().currentUser !== null){
+    navigation.navigate("RootStack");
   }
-
-  // sets the function to trigger when the listener fires
-  useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-
-    return unsubscriber;
-    
-  });
 
   return (
     <SafeAreaView style={globalStyles.container}>

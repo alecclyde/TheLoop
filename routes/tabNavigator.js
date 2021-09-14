@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator();
 export default function RootStack() {
     return (
       <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="Profile"
         screenOptions={{ headerShown: false}}
       >
         <Tab.Screen

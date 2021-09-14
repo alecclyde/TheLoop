@@ -16,6 +16,7 @@ import { Formik } from "formik";
 import { NavigationContainer } from "@react-navigation/native";
 
 //https://github.com/jquense/yup/issues/97#issuecomment-306547261
+//checks to see if both passwords are the same
 function equalTo(ref, msg) {
   return this.test({
     name: "equalTo",
