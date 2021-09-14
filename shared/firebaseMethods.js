@@ -54,9 +54,9 @@ export async function loggingOut(navigation) {
 export async function getUserData(userID) {
   try {
     const user = await firebase.firestore().collection('users').doc(userID).get().then(querySnapshot =>
-      console.log('Total users: ', querySnapshot.firstName));
+      console.log('Total users: ', querySnapshot.data().firstName));
     
-    return user;
+    return user.data();
 
   } catch (err) {
     console.log(err);
