@@ -9,11 +9,11 @@ import { loggingOut, getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import * as firebase from "firebase";
 
-export default function Profile({ navigation }) {
+export default function Profile({ navigation, route }) {
 
-  const email = firebase.auth().currentUser.email;
-  const firstName = firebase.auth().currentUser.firstName;
-  const lastName = firebase.auth().currentUser.lastName;
+  const email = route.params?.userData.email ?? 'email';
+  const firstName = route.params?.userData.firstName ?? 'firstName';
+  const lastName = route.params?.userData.lastName ?? 'lastName';
 
   return (
     <View style={{flex: 1 }}>

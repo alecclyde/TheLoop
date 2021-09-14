@@ -26,7 +26,9 @@ export default function Login({ navigation }) {
   const [welcomeText, setWelcomeText] = useState("");
 
   if(firebase.auth().currentUser !== null){
-    navigation.navigate("RootStack");
+    userData = getUserData(firebase.auth().currentUser.uid)
+    console.log(userData);
+    navigation.navigate("RootStack", {userData: userData});
   }
 
   return (
