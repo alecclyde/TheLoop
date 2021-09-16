@@ -53,7 +53,7 @@ export async function loggingOut(navigation) {
 // Grabs a single user's data
 export async function getUserData(userID) {
   try {
-    const user = await firebase.firestore().collection('users').doc(userID).get();
+    const user = await firebase.firestore().collection('users').doc(userID).get().then((result) => console.log(result));
     return user.data();
 
   } catch (err) {
