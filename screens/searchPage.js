@@ -11,8 +11,8 @@ const App = () => {
         <MapView
           style={styles.mapStyle}
           initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
+            latitude: 40.157813,
+            longitude: -76.986283,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
@@ -21,12 +21,12 @@ const App = () => {
           <Marker
             draggable
             coordinate={{
-              latitude: 37.78825,
-              longitude: -122.4324,
+              latitude: 40.157813,
+              longitude: -76.986283,
             }}
             onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
-            title={"Test Marker"}
-            description={"This is a description of the marker"}
+            title={"Messiah University"}
+            description={"This is a test of the marker (not actual location)"}
           />
         </MapView>
       </View>
