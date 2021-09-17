@@ -4,6 +4,6 @@ version: 2.1
 orbs:
   node: circleci/node@4.7.0
 workflows:
-  example-workflow:
+  node-test:
     jobs:
       - node/run
