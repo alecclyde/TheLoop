@@ -25,6 +25,10 @@
         "backgroundColor": "#FFFFFF"
       }
     },
+  "meta-data": {
+      "android:name":"com.google.android.geo.API_KEY",
+      "android:value":"AIzaSyCCw4A_RiN4D2FGqZyUDrwlW-e55VnXwAU"
+  },
     "web": {
       "favicon": "./assets/favicon.png"
     }
