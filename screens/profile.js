@@ -11,9 +11,12 @@ import * as firebase from "firebase";
 
 export default function Profile({ navigation, route }) {
 
-  const email = route.params?.userData.email ?? 'email';
-  const firstName = route.params?.userData.firstName ?? 'firstName';
-  const lastName = route.params?.userData.lastName ?? 'lastName';
+  // const email = route.params?.userData.email ?? 'email';
+  // const firstName = route.params?.userData.firstName ?? 'firstName';
+  // const lastName = route.params?.userData.lastName ?? 'lastName';
+  const email = await getUserData(firebase.auth().currentUser.uid).email;
+  const firstName = await getUserData(firebase.auth().currentUser.uid).firstName;
+  const lastName = await getUserData(firebase.auth().currentUser.uid).lastName;
 
   return (
     <View style={{flex: 1 }}>

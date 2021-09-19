@@ -18,7 +18,7 @@ export async function registration(email, password, lastName, firstName, navigat
         });
     //   navigation.dispatch(StackActions.pop(1));
     //   if(firebase.auth().currentUser !== null){
-        navigation.navigate('Profile', {user: getUserData(currentUser.uid)});
+        navigation.navigate('Profile');
     //   }
     } catch (err) {
       Alert.alert("There is something wrong!", err.message);
@@ -30,9 +30,7 @@ export async function signIn(email, password, navigation) {
   try {
    await firebase.auth().signInWithEmailAndPassword(email, password);
       if(firebase.auth().currentUser !== null){
-        userData = getUserData(firebase.auth().currentUser.uid)
-        console.log(userData);
-        navigation.navigate("RootStack", {userData: userData});
+        navigation.navigate("RootStack");
       }
   } catch (err) {
     console.log(err);
@@ -53,7 +51,7 @@ export async function loggingOut(navigation) {
 // Grabs a single user's data
 export async function getUserData(userID) {
   try {
-    const user = await firebase.firestore().collection('users').doc(userID).get().then((result) => console.log(result));
+    const user = await firebase.firestore().collection('users').doc(userID).get();
     return user.data();
 
   } catch (err) {
