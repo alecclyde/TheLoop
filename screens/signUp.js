@@ -140,9 +140,8 @@ export default function SignUp({ navigation }) {
         </Formik>
 
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Text>Already have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate("LogIn")}>
-            <Text style={{color: 'blue'}}>Sign in</Text>
+            <Text style={{color: 'blue'}}>Log in</Text>
           </TouchableOpacity>
         </View>
       </View>

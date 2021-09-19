@@ -25,12 +25,11 @@ const LoginSchema = yup.object({
 export default function Login({ navigation }) {
   const [welcomeText, setWelcomeText] = useState("");
 
-  if(firebase.auth().currentUser !== null){
-    userData = getUserData(firebase.auth().currentUser.uid)
-    console.log(userData);
-    navigation.navigate("RootStack", {userData: userData});
-  }
-
+  useEffect(() => {
+    if(firebase.auth().currentUser !== null){
+      navigation.navigate("RootStack");
+    }
+  }),[]
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }} />
@@ -86,6 +85,13 @@ export default function Login({ navigation }) {
             </>
           )}
         </Formik>
+        
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Text>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+            <Text style={{color: 'blue'}}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={{ flex: 1 }} />
       {/* <View>

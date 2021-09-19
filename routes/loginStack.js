@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 export default function ProfileStack(){
   return(
     <Stack.Navigator
-      initialRouteName='SignUp'
+      initialRouteName='Login'
       screenOptions={{ headerShown: false}}
     >
        <Stack.Screen 
