@@ -1,6 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as firebase from 'firebase';
 import React from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+
 
 // stacks
 import HomeStack from './homeStack';
@@ -15,31 +18,60 @@ export default function RootStack() {
       <Tab.Navigator
         initialRouteName="Profile"
         screenOptions={{ headerShown: false}}
+        labeled={false}
+        showLabel={false}
       >
         <Tab.Screen
           name='HomeStack'
           component={HomeStack}
-          options={{title: 'Home'}}
+          options={{backgroundColor: 'orange', title: '',  tabBarIcon: ({ color, size }) => (
+            <Icon
+            raised
+            size= {30}
+            color= "orange"
+            name="home"  />)
+        }}
+          
         />
         <Tab.Screen
           name='ProfileStack'
           component={ProfileStack}
-          options={{title: 'Profile'}}
+          options={{title: '', tabBarIcon: ({ color, size }) => (
+            <Icon
+            raised
+            size= {30}
+            color= "black"
+            name="user"  />)}}
         />
         <Tab.Screen
           name='EventCreationStack'
           component={EventCreationStack}
-          options={{title: 'Create Event'}}
+          options={{title: '',  tabBarIcon: ({ color, size }) => (
+            <Icon
+            raised
+            size= {30}
+            color= "orange"
+            name="plus"  />)}}
         />
         <Tab.Screen
           name='SearchEvents'
           component={SearchEventsStack}
-          options={{title: 'Search Events'}}
+          options={{title: '',  tabBarIcon: ({ color, size }) => (
+            <Icon
+            raised
+            size= {30}
+            color= "black"
+            name="search"  />)}}
         />
         <Tab.Screen
           name='Notifications'
           component={NotificationsStack}
-          options={{title: 'Notifications'}}
+          options={{title: '',  tabBarIcon: ({ color, size }) => (
+            <Icon
+            raised
+            size= {30}
+            color= "orange"
+            name="bell-o"  />)}}
         />
       </Tab.Navigator>
     );

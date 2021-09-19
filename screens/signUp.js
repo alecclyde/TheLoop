@@ -1,7 +1,6 @@
 import React from "react";
 import {
   View,
-  Text,
   TextInput,
   ScrollView,
   Keyboard,
@@ -14,6 +13,11 @@ import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
 import { NavigationContainer } from "@react-navigation/native";
+import { Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input } from 'react-native-elements';
+import { Text } from 'react-native-elements';
+
 
 //https://github.com/jquense/yup/issues/97#issuecomment-306547261
 //checks to see if both passwords are the same
@@ -35,7 +39,7 @@ yup.addMethod(yup.string, "equalTo", equalTo);
 
 const SignUpSchema = yup.object({
   firstName: yup.string().required("First name is a required field"),
-  lastName: yup.string(),
+  lastName: yup.string().required("Last name is a required field"),
   email: yup.string().email().required("Email is a required field"),
   password: yup
     .string()
@@ -73,76 +77,104 @@ export default function SignUp({ navigation }) {
         >
           {(props) => (
             <>
-              <Text style={globalStyles.titleText}>Create an account </Text>
+            <Text h5 style={{textAlign: 'center', padding: 20,}} >Become a Member of The Loop!</Text>
               <ScrollView onBlur={Keyboard.dismiss}>
-                <TextInput
-                  style={globalStyles.input}
+                <Input
                   placeholder="First name*"
+                  errorStyle={{ color: 'red' }}
+                  errorMessage={props.touched.firstName && props.errors.firstName}
                   value={props.values.firstName}
                   onChangeText={props.handleChange("firstName")}
                   onBlur={props.handleBlur("firstName")}
                 />
-                <Text style={globalStyles.errorText}>
-                  {props.touched.firstName && props.errors.firstName}
-                </Text>
-                <TextInput
-                  style={globalStyles.input}
-                  placeholder="Last name"
+                <Input
+                  placeholder="Last name*"
+                  errorStyle={{ color: 'red' }}
+                  errorMessage={props.touched.lastName && props.errors.lastName}
                   value={props.values.lastName}
                   onChangeText={props.handleChange("lastName")}
                 />
-                <Text style={globalStyles.errorText}>
-                  {props.touched.lastName && props.errors.lastName}
-                </Text>
-                <TextInput
-                  style={globalStyles.input}
-                  placeholder="Enter your email*"
+                <Input
+                  leftIcon={
+                  <Icon
+                  name = 'user'
+                  size={24}
+                  color='black'/>
+                  }
+                  errorStyle={{ color: 'red' }}
+                  errorMessage={props.touched.email && props.errors.email}
+                  placeholder=" Enter your email*"
                   value={props.values.email}
                   onChangeText={props.handleChange("email")}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   onBlur={props.handleBlur("email")}
                 />
-                <Text style={globalStyles.errorText}>
-                  {props.touched.email && props.errors.email}
-                </Text>
-                <TextInput
-                  style={globalStyles.input}
-                  placeholder="Enter your password*"
+                <Input
+                  placeholder=" Enter your password*"
+                  secureTextEntry={true} 
+                  errorStyle={{ color: 'red' }}
+                  errorMessage={props.touched.password && props.errors.password}
                   value={props.values.password}
                   onChangeText={props.handleChange("password")}
                   secureTextEntry={true}
                   onBlur={props.handleBlur("password")}
                 />
-                <Text style={globalStyles.errorText}>
-                  {props.touched.password && props.errors.password}
-                </Text>
-                <TextInput
-                  style={globalStyles.input}
-                  placeholder="Retype your password to confirm*"
+                <Input
+                  leftIcon={
+                  <Icon
+                  name = 'lock'
+                  size={24}
+                  color='black'/>
+                  }
+                  errorStyle={{ color: 'red' }}
+                  errorMessage={props.touched.password2 && props.errors.password2}
+                  placeholder=" Retype your password to confirm*"
                   value={props.values.password2}
                   onChangeText={props.handleChange("password2")}
                   secureTextEntry={true}
                   onBlur={props.handleBlur("password2")}
                 />
-                <Text style={globalStyles.errorText}>
-                  {props.touched.password2 && props.errors.password2}
-                </Text>
-                <TouchableOpacity
-                  style={styles.button}
+                <Button
                   onPress={props.handleSubmit}
-                >
-                  <Text style={styles.buttonText}>Sign Up</Text>
-                </TouchableOpacity>
+                  title = "Sign Up"
+                  buttonStyle = {{height: 50}}
+                  containerStyle = {{ 
+                    marginBottom: 5,
+                    borderRadius: 10, // adds the rounded corners
+                    }}
+                />
               </ScrollView>
             </>
           )}
         </Formik>
 
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <TouchableOpacity onPress={() => navigation.navigate("LogIn")}>
-            <Text style={{color: 'blue'}}>Log in</Text>
-          </TouchableOpacity>
+        <View style={{ flexDirection: "row", justifyContent: "center"}}>
+        <Text h4 style={{textAlign: 'center',}} >or</Text>
+          </View>
+
+        <View style={{ flexDirection: "row", justifyContent: "center"}}>
+        <Icon
+        style={{paddingBottom: 20,}}
+                  name = 'arrow-down'
+                  size={30}
+                  color='black'/>
+          </View>
+
+          <View style= {{flexDirection: "row", justifyContent: "center"}}>
+          <Button 
+          icon={
+              <Icon
+                name="sign-in"
+                size={15}
+                color="white"
+              />}
+              containerStyle = {{ 
+                    borderRadius: 10, // adds the rounded corners
+                    }}
+          title = "  Sign In"
+          onPress={() => navigation.navigate("LogIn")}>
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -156,7 +188,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 10,
     backgroundColor: "#6bc7b8",
-    height: 100,
+    height: 50,
     justifyContent: "center",
   },
   buttonText: {
