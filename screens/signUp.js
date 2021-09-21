@@ -20,6 +20,7 @@ import { Text } from 'react-native-elements';
 
 
 //https://github.com/jquense/yup/issues/97#issuecomment-306547261
+//checks to see if both passwords are the same
 function equalTo(ref, msg) {
   return this.test({
     name: "equalTo",

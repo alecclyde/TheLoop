@@ -23,29 +23,13 @@ const LoginSchema = yup.object({
 });
 
 export default function Login({ navigation }) {
-  const [user, setUser] = useState();
   const [welcomeText, setWelcomeText] = useState("");
 
-  // Handle user state changes
-  function AuthStateChangedListener(user) {
-    setUser(user);
-
-    // go to profile page if already logged in
-    if (user) {
-        navigation.navigate("Profile");
-    }
-  }
-
-  // sets the function to trigger when the listener fires
   useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-
-    return unsubscriber;
-    
-  });
-
+    if(firebase.auth().currentUser !== null){
+      navigation.navigate("RootStack");
+    }
+  }),[]
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }} />
@@ -101,6 +85,13 @@ export default function Login({ navigation }) {
             </>
           )}
         </Formik>
+        
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Text>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+            <Text style={{color: 'blue'}}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={{ flex: 1 }} />
       {/* <View>
