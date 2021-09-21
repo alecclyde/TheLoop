@@ -17,18 +17,19 @@ export default function RootStack() {
     return (
       <Tab.Navigator
         initialRouteName="Profile"
-        screenOptions={{ headerShown: false}}
+        screenOptions={{ headerShown: false,tabBarActiveBackgroundColor:'#FF8C00'}}
+        options={{}}
         labeled={false}
         showLabel={false}
       >
         <Tab.Screen
           name='HomeStack'
           component={HomeStack}
-          options={{backgroundColor: 'orange', title: '',  tabBarIcon: ({ color, size }) => (
+          options={{backgroundColor: 'orange',title: '',  tabBarIcon: ({ color, size }) => (
             <Icon
             raised
             size= {30}
-            color= "orange"
+            color= "black"
             name="home"  />)
         }}
           
@@ -50,7 +51,7 @@ export default function RootStack() {
             <Icon
             raised
             size= {30}
-            color= "orange"
+            color= "black"
             name="plus"  />)}}
         />
         <Tab.Screen
@@ -70,7 +71,7 @@ export default function RootStack() {
             <Icon
             raised
             size= {30}
-            color= "orange"
+            color= "black"
             name="bell-o"  />)}}
         />
       </Tab.Navigator>
