@@ -1,26 +1,49 @@
 import React, { useState } from "react";
 // Import required components
-import { SafeAreaView, StyleSheet, View, Button, Text } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Button,
+  Text,
+  PermissionsAndroid,
+  StatusBar,
+} from "react-native";
+
 // Import Map and Marker
 import MapView, { Marker } from "react-native-maps";
-import Geolocation from "react-native-geolocation-service";
+import Geolocation, {
+  getCurrentPosition,
+} from "react-native-geolocation-service";
 
 export default function SearchPage({}) {
-  if (hasLocationPermission) {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        console.log(position);
+  const latitude = 0;
+  const longitude = 0;
+  //let position = navigator.geolocation.getCurrentPosition;
+  Location.installWebGeolocationPolyfill();
+  navigator.geolocation.getCurrentPosition(setPosition);
+
+  function findCurrentLocation() {
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        alert(
+          "Lat: " +
+            position.coords.latitude +
+            "\nLon: " +
+            position.coords.longitude
+        );
       },
-      (error) => {
-        // See error code charts below.
-        console.log(error.code, error.message);
+      function (error) {
+        alert(error.message);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+      }
     );
   }
 
-  let latitude = 40.00001;
-  let longitude = 40.00001;
+  findCurrentLocation();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -43,27 +66,13 @@ export default function SearchPage({}) {
             }}
             onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
             title={"Messiah University"}
-            description={position}
+            description={"position"}
           />
         </MapView>
       </View>
     </SafeAreaView>
   );
 }
-
-const permissionHandle = async () => {
-  console.log("here");
-
-  let permission = await RNLocation.checkPermission({
-    ios: "whenInUse", // or 'always'
-    android: {
-      detail: "coarse", // or 'fine'
-    },
-  });
-
-  console.log("here2");
-  console.log(permission);
-};
 
 //export default App;
 const mapStyle = [
