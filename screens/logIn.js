@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   TextInput,
   ScrollView,
   Keyboard,
   StyleSheet,
   SafeAreaView,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { signIn, getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
+import { Button } from 'react-native-elements';
+import { Image } from 'react-native-elements';
+import { Input } from 'react-native-elements';
+import { Text } from 'react-native-elements';
 
 import * as firebase from "firebase";
 import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
@@ -23,29 +25,13 @@ const LoginSchema = yup.object({
 });
 
 export default function Login({ navigation }) {
-  const [user, setUser] = useState();
   const [welcomeText, setWelcomeText] = useState("");
 
-  // Handle user state changes
-  function AuthStateChangedListener(user) {
-    setUser(user);
-
-    // go to profile page if already logged in
-    if (user) {
-        navigation.navigate("Profile");
-    }
-  }
-
-  // sets the function to trigger when the listener fires
   useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-
-    return unsubscriber;
-    
-  });
-
+    if(firebase.auth().currentUser !== null){
+      navigation.navigate("RootStack");
+    }
+  }),[]
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }} />
@@ -59,76 +45,73 @@ export default function Login({ navigation }) {
         >
           {(props) => (
             <>
-              <Text style={globalStyles.titleText}>Welcome to The Loop!</Text>
+            <View style= {{flexDirection: "row", justifyContent: "center"}}>
+            
+          <Image
+              source={require("../assets/Logo_Cropped.png")}
+              style={{
+              width: 90,
+              height: 90,
+              marginRight: 10,
+              marginBottom: 60,
+              marginTop: 12}}
+            />
+          </View>
               <ScrollView onBlur={Keyboard.dismiss}>
                 {/* Email */}
-                <TextInput
-                  style={globalStyles.input}
+                <Input
                   placeholder="Enter your email"
+                  errorStyle={{ color: 'red' }}
+                  errorMessage={props.touched.email && props.errors.email}
                   value={props.values.email}
                   onChangeText={props.handleChange("email")}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
                   onBlur={props.handleBlur("email")}
+                  autoCapitalize="none"
                 />
-                <Text style={globalStyles.errorText}>
-                  {props.touched.email && props.errors.email}
-                </Text>
-
                 {/* Password */}
-                <TextInput
-                  style={globalStyles.input}
+                <Input
                   placeholder="Enter your password"
+                  errorStyle={{ color: 'red' }}
+                  errorMessage={props.touched.password && props.errors.password}
                   value={props.values.password}
                   onChangeText={props.handleChange("password")}
-                  secureTextEntry={true}
                   onBlur={props.handleBlur("password")}
+                  autoCapitalize="none"
+                  secureTextEntry={true}
                 />
-                <Text style={globalStyles.errorText}>
-                  {props.touched.password && props.errors.password}
-                </Text>
-
                 {/* Sign-in Button */}
-                <TouchableOpacity
-                  style={styles.button}
+                <Button
                   onPress={props.handleSubmit}
-                >
-                  <Text style={styles.buttonText}>Sign In</Text>
-                </TouchableOpacity>
+                  title = "Sign In"
+                  buttonStyle = {{height: 50}}
+                  containerStyle = {{ 
+                    marginBottom: 5,
+                    borderRadius: 10, // adds the rounded corners
+                    }}
+                />
 
                 <Text>{welcomeText}</Text>
               </ScrollView>
             </>
           )}
         </Formik>
+
+        <View style= {{flexDirection: "row", justifyContent: "center"}}>
+          <Text h5 style={{textAlign: 'center', padding: 20,}} >Don't have an account?</Text>
+          </View>
+          <View style= {{flexDirection: "row", justifyContent: "center"}}>
+          <Button 
+              containerStyle = {{ 
+                    borderRadius: 10, // adds the rounded corners
+                    }}
+          title = "Sign Up"
+          onPress={() => navigation.navigate("SignUp")}>
+          </Button>
+        </View>
       </View>
       <View style={{ flex: 1 }} />
-      {/* <View>
-        <TouchableOpacity style={styles.button} onPress={loggingOut}>
-          <Text style={styles.buttonText}>Sign Out</Text>
-        </TouchableOpacity>
-      </View> */}
     </SafeAreaView>
   );
 }
 
 // Thanks Caden for giving me a framework for the login screen!
-
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 0,
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    marginTop: 10,
-    backgroundColor: "#6bc7b8",
-    height: 100,
-    justifyContent: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    textTransform: "capitalize",
-    fontSize: 22,
-    textAlign: "center",
-  },
-});
