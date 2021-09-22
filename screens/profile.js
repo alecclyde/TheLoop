@@ -2,18 +2,18 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
-  ScrollView,
-  Keyboard,
   StyleSheet,
-  SafeAreaView,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { loggingOut, getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import * as firebase from "firebase";
 
-export default function Profile({ navigation }) {
+export default function Profile({ navigation, route }) {
+
+  // const email = route.params?.userData.email ?? 'email';
+  // const firstName = route.params?.userData.firstName ?? 'firstName';
+  // const lastName = route.params?.userData.lastName ?? 'lastName';
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
