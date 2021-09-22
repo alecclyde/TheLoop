@@ -3,10 +3,25 @@ import React, { useState } from "react";
 import { SafeAreaView, StyleSheet, View, Button, Text } from "react-native";
 // Import Map and Marker
 import MapView, { Marker } from "react-native-maps";
+import Geolocation from "react-native-geolocation-service";
 
 export default function SearchPage({}) {
+  if (hasLocationPermission) {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position);
+      },
+      (error) => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+  }
+
   let latitude = 40.00001;
   let longitude = 40.00001;
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -28,13 +43,27 @@ export default function SearchPage({}) {
             }}
             onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
             title={"Messiah University"}
-            description={"This is a test of the marker (not actual location)"}
+            description={position}
           />
         </MapView>
       </View>
     </SafeAreaView>
   );
 }
+
+const permissionHandle = async () => {
+  console.log("here");
+
+  let permission = await RNLocation.checkPermission({
+    ios: "whenInUse", // or 'always'
+    android: {
+      detail: "coarse", // or 'fine'
+    },
+  });
+
+  console.log("here2");
+  console.log(permission);
+};
 
 //export default App;
 const mapStyle = [
