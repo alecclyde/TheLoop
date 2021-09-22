@@ -20,19 +20,41 @@ import { Formik } from "formik";
 import moment from "moment";
 import { createEvent } from "../shared/firebaseMethods";
 
-const CreateEventSchema = yup.object({
+// Test to make sure that a selected date and time hasn't happened yet
+function isFutureDate(ref, msg) {
+  return this.test({
+    name: "isFutureDate",
+    exclusive: false,
+    message: msg || "You cannot create an event in the past",
+    params: {
+      reference: ref.path,
+    },
+    test: function (value) {
 
-  // date: yup.date().min(moment()),
+      return (
+        moment(this.resolve(ref) + " " + value).format("x") >
+        moment().format("x")
+      );
+    },
+  });
+}
+
+yup.addMethod(yup.string, "isFutureDate", isFutureDate);
+
+const CreateEventSchema = yup.object({
   eventName: yup.string().required("Please enter a name for your event"),
   eventLoop: yup.string().required("Please select a loop for your event"),
   eventDate: yup.string().required("Please select a date for your event"),
-  eventTime: yup.string().required("Please select a time for your event"),
+  eventTime: yup
+    .string()
+    
+    .isFutureDate(yup.ref("eventDate"))
+    .required("Please select a time for your event")
+    ,
   eventAddress: yup.string().required("Please enter an address for your event"),
-  
 });
 
 export default function EventCreation({ navigation }) {
-
   const date = new Date();
   const [show, setShow] = useState(false);
   const [dateText, setDateText] = useState();
@@ -46,15 +68,14 @@ export default function EventCreation({ navigation }) {
     setShow(false);
 
     if (mode == "date") {
-        setDateText(moment(currentDate).format('MMMM Do, YYYY'));
+      setDateText(moment(currentDate).format("MMMM Do, YYYY"));
     }
     if (mode == "time") {
-        setTimeText(moment(currentDate).format('hh:mm A'));
+      setTimeText(moment(currentDate).format("hh:mm A"));
     }
   };
 
   const showMode = (currentMode) => {
-
     setMode(currentMode);
     setShow(true);
   };
@@ -94,7 +115,7 @@ export default function EventCreation({ navigation }) {
                   values.eventName,
                   values.eventLoop,
                   // formats the date and time to be in milliseconds
-                  moment(values.eventDate + ' ' + values.eventTime).format('x'),
+                  moment(values.eventDate + " " + values.eventTime).format("x"),
                   values.eventAddress,
                   navigation
                 );
@@ -109,6 +130,9 @@ export default function EventCreation({ navigation }) {
                     onChangeText={props.handleChange("eventName")}
                     onBlur={props.handleBlur("eventName")}
                   />
+                  <Text style={globalStyles.errorText}>
+                    {props.touched.eventName && props.errors.eventName}
+                  </Text>
                   {/* Touching the date button opens the date picker */}
                   <TouchableOpacity
                     style={globalStyles.input}
@@ -116,7 +140,9 @@ export default function EventCreation({ navigation }) {
                   >
                     <Text>{dateText || "Date"}</Text>
                   </TouchableOpacity>
-
+                  <Text style={globalStyles.errorText}>
+                    {props.touched.eventDate && props.errors.eventDate}
+                  </Text>
                   {/* and touching the time button opens the time picker */}
                   <TouchableOpacity
                     style={globalStyles.input}
@@ -124,6 +150,9 @@ export default function EventCreation({ navigation }) {
                   >
                     <Text>{timeText || "Time"}</Text>
                   </TouchableOpacity>
+                  <Text style={globalStyles.errorText}>
+                    {props.touched.eventTime && props.errors.eventTime}
+                  </Text>
                   {show && (
                     <DateTimePicker
                       value={date}
@@ -132,12 +161,17 @@ export default function EventCreation({ navigation }) {
                       onChange={(event, date) => {
                         onChange(event, date);
                         // updates the date or time field value, depending on which one was selected
-                        mode === "date" && props.setFieldValue("eventDate", moment(date).format("YYYY-MM-DD"));
-                        mode === "time" && props.setFieldValue("eventTime", moment(date).format("HH:mm"));
-
-                      }
-                        
-                        }
+                        mode === "date" &&
+                          props.setFieldValue(
+                            "eventDate",
+                            moment(date).format("YYYY-MM-DD")
+                          );
+                        mode === "time" &&
+                          props.setFieldValue(
+                            "eventTime",
+                            moment(date).format("HH:mm")
+                          );
+                      }}
                     />
                   )}
                   <TextInput
@@ -147,6 +181,9 @@ export default function EventCreation({ navigation }) {
                     onChangeText={props.handleChange("eventLoop")}
                     onBlur={props.handleBlur("eventLoop")}
                   />
+                  <Text style={globalStyles.errorText}>
+                    {props.touched.eventLoop && props.errors.eventLoop}
+                  </Text>
                   <TextInput
                     style={globalStyles.input}
                     placeholder="Address"
@@ -154,18 +191,19 @@ export default function EventCreation({ navigation }) {
                     onChangeText={props.handleChange("eventAddress")}
                     onBlur={props.handleBlur("eventAddress")}
                   />
+                  <Text style={globalStyles.errorText}>
+                    {props.touched.eventAddress && props.errors.eventAddress}
+                  </Text>
 
                   <TouchableOpacity
-                  style={globalStyles.input}
-                  onPress={props.handleSubmit}
+                    style={globalStyles.input}
+                    onPress={props.handleSubmit}
                   >
-                  <Text>Create Event</Text>
-
+                    <Text>Create Event</Text>
                   </TouchableOpacity>
                 </>
               )}
             </Formik>
-
           </View>
         </SafeAreaView>
       </ImageBackground>
