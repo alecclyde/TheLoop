@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 // Import required components
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View, Button, Text } from "react-native";
 // Import Map and Marker
 import MapView, { Marker } from "react-native-maps";
 
-const App = () => {
+export default function SearchPage({}) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <MapView
           style={styles.mapStyle}
           initialRegion={{
-            latitude: 40.157813,
-            longitude: -76.986283,
+            latitude: latitude,
+            longitude: longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
@@ -21,8 +21,8 @@ const App = () => {
           <Marker
             draggable
             coordinate={{
-              latitude: 40.157813,
-              longitude: -76.986283,
+              latitude: latitude,
+              longitude: longitude,
             }}
             onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
             title={"Messiah University"}
@@ -32,10 +32,9 @@ const App = () => {
       </View>
     </SafeAreaView>
   );
-};
+}
 
-export default App;
-
+//export default App;
 const mapStyle = [
   { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
