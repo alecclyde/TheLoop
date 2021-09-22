@@ -63,7 +63,6 @@ export async function getUserData(userID) {
 // Creates a new event and adds the data to Firebase
 export async function createEvent(eventName, eventLoop, eventDateTime, eventAddress, navigation) {
 
-  
   try {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
@@ -73,12 +72,12 @@ export async function createEvent(eventName, eventLoop, eventDateTime, eventAddr
       loop: eventLoop,
       address: eventAddress,
       creator: currentUser.uid,
-      // datetime: fromMillis(eventDateTime)
       datetime: firebase.firestore.Timestamp.fromMillis(eventDateTime),
       attendees: [currentUser.uid]
     });
 
-    console.log("Event created!");
+    // probably should navigate to event page after this
+
 
   } catch (err) {
     console.log(err);
