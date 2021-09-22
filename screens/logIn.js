@@ -29,7 +29,7 @@ export default function Login({ navigation }) {
     if(firebase.auth().currentUser !== null){
       navigation.navigate("RootStack");
     }
-  }),[]
+  },[]);
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }} />
