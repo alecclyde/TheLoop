@@ -5,6 +5,8 @@ import { SafeAreaView, StyleSheet, View, Button, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 export default function SearchPage({}) {
+  let latitude = 40.00001;
+  let longitude = 40.00001;
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
