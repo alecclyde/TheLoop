@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // Import required components
 import {
   SafeAreaView,
@@ -15,35 +15,17 @@ import MapView, { Marker } from "react-native-maps";
 import Geolocation, {
   getCurrentPosition,
 } from "react-native-geolocation-service";
+import * as Location from "expo-location";
 
 export default function SearchPage({}) {
   const latitude = 0;
   const longitude = 0;
-  //let position = navigator.geolocation.getCurrentPosition;
-  Location.installWebGeolocationPolyfill();
-  navigator.geolocation.getCurrentPosition(setPosition);
 
-  function findCurrentLocation() {
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        alert(
-          "Lat: " +
-            position.coords.latitude +
-            "\nLon: " +
-            position.coords.longitude
-        );
-      },
-      function (error) {
-        alert(error.message);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-      }
-    );
+  if (Location.hasServicesEnabledAsync() == true) {
+    alert("services ON");
+  } else {
+    Location.requestForegroundPermissionsAsync();
   }
-
-  findCurrentLocation();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
