@@ -15,6 +15,7 @@ import { Button } from 'react-native-elements';
 import { Image } from 'react-native-elements';
 import { Input } from 'react-native-elements';
 import { Text } from 'react-native-elements';
+import AppLoading from 'expo-app-loading';
 
 import * as firebase from "firebase";
 import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
@@ -26,102 +27,129 @@ const LoginSchema = yup.object({
 
 export default function Login({ navigation }) {
   const [welcomeText, setWelcomeText] = useState("");
+  const [userLoaded, setUserLoaded] = useState(false);
 
-  useEffect(() => {
-    console.log("bogo");
-    async function checkLogin(){
-      try{
-        getUserData(firebase.auth().currentUser.uid).then((userData) => {
-          if(userData != null){navigation.navigate("RootStack", {user: userData});}else{checkLogin();}
-        })
-      }
-      catch(e){
-        console.log(e);
-      }
+  function AuthStateChangedListener(user) {
+    if (user) {
+      getUserData(user.uid).then((user) =>
+        navigation.navigate("RootStack", {user: user})
+      );
     }
-    checkLogin();
-  },[]);
-  
-  return (
-    <SafeAreaView style={globalStyles.container}>
-      <View style={{ flex: 1 }} />
-      <View>
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          validationSchema={LoginSchema}
-          onSubmit={(values) => {
-            signIn(values.email, values.password, navigation);
-          }}
-        >
-          {(props) => (
-            <>
-            <View style= {{flexDirection: "row", justifyContent: "center"}}>
-            
-          <Image
-              source={require("../assets/Logo_Cropped.png")}
-              style={{
-              width: 90,
-              height: 90,
-              marginRight: 10,
-              marginBottom: 60,
-              marginTop: 12}}
-            />
-          </View>
-              <ScrollView onBlur={Keyboard.dismiss}>
-                {/* Email */}
-                <Input
-                  placeholder="Enter your email"
-                  errorStyle={{ color: 'red' }}
-                  errorMessage={props.touched.email && props.errors.email}
-                  value={props.values.email}
-                  onChangeText={props.handleChange("email")}
-                  onBlur={props.handleBlur("email")}
-                  autoCapitalize="none"
-                />
-                {/* Password */}
-                <Input
-                  placeholder="Enter your password"
-                  errorStyle={{ color: 'red' }}
-                  errorMessage={props.touched.password && props.errors.password}
-                  value={props.values.password}
-                  onChangeText={props.handleChange("password")}
-                  onBlur={props.handleBlur("password")}
-                  autoCapitalize="none"
-                  secureTextEntry={true}
-                />
-                {/* Sign-in Button */}
-                <Button
-                  onPress={props.handleSubmit}
-                  title = "Sign In"
-                  buttonStyle = {{height: 50}}
-                  containerStyle = {{ 
-                    marginBottom: 5,
-                    borderRadius: 10, // adds the rounded corners
-                    }}
-                />
+  }
+  useEffect(() => {
+    const unsubscriber = firebase
+      .auth()
+      .onAuthStateChanged(AuthStateChangedListener);
 
-                <Text>{welcomeText}</Text>
-              </ScrollView>
-            </>
-          )}
-        </Formik>
+    return () => {
+      unsubscriber;
+    };
+  }, []);
 
-        <View style= {{flexDirection: "row", justifyContent: "center"}}>
-          <Text h5 style={{textAlign: 'center', padding: 20,}} >Don't have an account?</Text>
-          </View>
+  // useEffect(() => {
+  //   console.log("bogo");
+  //   async function checkLogin(){
+  //     try{
+  //       getUserData(firebase.auth().currentUser.uid).then((userData) => {
+  //         if(userData != null){navigation.navigate("RootStack", {user: userData});}else{checkLogin();}
+  //       })
+  //     }
+  //     catch(e){
+  //       console.log(e);
+  //     }
+  //   }
+  //   checkLogin();
+  // },[]);
+  if(userLoaded){
+    return (
+      <SafeAreaView style={globalStyles.container}>
+        <View style={{ flex: 1 }} />
+        <View>
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validationSchema={LoginSchema}
+            onSubmit={(values) => {
+              signIn(values.email, values.password, navigation);
+            }}
+          >
+            {(props) => (
+              <>
+              <View style= {{flexDirection: "row", justifyContent: "center"}}>
+              
+            <Image
+                source={require("../assets/Logo_Cropped.png")}
+                style={{
+                width: 90,
+                height: 90,
+                marginRight: 10,
+                marginBottom: 60,
+                marginTop: 12}}
+              />
+            </View>
+                <ScrollView onBlur={Keyboard.dismiss}>
+                  {/* Email */}
+                  <Input
+                    placeholder="Enter your email"
+                    errorStyle={{ color: 'red' }}
+                    errorMessage={props.touched.email && props.errors.email}
+                    value={props.values.email}
+                    onChangeText={props.handleChange("email")}
+                    onBlur={props.handleBlur("email")}
+                    autoCapitalize="none"
+                  />
+                  {/* Password */}
+                  <Input
+                    placeholder="Enter your password"
+                    errorStyle={{ color: 'red' }}
+                    errorMessage={props.touched.password && props.errors.password}
+                    value={props.values.password}
+                    onChangeText={props.handleChange("password")}
+                    onBlur={props.handleBlur("password")}
+                    autoCapitalize="none"
+                    secureTextEntry={true}
+                  />
+                  {/* Sign-in Button */}
+                  <Button
+                    onPress={props.handleSubmit}
+                    title = "Sign In"
+                    buttonStyle = {{height: 50}}
+                    containerStyle = {{ 
+                      marginBottom: 5,
+                      borderRadius: 10, // adds the rounded corners
+                      }}
+                  />
+
+                  <Text>{welcomeText}</Text>
+                </ScrollView>
+              </>
+            )}
+          </Formik>
+
           <View style= {{flexDirection: "row", justifyContent: "center"}}>
-          <Button 
-              containerStyle = {{ 
-                    borderRadius: 10, // adds the rounded corners
-                    }}
-          title = "Sign Up"
-          onPress={() => navigation.navigate("SignUp")}>
-          </Button>
+            <Text h5 style={{textAlign: 'center', padding: 20,}} >Don't have an account?</Text>
+            </View>
+            <View style= {{flexDirection: "row", justifyContent: "center"}}>
+            <Button 
+                containerStyle = {{ 
+                      borderRadius: 10, // adds the rounded corners
+                      }}
+            title = "Sign Up"
+            onPress={() => navigation.navigate("SignUp")}>
+            </Button>
+          </View>
         </View>
-      </View>
-      <View style={{ flex: 1 }} />
-    </SafeAreaView>
-  );
+        <View style={{ flex: 1 }} />
+      </SafeAreaView>
+    );
+  }else{
+    return(
+      <AppLoading 
+      startAsync={AuthStateChangedListener} 
+      onFinish={() => setUserLoaded(true)} 
+      onError={console.warn}
+    />
+    )
+  }
 }
 
 // Thanks Caden for giving me a framework for the login screen!
