@@ -28,10 +28,20 @@ export default function Login({ navigation }) {
   const [welcomeText, setWelcomeText] = useState("");
 
   useEffect(() => {
-    if(firebase.auth().currentUser !== null){
-      navigation.navigate("RootStack");
+    console.log("bogo");
+    async function checkLogin(){
+      try{
+        getUserData(firebase.auth().currentUser.uid).then((userData) => {
+          if(userData != null){navigation.navigate("RootStack", {user: userData});}else{checkLogin();}
+        })
+      }
+      catch(e){
+        console.log(e);
+      }
     }
+    checkLogin();
   },[]);
+  
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }} />

@@ -15,19 +15,18 @@ export default function ProfileStack(){
       initialRouteName='Login'
       screenOptions={{ headerShown: false}}
     >
+      <Stack.Screen
+        name='LogIn'
+        component={LogIn}
+      />
        <Stack.Screen 
         name='SignUp'
         component={SignUp}
       />
       <Stack.Screen
-        name='LogIn'
-        component={LogIn}
-      />
-      <Stack.Screen
         name='RootStack'
         component={RootStack}
       />
-
     </Stack.Navigator>
   )
 }
