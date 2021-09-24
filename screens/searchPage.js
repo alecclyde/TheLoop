@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, setState } from "react";
 // Import required components
 import {
   SafeAreaView,
@@ -21,12 +21,16 @@ export default function SearchPage({}) {
   const latitude = 0;
   const longitude = 0;
 
+  const [location, setLocation] = useState(null);
   if (Location.hasServicesEnabledAsync() == true) {
-    alert("services ON");
+    //Location.getLastKnownPositionAsync((position) => {
+    let position = await Location.getCurrentPositionAsync({});
+    //latitude = JSON.stringify(position.coords.latitude);
+    //longitude = JSON.stringify(position.coords.longitude);
+    setLocation(location);
   } else {
     Location.requestForegroundPermissionsAsync();
   }
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -149,6 +153,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   mapStyle: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  paragraph: {
     position: "absolute",
     top: 0,
     left: 0,
