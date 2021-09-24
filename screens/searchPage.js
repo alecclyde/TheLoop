@@ -8,6 +8,8 @@ import {
   Text,
   PermissionsAndroid,
   StatusBar,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 
 // Import Map and Marker
@@ -16,21 +18,31 @@ import Geolocation, {
   getCurrentPosition,
 } from "react-native-geolocation-service";
 import * as Location from "expo-location";
+import { string } from "yup";
 
 export default function SearchPage({}) {
   const latitude = 0;
   const longitude = 0;
+  const position = 0;
 
-  const [location, setLocation] = useState(null);
   if (Location.hasServicesEnabledAsync() == true) {
-    //Location.getLastKnownPositionAsync((position) => {
-    let position = await Location.getCurrentPositionAsync({});
-    //latitude = JSON.stringify(position.coords.latitude);
-    //longitude = JSON.stringify(position.coords.longitude);
-    setLocation(location);
+    Location.getLastKnownPositionAsync(position);
+    longitude = longitude + 50;
   } else {
     Location.requestForegroundPermissionsAsync();
   }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      this.return(position.coords.latitude, position.coords.longitude);
+    },
+    (error) => {
+      this.setState({
+        error: "Error Getting Weather Conditions",
+      });
+    }
+  );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
