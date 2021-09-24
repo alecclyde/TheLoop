@@ -13,10 +13,12 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@react-native-community/geolocation": "^2.0.2",
     "@react-navigation/bottom-tabs": "^6.0.5",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
     "expo": "~42.0.1",
+    "expo-location": "~12.1.2",
     "expo-status-bar": "~1.0.4",
     "firebase": "8.2.3",
     "fontisto": "^3.0.4",
@@ -33,8 +35,7 @@
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-web": "^0.17.1",
-    "yup": "^0.32.9",
-    "expo-location": "~12.1.2"
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "babel-preset-expo": "8.3.0",
