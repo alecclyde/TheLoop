@@ -13,6 +13,7 @@ import {
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
@@ -30,11 +31,14 @@ function isFutureDate(ref, msg) {
       reference: ref.path,
     },
     test: function (value) {
-
-      return (
-        moment(this.resolve(ref) + " " + value).format("x") >
-        moment().format("x")
-      );
+      if (value == null || this.resolve(ref) == null) {
+        return false;
+      } else {
+        return (
+          moment(this.resolve(ref) + "T" + value).format("x") >
+          moment().format("x")
+        );
+      }
     },
   });
 }
@@ -47,10 +51,9 @@ const CreateEventSchema = yup.object({
   eventDate: yup.string().required("Please select a date for your event"),
   eventTime: yup
     .string()
-    
+
     .isFutureDate(yup.ref("eventDate"))
-    .required("Please select a time for your event")
-    ,
+    .required("Please select a time for your event"),
   eventAddress: yup.string().required("Please enter an address for your event"),
 });
 
@@ -63,7 +66,7 @@ export default function EventCreation({ navigation }) {
 
   // from https://github.com/react-native-datetimepicker/datetimepicker
 
-  const onChange = (event, selectedDate) => {
+  const onConfirm = (selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(false);
 
@@ -74,6 +77,10 @@ export default function EventCreation({ navigation }) {
       setTimeText(moment(currentDate).format("hh:mm A"));
     }
   };
+
+  const onCancel = () => {
+    setShow(false);
+  }
 
   const showMode = (currentMode) => {
     setMode(currentMode);
@@ -153,13 +160,14 @@ export default function EventCreation({ navigation }) {
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventTime && props.errors.eventTime}
                   </Text>
-                  {show && (
-                    <DateTimePicker
-                      value={date}
+                  {
+                    <DateTimePickerModal
+                      // value={date}
                       mode={mode}
-                      display="default"
-                      onChange={(event, date) => {
-                        onChange(event, date);
+                      isVisible={show}
+                      display="spinner"
+                      onConfirm={(date) => {
+                        onConfirm(date);
                         // updates the date or time field value, depending on which one was selected
                         mode === "date" &&
                           props.setFieldValue(
@@ -169,11 +177,13 @@ export default function EventCreation({ navigation }) {
                         mode === "time" &&
                           props.setFieldValue(
                             "eventTime",
-                            moment(date).format("HH:mm")
+                            moment(date).format("HH:mm:00ZZ")
                           );
                       }}
+                      // onCancel is a required prop, so ignore this for now
+                      onCancel={onCancel}
                     />
-                  )}
+                  }
                   <TextInput
                     style={globalStyles.input}
                     placeholder="Event Loop"
