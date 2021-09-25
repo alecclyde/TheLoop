@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Button,
   Platform,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -63,6 +64,7 @@ export default function EventCreation({ navigation }) {
   const [dateText, setDateText] = useState();
   const [timeText, setTimeText] = useState();
   const [mode, setMode] = useState("date");
+  const [loop, setLoop] = useState();
 
   // from https://github.com/react-native-datetimepicker/datetimepicker
 
@@ -80,7 +82,7 @@ export default function EventCreation({ navigation }) {
 
   const onCancel = () => {
     setShow(false);
-  }
+  };
 
   const showMode = (currentMode) => {
     setMode(currentMode);
@@ -106,7 +108,6 @@ export default function EventCreation({ navigation }) {
       >
         <SafeAreaView style={globalStyles.container}>
           <View style={{ alignItems: "center" }}>
-            <Text style={globalStyles.titleText}>Create a New Event</Text>
 
             <Formik
               initialValues={{
@@ -117,8 +118,8 @@ export default function EventCreation({ navigation }) {
                 eventAddress: "",
               }}
               validationSchema={CreateEventSchema}
-              onSubmit={(values) => {
-                createEvent(
+              onSubmit={(values, actions) => {
+                var success = createEvent(
                   values.eventName,
                   values.eventLoop,
                   // formats the date and time to be in milliseconds
@@ -126,10 +127,17 @@ export default function EventCreation({ navigation }) {
                   values.eventAddress,
                   navigation
                 );
+                if (success) {
+                  Alert.alert("Success!", "Event successfully created!");
+                  actions.resetForm();
+                }
               }}
+
             >
               {(props) => (
                 <>
+                <Text style={globalStyles.titleText}>Create a New Event</Text>
+                
                   <TextInput
                     style={globalStyles.input}
                     placeholder="Event name"
@@ -184,13 +192,68 @@ export default function EventCreation({ navigation }) {
                       onCancel={onCancel}
                     />
                   }
-                  <TextInput
+
+                  {/* <TextInput
                     style={globalStyles.input}
                     placeholder="Event Loop"
                     value={props.values.eventLoop}
                     onChangeText={props.handleChange("eventLoop")}
                     onBlur={props.handleBlur("eventLoop")}
-                  />
+                  /> */}
+
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
+                      <TouchableOpacity
+                        style={[
+                          loop == "Sports"
+                            ? styles.selectedLoop
+                            : globalStyles.input,
+                          { alignItems: "center" },
+                        ]}
+                        onPress={() => {
+                          setLoop("Sports");
+                          props.setFieldValue("eventLoop", "Sports");
+                        }}
+                      >
+                        <Text>Sports</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
+                      <TouchableOpacity
+                        style={[
+                          loop == "Music"
+                            ? styles.selectedLoop
+                            : globalStyles.input,
+                          { alignItems: "center" },
+                        ]}
+                        onPress={() => {
+                          setLoop("Music");
+                          props.setFieldValue("eventLoop", "Music");
+                        }}
+                      >
+                        <Text>Music</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
+                      <TouchableOpacity
+                        style={[
+                          loop == "Volunteer"
+                            ? styles.selectedLoop
+                            : globalStyles.input,
+                          { alignItems: "center" },
+                        ]}
+                        onPress={() => {
+                          setLoop("Volunteer");
+                          props.setFieldValue("eventLoop", "Volunteer");
+                        }}
+                      >
+                        <Text>Volunteer</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventLoop && props.errors.eventLoop}
                   </Text>
@@ -220,3 +283,15 @@ export default function EventCreation({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  selectedLoop: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 10,
+    fontSize: 18,
+    marginBottom: 10,
+    borderRadius: 6,
+    backgroundColor: "rgba(221, 221, 221, 0.5)",
+  },
+});

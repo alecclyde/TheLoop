@@ -61,6 +61,7 @@ export async function getUserData(userID) {
 }
 
 // Creates a new event and adds the data to Firebase
+// Returns true if event is successfully created, returns false otherwise
 export async function createEvent(eventName, eventLoop, eventDateTime, eventAddress, navigation) {
 
   try {
@@ -75,6 +76,7 @@ export async function createEvent(eventName, eventLoop, eventDateTime, eventAddr
       datetime: firebase.firestore.Timestamp.fromMillis(eventDateTime),
       attendees: [currentUser.uid]
     });
+    return true;
 
     // probably should navigate to event page after this
 
@@ -82,8 +84,8 @@ export async function createEvent(eventName, eventLoop, eventDateTime, eventAddr
   } catch (err) {
     console.log(err);
     Alert.alert('Something went wrong!', err.message);
+    return false;
   }
-
 }
 
 // Grabs a single event's data
