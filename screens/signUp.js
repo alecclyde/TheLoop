@@ -154,11 +154,6 @@ export default function SignUp({ navigation }) {
           </View>
 
         <View style={{ flexDirection: "row", justifyContent: "center"}}>
-        <Icon
-        style={{paddingBottom: 20,}}
-                  name = 'arrow-down'
-                  size={30}
-                  color='black'/>
           </View>
 
           <View style= {{flexDirection: "row", justifyContent: "center"}}>
