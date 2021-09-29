@@ -11,10 +11,10 @@ import { signIn, getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
-import { Button } from 'react-native-elements';
-import { Image } from 'react-native-elements';
-import { Input } from 'react-native-elements';
-import { Text } from 'react-native-elements';
+import { Button } from "react-native-elements";
+import { Image } from "react-native-elements";
+import { Input } from "react-native-elements";
+import { Text } from "react-native-elements";
 
 import * as firebase from "firebase";
 import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
@@ -28,10 +28,11 @@ export default function Login({ navigation }) {
   const [welcomeText, setWelcomeText] = useState("");
 
   useEffect(() => {
-    if(firebase.auth().currentUser !== null){
+    if (firebase.auth().currentUser !== null) {
       navigation.navigate("RootStack");
     }
-  }),[]
+  }),
+    [];
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }} />
@@ -45,23 +46,23 @@ export default function Login({ navigation }) {
         >
           {(props) => (
             <>
-            <View style= {{flexDirection: "row", justifyContent: "center"}}>
-            
-          <Image
-              source={require("../assets/Logo_Cropped.png")}
-              style={{
-              width: 90,
-              height: 90,
-              marginRight: 10,
-              marginBottom: 60,
-              marginTop: 12}}
-            />
-          </View>
+              <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                <Image
+                  source={require("../assets/The Loop-4.png")}
+                  style={{
+                    width: 90,
+                    height: 90,
+                    marginRight: 10,
+                    marginBottom: 60,
+                    marginTop: 12,
+                  }}
+                />
+              </View>
               <ScrollView onBlur={Keyboard.dismiss}>
                 {/* Email */}
                 <Input
                   placeholder="Enter your email"
-                  errorStyle={{ color: 'red' }}
+                  errorStyle={{ color: "red" }}
                   errorMessage={props.touched.email && props.errors.email}
                   value={props.values.email}
                   onChangeText={props.handleChange("email")}
@@ -71,7 +72,7 @@ export default function Login({ navigation }) {
                 {/* Password */}
                 <Input
                   placeholder="Enter your password"
-                  errorStyle={{ color: 'red' }}
+                  errorStyle={{ color: "red" }}
                   errorMessage={props.touched.password && props.errors.password}
                   value={props.values.password}
                   onChangeText={props.handleChange("password")}
@@ -82,12 +83,12 @@ export default function Login({ navigation }) {
                 {/* Sign-in Button */}
                 <Button
                   onPress={props.handleSubmit}
-                  title = "Sign In"
-                  buttonStyle = {{height: 50}}
-                  containerStyle = {{ 
+                  title="Sign In"
+                  buttonStyle={{ height: 50 }}
+                  containerStyle={{
                     marginBottom: 5,
                     borderRadius: 10, // adds the rounded corners
-                    }}
+                  }}
                 />
 
                 <Text>{welcomeText}</Text>
@@ -96,17 +97,19 @@ export default function Login({ navigation }) {
           )}
         </Formik>
 
-        <View style= {{flexDirection: "row", justifyContent: "center"}}>
-          <Text h5 style={{textAlign: 'center', padding: 20,}} >Don't have an account?</Text>
-          </View>
-          <View style= {{flexDirection: "row", justifyContent: "center"}}>
-          <Button 
-              containerStyle = {{ 
-                    borderRadius: 10, // adds the rounded corners
-                    }}
-          title = "Sign Up"
-          onPress={() => navigation.navigate("SignUp")}>
-          </Button>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Text h5 style={{ textAlign: "center", padding: 20 }}>
+            Don't have an account?
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Button
+            containerStyle={{
+              borderRadius: 10, // adds the rounded corners
+            }}
+            title="Sign Up"
+            onPress={() => navigation.navigate("SignUp")}
+          ></Button>
         </View>
       </View>
       <View style={{ flex: 1 }} />
