@@ -13,11 +13,10 @@ import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
 import { NavigationContainer } from "@react-navigation/native";
-import { Button } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Input } from 'react-native-elements';
-import { Text } from 'react-native-elements';
-
+import { Button } from "react-native-elements";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Input } from "react-native-elements";
+import { Text } from "react-native-elements";
 
 //https://github.com/jquense/yup/issues/97#issuecomment-306547261
 function equalTo(ref, msg) {
@@ -76,31 +75,30 @@ export default function SignUp({ navigation }) {
         >
           {(props) => (
             <>
-            <Text h5 style={{textAlign: 'center', padding: 20,}} >Become a Member of The Loop!</Text>
+              <Text h5 style={{ textAlign: "center", padding: 20 }}>
+                Become a Member of The Loop!
+              </Text>
               <ScrollView onBlur={Keyboard.dismiss}>
                 <Input
                   placeholder="First name*"
-                  errorStyle={{ color: 'red' }}
-                  errorMessage={props.touched.firstName && props.errors.firstName}
+                  errorStyle={{ color: "red" }}
+                  errorMessage={
+                    props.touched.firstName && props.errors.firstName
+                  }
                   value={props.values.firstName}
                   onChangeText={props.handleChange("firstName")}
                   onBlur={props.handleBlur("firstName")}
                 />
                 <Input
                   placeholder="Last name*"
-                  errorStyle={{ color: 'red' }}
+                  errorStyle={{ color: "red" }}
                   errorMessage={props.touched.lastName && props.errors.lastName}
                   value={props.values.lastName}
                   onChangeText={props.handleChange("lastName")}
                 />
                 <Input
-                  leftIcon={
-                  <Icon
-                  name = 'user'
-                  size={24}
-                  color='black'/>
-                  }
-                  errorStyle={{ color: 'red' }}
+                  leftIcon={<Icon name="user" size={24} color="black" />}
+                  errorStyle={{ color: "red" }}
                   errorMessage={props.touched.email && props.errors.email}
                   placeholder=" Enter your email*"
                   value={props.values.email}
@@ -111,8 +109,8 @@ export default function SignUp({ navigation }) {
                 />
                 <Input
                   placeholder=" Enter your password*"
-                  secureTextEntry={true} 
-                  errorStyle={{ color: 'red' }}
+                  secureTextEntry={true}
+                  errorStyle={{ color: "red" }}
                   errorMessage={props.touched.password && props.errors.password}
                   value={props.values.password}
                   onChangeText={props.handleChange("password")}
@@ -120,14 +118,11 @@ export default function SignUp({ navigation }) {
                   onBlur={props.handleBlur("password")}
                 />
                 <Input
-                  leftIcon={
-                  <Icon
-                  name = 'lock'
-                  size={24}
-                  color='black'/>
+                  leftIcon={<Icon name="lock" size={24} color="black" />}
+                  errorStyle={{ color: "red" }}
+                  errorMessage={
+                    props.touched.password2 && props.errors.password2
                   }
-                  errorStyle={{ color: 'red' }}
-                  errorMessage={props.touched.password2 && props.errors.password2}
                   placeholder=" Retype your password to confirm*"
                   value={props.values.password2}
                   onChangeText={props.handleChange("password2")}
@@ -136,44 +131,33 @@ export default function SignUp({ navigation }) {
                 />
                 <Button
                   onPress={props.handleSubmit}
-                  title = "Sign Up"
-                  buttonStyle = {{height: 50}}
-                  containerStyle = {{ 
+                  title="Sign Up"
+                  buttonStyle={{ height: 50 }}
+                  containerStyle={{
                     marginBottom: 5,
                     borderRadius: 10, // adds the rounded corners
-                    }}
+                  }}
                 />
               </ScrollView>
             </>
           )}
         </Formik>
 
-        <View style={{ flexDirection: "row", justifyContent: "center"}}>
-        <Text h4 style={{textAlign: 'center',}} >or</Text>
-          </View>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Text h4 style={{ textAlign: "center" }}>
+            or
+          </Text>
+        </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "center"}}>
-        <Icon
-        style={{paddingBottom: 20,}}
-                  name = 'arrow-down'
-                  size={30}
-                  color='black'/>
-          </View>
-
-          <View style= {{flexDirection: "row", justifyContent: "center"}}>
-          <Button 
-          icon={
-              <Icon
-                name="sign-in"
-                size={15}
-                color="white"
-              />}
-              containerStyle = {{ 
-                    borderRadius: 10, // adds the rounded corners
-                    }}
-          title = "  Sign In"
-          onPress={() => navigation.navigate("LogIn")}>
-          </Button>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Button
+            icon={<Icon name="sign-in" size={15} color="white" />}
+            containerStyle={{
+              borderRadius: 10, // adds the rounded corners
+            }}
+            title="  Sign In"
+            onPress={() => navigation.navigate("LogIn")}
+          ></Button>
         </View>
       </View>
     </SafeAreaView>
