@@ -48,7 +48,7 @@ export default function Login({ navigation }) {
             <>
               <View style={{ flexDirection: "row", justifyContent: "center" }}>
                 <Image
-                  source={require("../assets/The Loop-4.png")}
+                  source={require("../assets/Logo_Cropped.png")}
                   style={{
                     width: 90,
                     height: 90,
