@@ -59,3 +59,42 @@ export async function getUserData(userID) {
     Alert.alert('Something went wrong!', err.message);
   }
 }
+
+// Creates a new event and adds the data to Firebase
+// Returns true if event is successfully created, returns false otherwise
+export async function createEvent(eventName, eventLoop, eventDateTime, eventAddress, navigation) {
+
+  try {
+    const currentUser = firebase.auth().currentUser;
+    const db = firebase.firestore();
+
+    db.collection("events").add({
+      name: eventName,
+      loop: eventLoop,
+      address: eventAddress,
+      creator: currentUser.uid,
+      datetime: firebase.firestore.Timestamp.fromMillis(eventDateTime),
+      attendees: [currentUser.uid]
+    });
+    return true;
+
+    // probably should navigate to event page after this
+
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert('Something went wrong!', err.message);
+    return false;
+  }
+}
+
+// Grabs a single event's data
+export async function getEventData(eventID) {
+  try {
+    // Get some event data
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert('something went wrong!', err.message);
+  }
+}

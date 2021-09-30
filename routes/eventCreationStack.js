@@ -11,7 +11,7 @@ const Stack = createStackNavigator();
 export default function EventCreationStack(){
   return(
     <Stack.Navigator
-      initialRouteName='BrainBreakFirstQuestion'
+      initialRouteName='EventCreation'
       screenOptions={{ headerShown: false}}
     >
       <Stack.Screen 
