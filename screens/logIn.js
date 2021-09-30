@@ -27,12 +27,16 @@ const LoginSchema = yup.object({
 
 export default function Login({ navigation }) {
   const [welcomeText, setWelcomeText] = useState("");
-  const [userLoaded, setUserLoaded] = useState(false);
+  // const [user, setUser] = useState("");
+  // const [userLoaded, setUserLoaded] = useState(false);
+  // const getUser = async () => getUserData(firebase.auth().currentUser.uid).then((user) => setUser(user))
+  // console.log(user);
 
   function AuthStateChangedListener(user) {
     if (user) {
-      getUserData(user.uid).then((user) =>
-        navigation.navigate("RootStack", {user: user})
+      getUserData(user.uid).then((user) => {
+        navigation.navigate("RootStack", {userData: user})
+      }
       );
     }
   }
@@ -44,23 +48,9 @@ export default function Login({ navigation }) {
     return () => {
       unsubscriber;
     };
-  }, []);
+  });
 
-  // useEffect(() => {
-  //   console.log("bogo");
-  //   async function checkLogin(){
-  //     try{
-  //       getUserData(firebase.auth().currentUser.uid).then((userData) => {
-  //         if(userData != null){navigation.navigate("RootStack", {user: userData});}else{checkLogin();}
-  //       })
-  //     }
-  //     catch(e){
-  //       console.log(e);
-  //     }
-  //   }
-  //   checkLogin();
-  // },[]);
-  if(userLoaded){
+  // if(userLoaded){
     return (
       <SafeAreaView style={globalStyles.container}>
         <View style={{ flex: 1 }} />
@@ -141,15 +131,15 @@ export default function Login({ navigation }) {
         <View style={{ flex: 1 }} />
       </SafeAreaView>
     );
-  }else{
-    return(
-      <AppLoading 
-      startAsync={AuthStateChangedListener} 
-      onFinish={() => setUserLoaded(true)} 
-      onError={console.warn}
-    />
-    )
-  }
+  // }else{
+  //   return(
+  //     <AppLoading 
+  //     startAsync={getUser} 
+  //     onFinish={() => setUserLoaded(true)} 
+  //     onError={console.warn}
+  //   />
+  //   )
+  // }
 }
 
 // Thanks Caden for giving me a framework for the login screen!
