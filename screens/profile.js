@@ -11,41 +11,41 @@ import * as firebase from "firebase";
 
 export default function Profile({ navigation, route }) {
 
-  // const email = route.params?.userData.email ?? 'email';
-  // const firstName = route.params?.userData.firstName ?? 'firstName';
-  // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const email = route.params?.userData.email ?? 'email';
+  const firstName = route.params?.userData.firstName ?? 'firstName';
+  const lastName = route.params?.userData.lastName ?? 'lastName';
+  // const [email, setEmail] = useState("");
+  // const [firstName, setFirstName] = useState("");
+  // const [lastName, setLastName] = useState("");
 
   // Listener to update user data
-  function AuthStateChangedListener(user) {
-    if (user) {
-      const userData = getUserData(user.uid).then((user) =>
-        displayUserData(user)
-      );
-    } else {
-      setEmail("");
-      setFirstName("");
-      setLastName("");
-    }
-  }
+  // function AuthStateChangedListener(user) {
+  //   if (user) {
+  //     getUserData(user.uid).then((user) =>
+  //       displayUserData(user)
+  //     );
+  //   } else {
+  //     setEmail("");
+  //     setFirstName("");
+  //     setLastName("");
+  //   }
+  // }
 
-  function displayUserData(user) {
-    setEmail(user.email);
-    setFirstName(user.firstName);
-    setLastName(user.lastName);
-  }
+  // function displayUserData(user) {
+  //   setEmail(user.email);
+  //   setFirstName(user.firstName);
+  //   setLastName(user.lastName);
+  // }
 
-  useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
+  // useEffect(() => {
+  //   const unsubscriber = firebase
+  //     .auth()
+  //     .onAuthStateChanged(AuthStateChangedListener);
 
-    return () => {
-      unsubscriber;
-    };
-  }, []);
+  //   return () => {
+  //     unsubscriber;
+  //   };
+  // }, []);
 
   return (
     <View style={{flex: 1 }}>
