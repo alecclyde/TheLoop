@@ -11,7 +11,8 @@ import {
   MEASUREMENT_ID,
 } from "@env";
 import * as firebase from "firebase";
-import LoginStack from './routes/loginStack';
+import LoginStack from "./routes/loginStack";
+import * as Location from "expo-location";
 
 import { LogBox } from "react-native";
 //https://github.com/firebase/firebase-js-sdk/issues/97
@@ -36,8 +37,8 @@ if (!firebase.apps.length) {
 
 export default function App() {
   return (
-  <NavigationContainer>
-    <LoginStack/>
-  </NavigationContainer>
+    <NavigationContainer>
+      <LoginStack />
+    </NavigationContainer>
   );
 }

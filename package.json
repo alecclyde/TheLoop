@@ -13,11 +13,13 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/datetimepicker": "^3.5.2",
     "@react-navigation/bottom-tabs": "^6.0.5",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
     "expo": "~42.0.1",
+    "expo-location": "~12.1.2",
     "expo-app-loading": "^1.1.2",
     "expo-status-bar": "~1.0.4",
     "firebase": "8.2.3",
@@ -30,6 +32,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-dotenv": "^3.2.0",
     "react-native-elements": "^3.4.2",
+    "react-native-geolocation-service": "^5.3.0-beta.2",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-maps": "^0.28.0",
     "react-native-modal-datetime-picker": "^11.0.0",

@@ -1,137 +1,53 @@
 import React from "react";
-// Import required components
-import { SafeAreaView, StyleSheet, View } from "react-native";
-// Import Map and Marker
+import { StyleSheet, View, Text, Dimensions } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { FontAwesome } from "@expo/vector-icons";
+import * as Location from "expo-location";
 
-const App = () => {
+const MapComponent = () => {
+  const [location, setLocation] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setError("Permission to access location was denied");
+        return;
+      }
+      const locate = await Location.getCurrentPositionAsync({
+        accuracy: 6,
+      });
+      setLocation(locate.coords);
+    })();
+  }, []);
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <MapView
-          style={styles.mapStyle}
-          initialRegion={{
-            latitude: 40.157813,
-            longitude: -76.986283,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-          customMapStyle={mapStyle}
-        >
-          <Marker
-            draggable
-            coordinate={{
-              latitude: 40.157813,
-              longitude: -76.986283,
-            }}
-            onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
-            title={"Messiah University"}
-            description={"This is a test of the marker (not actual location)"}
-          />
-        </MapView>
-      </View>
-    </SafeAreaView>
+    <View>
+      <Text style={styles.heading}>Map</Text>
+      <MapView style={styles.map}>
+        {location ? (
+          <Marker coordinate={location} title="My location">
+            <FontAwesome name="map-marker" size={40} color="#B12A5B" />
+          </Marker>
+        ) : (
+          <Text>{error}</Text>
+        )}
+      </MapView>
+    </View>
   );
 };
-
-export default App;
-
-const mapStyle = [
-  { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-  {
-    featureType: "administrative.locality",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#d59563" }],
-  },
-  {
-    featureType: "poi",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#d59563" }],
-  },
-  {
-    featureType: "poi.park",
-    elementType: "geometry",
-    stylers: [{ color: "#263c3f" }],
-  },
-  {
-    featureType: "poi.park",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#6b9a76" }],
-  },
-  {
-    featureType: "road",
-    elementType: "geometry",
-    stylers: [{ color: "#38414e" }],
-  },
-  {
-    featureType: "road",
-    elementType: "geometry.stroke",
-    stylers: [{ color: "#212a37" }],
-  },
-  {
-    featureType: "road",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#9ca5b3" }],
-  },
-  {
-    featureType: "road.highway",
-    elementType: "geometry",
-    stylers: [{ color: "#746855" }],
-  },
-  {
-    featureType: "road.highway",
-    elementType: "geometry.stroke",
-    stylers: [{ color: "#1f2835" }],
-  },
-  {
-    featureType: "road.highway",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#f3d19c" }],
-  },
-  {
-    featureType: "transit",
-    elementType: "geometry",
-    stylers: [{ color: "#2f3948" }],
-  },
-  {
-    featureType: "transit.station",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#d59563" }],
-  },
-  {
-    featureType: "water",
-    elementType: "geometry",
-    stylers: [{ color: "#17263c" }],
-  },
-  {
-    featureType: "water",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#515c6d" }],
-  },
-  {
-    featureType: "water",
-    elementType: "labels.text.stroke",
-    stylers: [{ color: "#17263c" }],
-  },
-];
+export default MapComponent;
 
 const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: "center",
-    justifyContent: "flex-end",
+  map: {
+    width: Dimensions.get("screen").width,
+    height: Dimensions.get("screen").height * 0.9,
   },
-  mapStyle: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+  heading: {
+    alignSelf: "center",
+    paddingTop: 20,
+    marginBottom: 10,
+    fontSize: 24,
   },
 });
