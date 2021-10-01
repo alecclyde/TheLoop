@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/home'
+import CardDetails from '../screens/cardDetails';
 import React from 'react';
 
 
@@ -16,6 +17,10 @@ export default function HomeStack(){
       <Stack.Screen 
         name='Home'
         component={Home}
+      />
+      <Stack.Screen 
+        name='CardDetails'
+        component={CardDetails}
       />
     </Stack.Navigator>
   )

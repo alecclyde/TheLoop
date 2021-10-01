@@ -8,19 +8,19 @@ const MapComponent = () => {
   const [location, setLocation] = React.useState(null);
   const [error, setError] = React.useState(null);
 
-  React.useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setError("Permission to access location was denied");
-        return;
-      }
-      const locate = await Location.getCurrentPositionAsync({
-        accuracy: 6,
-      });
-      setLocation(locate.coords);
-    })();
-  }, []);
+  // React.useEffect(() => {
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       setError("Permission to access location was denied");
+  //       return;
+  //     }
+  //     const locate = await Location.getCurrentPositionAsync({
+  //       accuracy: 6,
+  //     });
+  //     setLocation(locate.coords);
+  //   })();
+  // }, []);
 
   return (
     <View>
