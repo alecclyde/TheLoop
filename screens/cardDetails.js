@@ -14,8 +14,7 @@ export default function CardDetails({ navigation, route }) {
           <Text style={globalStyles.titleText}>
             { route.params?.name }
           </Text>
-          <MaterialIcons onPress={() => { StackActions.pop()
-            }} name='delete' size={25} style={{position: 'absolute', left: 1}}/>
+            <MaterialIcons onPress={() => navigation.dispatch(StackActions.pop(1))} name='delete' size={25} style={{position: 'absolute', left: 1}}/>
           </View>
         <Text>Address: { route.params?.address }</Text>
         <Text>Creator: { route.params?.creator }</Text>

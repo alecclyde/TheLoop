@@ -50,7 +50,7 @@ export default function Profile({ navigation, route }) {
   return (
     <View style={{flex: 1 }}>
       <View>
-        <Text style={globalStyles.titleText}>Profile</Text>
+        {/* <Text style={globalStyles.titleText}>Profile</Text> */}
         <Text>Email: {email}</Text>
         <Text>First Name: {firstName}</Text>
         <Text>Last Name: {lastName}</Text>

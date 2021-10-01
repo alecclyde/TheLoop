@@ -3,6 +3,7 @@ import React from 'react';
 import SignUp from '../screens/signUp';
 import LogIn from '../screens/logIn';
 import RootStack from './tabNavigator';
+import Header from '../shared/header';
 
 
 //Screens in the profile tab

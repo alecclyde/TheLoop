@@ -24,7 +24,7 @@ const MapComponent = () => {
 
   return (
     <View>
-      <Text style={styles.heading}>Map</Text>
+      {/* <Text style={styles.heading}>Map</Text> */}
       <MapView style={styles.map}>
         {location ? (
           <Marker coordinate={location} title="My location">

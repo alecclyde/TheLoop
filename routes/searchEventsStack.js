@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import SearchPage from '../screens/searchPage';
 import React from 'react';
+import Header from '../shared/header';
 
 
 //Screens in the search tab
@@ -11,11 +12,27 @@ export default function SearchEventsStack(){
   return(
     <Stack.Navigator
       initialRouteName='SearchPage'
-      screenOptions={{ headerShown: false}}
+      screenOptions={{
+        cardStyle: {
+          backgroundColor: '#fefefe'
+        },
+        headerLeft: ()=> null, 
+        headerTitleAlign: 'center',
+        headerBackTitle: null,
+        headerTintColor: 'black',
+        headerStyle: {
+          backgroundColor: 'white',
+        }
+      }}
     >
       <Stack.Screen 
-        name='SearchPage'
+        name='Map'
         component={SearchPage}
+        options={({ navigation }) => {
+          return {
+            headerRight: () => <Header navigation={navigation} />
+          }
+        }}
       />
     </Stack.Navigator>
   )
