@@ -114,7 +114,6 @@ export default function Login({ navigation }) {
               </>
             )}
           </Formik>
-
           <View style= {{flexDirection: "row", justifyContent: "center"}}>
             <Text h5 style={{textAlign: 'center', padding: 20,}} >Don't have an account?</Text>
             </View>

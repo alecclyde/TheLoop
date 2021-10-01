@@ -67,8 +67,10 @@ export async function createEvent(eventName, eventLoop, eventDateTime, eventAddr
   try {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
+    const id = await generateUniqueFirestoreId();
 
     db.collection("events").add({
+      id: id,
       name: eventName,
       loop: eventLoop,
       address: eventAddress,
@@ -97,4 +99,16 @@ export async function getEventData(eventID) {
     console.log(err);
     Alert.alert('something went wrong!', err.message);
   }
+}
+
+export async function generateUniqueFirestoreId(){
+  // Alphanumeric characters
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let autoId = '';
+  for (let i = 0; i < 20; i++) {
+    autoId += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return autoId;
 }
