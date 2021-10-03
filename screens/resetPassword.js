@@ -88,6 +88,8 @@ export default function ResetPassword({ navigation }) {
                     onChangeText={props.handleChange("email")}
                     onBlur={props.handleBlur("email")}
                     autoCapitalize="none"
+                    keyboardType="email-address"
+
                   />
 
                   {/* Sign-in Button */}

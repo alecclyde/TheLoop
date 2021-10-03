@@ -84,6 +84,7 @@ export default function Login({ navigation }) {
                   value={props.values.email}
                   onChangeText={props.handleChange("email")}
                   onBlur={props.handleBlur("email")}
+                  keyboardType="email-address"
                   autoCapitalize="none"
                 />
                 {/* Password */}
