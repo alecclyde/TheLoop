@@ -123,12 +123,17 @@ export async function generateUniqueFirestoreId() {
 
 export async function sendPasswordResetEmail(email, navigation) {
   try {
-    firebase.auth().sendPasswordResetEmail(email);
+    await firebase.auth().sendPasswordResetEmail(email);
   } catch (err) {
-    console.log(err);
-    Alert.alert("something went wrong!", err.message);
+    if (err.code != "auth/user-not-found") {
+      console.log(err.code);
+      Alert.alert("something went wrong!", err.message);
+    }
   }
 
-  Alert.alert("Email sent!", "Check your email for instructions on how to reset your password.");
+  Alert.alert(
+    "Email sent!",
+    "Check your email for instructions on how to reset your password."
+  );
   navigation.pop();
 }
