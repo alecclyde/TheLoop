@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   StyleSheet,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { loggingOut, getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
+import { Text } from 'react-native-elements';
+import { Header} from 'react-native-elements';
+import { Button } from 'react-native-elements';
+import { ListItem, Avatar } from 'react-native-elements';
+import {TouchableScale} from 'react-native-touchable-scale';
+import {LinearGradient} from 'expo-linear-gradient';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Divider } from 'react-native-elements';
 import * as firebase from "firebase";
 
 export default function Profile({ navigation, route }) {
@@ -18,10 +27,10 @@ export default function Profile({ navigation, route }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  //Listener to update user data
+  // Listener to update user data
   function AuthStateChangedListener(user) {
     if (user) {
-      getUserData(user.uid).then((user) =>
+      const userData = getUserData(user.uid).then((user) =>
         displayUserData(user)
       );
     } else {
@@ -47,41 +56,89 @@ export default function Profile({ navigation, route }) {
     };
   }, []);
 
+  const list = [
+    {
+      name: 'Event 1',
+      subtitle: 'Short Descrp'
+    },
+    {
+      name: 'Event 2',
+      subtitle: 'Short Descrp'
+    },
+    {
+      name: 'Event3',
+      subtitle: 'or location',
+    }
+  ]
+
+  
+
   return (
+    <SafeAreaView style={globalStyles.container}>
+
     <View style={{flex: 1 }}>
-      <View>
-        {/* <Text style={globalStyles.titleText}>Profile</Text> */}
-        <Text>Email: {email}</Text>
-        <Text>First Name: {firstName}</Text>
-        <Text>Last Name: {lastName}</Text>
+
+      <View style={{borderBottomColor: 'black', borderBottomWidth: 3,}}>
+      <Text h2 style={{textAlign: 'center',}} >Welcome Back {'\n'} {firstName}!</Text>
       </View>
 
-      <View style={{ flex: 1 }} />
 
+      <View style= {{backgroundColor: 'black'}}>
+      <Text h3 style={{textAlign: 'center', color: 'orange'}} >Your Events</Text>
+      </View>
+      
+      
       <View>
-        <TouchableOpacity style={styles.button} onPress={() => loggingOut(navigation)}>
-          <Text style={styles.buttonText}>Sign Out</Text>
-        </TouchableOpacity>
+      <ScrollView style={styles.scrollView}>
+        {
+          list.map((l, i) => (
+      <ListItem
+        key={i} bottomDivide
+        bottomDivider={true}
+        Component={TouchableScale}
+        friction={90} //
+        tension={100} // These props are passed to the parent component (here TouchableScale)
+        activeScale={0.95} //
+        linearGradientProps={{
+          colors: ['#FF9800', '#F44336'],
+          start: { x: 1, y: 0 },
+          end: { x: 0.2, y: 0 },
+        }}
+        ViewComponent={LinearGradient} 
+      >
+        <ListItem.Content>
+          <ListItem.Title style={{ color: 'white', fontWeight: 'bold' }}>
+            {l.name}
+          </ListItem.Title>
+          <ListItem.Subtitle style={{ color: 'white' }}>
+            {l.subtitle}
+          </ListItem.Subtitle>
+        </ListItem.Content>
+        <ListItem.Chevron color="white" />
+      </ListItem>
+          ))
+            }
+          </ScrollView>   
+      </View>
+
+
+
+      <View style={{ flex: 1}} />
+
+      <View style={{ flexDirection: "row", justifyContent: "center"}}>
+        <Button
+          title= "Sign Out"
+          onPress={() => loggingOut(navigation)}>
+          
+        </Button>
+      </View>
+      <View style={{ flex: .3}} >
+
       </View>
     </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-    button: {
-      borderRadius: 0,
-      paddingVertical: 14,
-      paddingHorizontal: 10,
-      marginTop: 10,
-      backgroundColor: "#6bc7b8",
-      height: 100,
-      justifyContent: "center",
-    },
-    buttonText: {
-      color: "white",
-      fontWeight: "bold",
-      textTransform: "capitalize",
-      fontSize: 22,
-      textAlign: "center",
-    },
   });
