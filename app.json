@@ -4,9 +4,9 @@
     "slug": "TheLoop",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/The Loop-4.png",
+    "icon": "./assets/The-Loop-4.png",
     "splash": {
-      "image": "./assets/The Loop-4.png",
+      "image": "./assets/The-Loop-4.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

@@ -6,14 +6,15 @@ import AboutUs from '../screens/aboutUs';
 import Header from '../shared/header';
 import SignUp from '../screens/signUp';
 import LogIn from '../screens/logIn';
-
+import { Button } from 'react-native-elements';
+import  Icon  from 'react-native-vector-icons/FontAwesome';
 
 
 //Screens in the profile tab
 
 const Stack = createStackNavigator();
 
-export default function ProfileStack(){
+export default function ProfileStack({navigation}){
   return(
     <Stack.Navigator
       initialRouteName='Profile'
@@ -21,7 +22,20 @@ export default function ProfileStack(){
         cardStyle: {
           backgroundColor: '#fefefe'
         },
-        headerLeft: ()=> null, 
+        headerLeft: ()=> (
+          <Button
+        buttonStyle={{backgroundColor: 'transparent'}}
+        icon={
+          <Icon
+            name="gear"
+            size={30}
+            color="orange"
+          />
+        }
+        onPress={() => navigation.navigate("Settings")}>
+
+        </Button>
+        ), 
         headerTitleAlign: 'center',
         headerBackTitle: null,
         headerTintColor: 'black',
