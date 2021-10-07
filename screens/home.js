@@ -22,7 +22,7 @@ export default function Home({ navigation }) {
         <View>
              <ImageBackground source={{uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6JwPaFY0B1vbLzXu6HUGW6Ix4TReDfz_mXA&usqp=CAU"}} resizeMode="cover" style={{width: '100%', height: '100%'}}>
                 <FlatList data={events} keyExtractor={(item) => item.id} renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => navigation.navigate('CardDetails', {address: item.address, attendees: item.attendees, creator: item.creator, datetime: item.dateTime, loop: item.loop, name: item.name})}>
+                    <TouchableOpacity onPress={() => navigation.navigate('CardDetails', {address: item.address, attendees: item.attendees, creator: item.creator, datetime: item.datetime, loop: item.loop, name: item.name})}>
                         <View style={styles.container}>
                             <Text style={styles.containerItem}>{ item.name }</Text>
                         </View>
