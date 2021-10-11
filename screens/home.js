@@ -1,55 +1,131 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, ImageBackground, View, FlatList, TouchableOpacity } from 'react-native';
-import { useIsFocused } from "@react-navigation/native";
-import * as firebase from 'firebase';
+import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { loggingOut, getUserData } from "../shared/firebaseMethods";
+import { globalStyles } from "../styles/global";
+import { Text } from "react-native-elements";
+import { Header } from "react-native-elements";
+import { Button } from "react-native-elements";
+import { ListItem, Avatar } from "react-native-elements";
+import { TouchableScale } from "react-native-touchable-scale";
+import { LinearGradient } from "expo-linear-gradient";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Divider } from "react-native-elements";
+import * as firebase from "firebase";
 
+export default function Home({ navigation, route }) {
+  // const email = route.params?.userData.email ?? 'email';
+  // const firstName = route.params?.userData.firstName ?? 'firstName';
+  // const lastName = route.params?.userData.lastName ?? 'lastName';
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
-export default function Home({ navigation }) {
-    const [events, setEvents] = useState([]);
-    const isFocused = useIsFocused();
+  // Listener to update user data
+  function AuthStateChangedListener(user) {
+    if (user) {
+      const userData = getUserData(user.uid).then((user) =>
+        displayUserData(user)
+      );
+    } else {
+      setEmail("");
+      setFirstName("");
+      setLastName("");
+    }
+  }
 
-    //Gets all the events from the database and sets them to the events
-    useEffect(() => {
-      setEvents([]);
-      firebase.firestore().collection('events').get()
-      .then((snap) => {
-          snap.docs.forEach(doc => {
-            if(doc.exists) setEvents(events => [...events, doc.data()])
-          })
-      })
-    },[isFocused]);
-    return (
-        <View>
-             <ImageBackground source={{uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6JwPaFY0B1vbLzXu6HUGW6Ix4TReDfz_mXA&usqp=CAU"}} resizeMode="cover" style={{width: '100%', height: '100%'}}>
-                <FlatList data={events} keyExtractor={(item) => item.id} renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => navigation.navigate('CardDetails', {address: item.address, attendees: item.attendees, creator: item.creator, datetime: item.dateTime, loop: item.loop, name: item.name})}>
-                        <View style={styles.container}>
-                            <Text style={styles.containerItem}>{ item.name }</Text>
-                        </View>
-                    </TouchableOpacity>
-                )} />
-            </ImageBackground>
+  function displayUserData(user) {
+    setEmail(user.email);
+    setFirstName(user.firstName);
+    setLastName(user.lastName);
+  }
+
+  useEffect(() => {
+    const unsubscriber = firebase
+      .auth()
+      .onAuthStateChanged(AuthStateChangedListener);
+
+    return () => {
+      unsubscriber;
+    };
+  }, []);
+
+  const list = [
+    {
+      name: "Event 1",
+      subtitle: "Short Descrp",
+    },
+    {
+      name: "Event 2",
+      subtitle: "Short Descrp",
+    },
+    {
+      name: "Event3",
+      subtitle: "or location",
+    },
+  ];
+
+  return (
+    <SafeAreaView style={globalStyles.container}>
+      <View style={{ flex: 1 }}>
+        <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
+          <Text h2 style={{ textAlign: "center" }}>
+            Welcome Back {"\n"} {firstName}!
+          </Text>
         </View>
-    );
+
+        <View style={{ backgroundColor: "black" }}>
+          <Text h3 style={{ textAlign: "center", color: "orange" }}>
+            Your Upcoming Events...
+          </Text>
+        </View>
+
+        <View>
+          <ScrollView style={styles.scrollView}>
+            {list.map((l, i) => (
+              <ListItem
+                key={i}
+                bottomDivide
+                bottomDivider={true}
+                Component={TouchableScale}
+                friction={90} //
+                tension={100} // These props are passed to the parent component (here TouchableScale)
+                activeScale={0.95} //
+                linearGradientProps={{
+                  colors: ["#FF9800", "#F44336"],
+                  start: { x: 1, y: 0 },
+                  end: { x: 0.2, y: 0 },
+                }}
+                ViewComponent={LinearGradient}
+              >
+                <ListItem.Content>
+                  <ListItem.Title
+                    style={{ color: "white", fontWeight: "bold" }}
+                  >
+                    {l.name}
+                  </ListItem.Title>
+                  <ListItem.Subtitle style={{ color: "white" }}>
+                    {l.subtitle}
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <ListItem.Chevron color="white" />
+              </ListItem>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View style={{ flex: 1 }} />
+
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Button
+            title="Sign Out"
+            onPress={() => loggingOut(navigation)}
+          ></Button>
+        </View>
+        <View style={{ flex: 0.3 }}></View>
+      </View>
+    </SafeAreaView>
+  );
 }
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: "row",
-      fontSize: 24,
-      padding: 20,
-      borderRadius: 6,
-      elevation: 3,
-      backgroundColor: '#fff',
-      shadowOffset: { width: 1, height: 1 },
-      shadowColor: '#333',
-      shadowOpacity: 0.3,
-      shadowRadius: 2,
-      marginHorizontal: 4,
-      marginVertical: 6,
-    },
-    containerItem: {
-      flex: 9,
-    }
-  });
+const styles = StyleSheet.create({});
