@@ -70,12 +70,10 @@ export default function Profile({ navigation }) {
                 ViewComponent={LinearGradient}
               >
                 <ListItem.Content>
-                  <ListItem.Title
-                    style={{ color: "white", fontWeight: "bold", fontSize: 20 }}
-                  >
+                  <ListItem.Title style={styles.listingItem}>
                     {item.name}
                   </ListItem.Title>
-                  <ListItem.Subtitle style={{ color: "white" }}>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
                     {item.loop}
                   </ListItem.Subtitle>
                 </ListItem.Content>
@@ -89,30 +87,13 @@ export default function Profile({ navigation }) {
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     flexDirection: "row",
-//     fontSize: 24,
-//     padding: 20,
-//     borderRadius: 6,
-//     elevation: 3,
-//     backgroundColor: "#FFFFFF",
-//     shadowOffset: { width: 1, height: 1 },
-//     shadowColor: "#333",
-//     shadowOpacity: 0.3,
-//     shadowRadius: 2,
-//     marginHorizontal: 4,
-//     marginVertical: 6,
-//   },
-//   containerItem: {
-//     flex: 9,
-//     fontSize: 18,
-//     padding: 25,
-//     backgroundColor: "#FFFFFF",
-//   },
-//   descriptionItem: {
-//     fontSize: 15,
-//     flex: 3,
-//   },
-// });
+const styles = StyleSheet.create({
+  listingItem: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  descriptionItem: {
+    color: "white",
+  },
+});
