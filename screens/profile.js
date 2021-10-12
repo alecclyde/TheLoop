@@ -49,7 +49,7 @@ export default function Profile({ navigation }) {
                   address: item.address,
                   attendees: item.attendees,
                   creator: item.creator,
-                  datetime: item.dateTime,
+                  datetime: item.datetime,
                   loop: item.loop,
                   name: item.name,
                 })
