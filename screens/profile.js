@@ -1,144 +1,99 @@
 import React, { useState, useEffect } from "react";
 import {
-  View,
   StyleSheet,
-  SafeAreaView,
-  ScrollView,
+  Text,
+  ImageBackground,
+  View,
+  FlatList,
+  TouchableOpacity,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { loggingOut, getUserData } from "../shared/firebaseMethods";
-import { globalStyles } from "../styles/global";
-import { Text } from 'react-native-elements';
-import { Header} from 'react-native-elements';
-import { Button } from 'react-native-elements';
-import { ListItem, Avatar } from 'react-native-elements';
-import {TouchableScale} from 'react-native-touchable-scale';
-import {LinearGradient} from 'expo-linear-gradient';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Divider } from 'react-native-elements';
+import { useIsFocused } from "@react-navigation/native";
 import * as firebase from "firebase";
+import { LinearGradient } from "expo-linear-gradient";
+import { TouchableScale } from "react-native-touchable-scale";
+import { Button, ListItem, Avatar } from "react-native-elements";
 
-export default function Profile({ navigation, route }) {
+export default function Profile({ navigation }) {
+  const [events, setEvents] = useState([]);
+  const isFocused = useIsFocused();
 
-  // const email = route.params?.userData.email ?? 'email';
-  // const firstName = route.params?.userData.firstName ?? 'firstName';
-  // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-
-  // Listener to update user data
-  function AuthStateChangedListener(user) {
-    if (user) {
-      const userData = getUserData(user.uid).then((user) =>
-        displayUserData(user)
-      );
-    } else {
-      setEmail("");
-      setFirstName("");
-      setLastName("");
-    }
-  }
-
-  function displayUserData(user) {
-    setEmail(user.email);
-    setFirstName(user.firstName);
-    setLastName(user.lastName);
-  }
-
+  //Gets all the events from the database and sets them to the events
   useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-
-    return () => {
-      unsubscriber;
-    };
-  }, []);
-
-  const list = [
-    {
-      name: 'Event 1',
-      subtitle: 'Short Descrp'
-    },
-    {
-      name: 'Event 2',
-      subtitle: 'Short Descrp'
-    },
-    {
-      name: 'Event3',
-      subtitle: 'or location',
-    }
-  ]
-
-  
-
+    setEvents([]);
+    firebase
+      .firestore()
+      .collection("events")
+      .get()
+      .then((snap) => {
+        snap.docs.forEach((doc) => {
+          if (doc.exists) setEvents((events) => [...events, doc.data()]);
+        });
+      });
+  }, [isFocused]);
   return (
-    <SafeAreaView style={globalStyles.container}>
-
-    <View style={{flex: 1 }}>
-
-      <View style={{borderBottomColor: 'black', borderBottomWidth: 3,}}>
-      <Text h2 style={{textAlign: 'center',}} >Welcome Back {'\n'} {firstName}!</Text>
-      </View>
-
-
-      <View style= {{backgroundColor: 'black'}}>
-      <Text h3 style={{textAlign: 'center', color: 'orange'}} >Your Events</Text>
-      </View>
-      
-      
-      <View>
-      <ScrollView style={styles.scrollView}>
-        {
-          list.map((l, i) => (
-      <ListItem
-        key={i} bottomDivide
-        bottomDivider={true}
-        Component={TouchableScale}
-        friction={90} //
-        tension={100} // These props are passed to the parent component (here TouchableScale)
-        activeScale={0.95} //
-        linearGradientProps={{
-          colors: ['#FF9800', '#F44336'],
-          start: { x: 1, y: 0 },
-          end: { x: 0.2, y: 0 },
+    <View>
+      <ImageBackground
+        source={{
+          uri: "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?size=626&ext=jpg",
         }}
-        ViewComponent={LinearGradient} 
+        resizeMode="cover"
+        style={{ width: "100%", height: "100%" }}
       >
-        <ListItem.Content>
-          <ListItem.Title style={{ color: 'white', fontWeight: 'bold' }}>
-            {l.name}
-          </ListItem.Title>
-          <ListItem.Subtitle style={{ color: 'white' }}>
-            {l.subtitle}
-          </ListItem.Subtitle>
-        </ListItem.Content>
-        <ListItem.Chevron color="white" />
-      </ListItem>
-          ))
-            }
-          </ScrollView>   
-      </View>
-
-
-
-      <View style={{ flex: 1}} />
-
-      <View style={{ flexDirection: "row", justifyContent: "center"}}>
-        <Button
-          title= "Sign Out"
-          onPress={() => loggingOut(navigation)}>
-          
-        </Button>
-      </View>
-      <View style={{ flex: .3}} >
-
-      </View>
+        <FlatList
+          data={events}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("CardDetails", {
+                  address: item.address,
+                  attendees: item.attendees,
+                  creator: item.creator,
+                  datetime: item.dateTime,
+                  loop: item.loop,
+                  name: item.name,
+                })
+              }
+            >
+              <ListItem
+                bottomDivide
+                bottomDivider={true}
+                Component={TouchableScale}
+                friction={90} //
+                tension={100} // These props are passed to the parent component (here TouchableScale)
+                activeScale={0.95} //
+                linearGradientProps={{
+                  colors: ["#FF9800", "#F44336"],
+                  start: { x: 1, y: 0 },
+                  end: { x: 0.2, y: 0 },
+                }}
+                ViewComponent={LinearGradient}
+              >
+                <ListItem.Content>
+                  <ListItem.Title style={styles.listingItem}>
+                    {item.name}
+                  </ListItem.Title>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    {item.loop}
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <ListItem.Chevron color="white" />
+              </ListItem>
+            </TouchableOpacity>
+          )}
+        />
+      </ImageBackground>
     </View>
-    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  });
+  listingItem: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  descriptionItem: {
+    color: "white",
+  },
+});
