@@ -268,7 +268,7 @@ export default function EventCreation({ navigation }) {
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventAddress && props.errors.eventAddress}
                   </Text>
-
+                  <View/>
                   <Button
                     title= "Create Event"
                     titleStyle={{fontSize: 30, color: 'black'}}
