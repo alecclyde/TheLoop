@@ -22,7 +22,7 @@ export async function registration(
     });
     //   navigation.dispatch(StackActions.pop(1));
     //   if(firebase.auth().currentUser !== null){
-    navigation.navigate("Profile");
+    navigation.navigate("RootStack");
     //   }
   } catch (err) {
     Alert.alert("There is something wrong!", err.message);

@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator();
 export default function RootStack() {
     return (
       <Tab.Navigator
-        initialRouteName="Profile"
+        initialRouteName="HomeStack"
         screenOptions={{ headerShown: false,tabBarActiveBackgroundColor:'#FF8C00'}}
         options={{}}
         labeled={false}
