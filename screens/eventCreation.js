@@ -268,7 +268,7 @@ export default function EventCreation({ navigation }) {
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventAddress && props.errors.eventAddress}
                   </Text>
-                  <View/>
+                  <View>
                   <Button
                     title= "Create Event"
                     titleStyle={{fontSize: 30, color: 'black'}}
@@ -276,6 +276,7 @@ export default function EventCreation({ navigation }) {
                     style={{padding: 45}}
                     onPress={props.handleSubmit}
                   />
+                  </View>
                 </>
               )}
             </Formik>
