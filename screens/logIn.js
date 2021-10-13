@@ -65,12 +65,12 @@ export default function Login({ navigation }) {
             <>
               <View style={{ flexDirection: "row", justifyContent: "center" }}>
                 <Image
-                  source={require("../assets/The-Loop-4.png")}
+                  source={require("../assets/Logo_Cropped.png")}
                   style={{
-                    width: 150,
-                    height: 150,
+                    width: 90,
+                    height: 90,
                     marginRight: 10,
-                    marginBottom: 15,
+                    marginBottom: 60,
                     marginTop: 12,
                   }}
                 />

@@ -1,21 +1,20 @@
 import {
+  Text,
   ImageBackground,
   View,
   SafeAreaView,
+  TextInput,
   ScrollView,
   Keyboard,
   StyleSheet,
+  Button,
   Platform,
   Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { Button } from "react-native-elements";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Input } from "react-native-elements";
-import { Text } from "react-native-elements";
 
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
@@ -71,7 +70,7 @@ export default function EventCreation({ navigation }) {
 
   const onConfirm = (selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
+    setShow(false);
 
     if (mode == "date") {
       setDateText(moment(currentDate).format("MMMM Do, YYYY"));
@@ -100,7 +99,13 @@ export default function EventCreation({ navigation }) {
 
   return (
 <View style={{flex: 1, backgroundColor: '#F8F8F8'}}>
-
+      {/* <ImageBackground
+        source={{
+          uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6JwPaFY0B1vbLzXu6HUGW6Ix4TReDfz_mXA&usqp=CAU",
+        }}
+        resizeMode="cover"
+        style={{ width: "100%", height: "100%" }}
+      > */}
         <SafeAreaView style={globalStyles.container}>
           <View style={{ alignItems: "center" }}>
 
@@ -131,41 +136,35 @@ export default function EventCreation({ navigation }) {
             >
               {(props) => (
                 <>
-                <Text style={globalStyles.titleText}></Text>
+                <Text style={globalStyles.titleText}>Create a New Event</Text>
                 
-                  <Input
-                  textAlign= 'center'
-                  placeholder="*Event Title*"
-                  value={props.values.eventName}
-                  onChangeText={props.handleChange("eventName")}
-                  onBlur={props.handleBlur("eventName")}
-
+                  <TextInput
+                    style={globalStyles.input}
+                    placeholder="Event name"
+                    value={props.values.eventName}
+                    onChangeText={props.handleChange("eventName")}
+                    onBlur={props.handleBlur("eventName")}
                   />
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventName && props.errors.eventName}
                   </Text>
-
                   {/* Touching the date button opens the date picker */}
-                  <Button
-                    titleStyle={{color: 'black'}}
-                    buttonStyle={{borderWidth: 1, borderColor: 'black', titleColor: 'black', backgroundColor: 'transparent'}}
-                    style={{padding: 10}}
-                    title = {dateText || "Date"}
+                  <TouchableOpacity
+                    style={globalStyles.input}
                     onPress={showDatePicker}
-                  />
+                  >
+                    <Text>{dateText || "Date"}</Text>
+                  </TouchableOpacity>
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventDate && props.errors.eventDate}
                   </Text>
-
                   {/* and touching the time button opens the time picker */}
-
-                  <Button
-                    titleStyle={{color: 'black'}}
-                    buttonStyle={{padding: 10, borderWidth: 1, borderColor: 'black', titleColor: 'black', backgroundColor: 'transparent'}}
-                    style={{padding: 10}}
-                    title = {timeText || "Time"}
+                  <TouchableOpacity
+                    style={globalStyles.input}
                     onPress={showTimePicker}
-                  />
+                  >
+                    <Text>{timeText || "Time"}</Text>
+                  </TouchableOpacity>
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventTime && props.errors.eventTime}
                   </Text>
@@ -175,7 +174,6 @@ export default function EventCreation({ navigation }) {
                       mode={mode}
                       isVisible={show}
                       display="spinner"
-                      textColor = "black"
                       onConfirm={(date) => {
                         onConfirm(date);
                         // updates the date or time field value, depending on which one was selected
@@ -259,8 +257,8 @@ export default function EventCreation({ navigation }) {
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventLoop && props.errors.eventLoop}
                   </Text>
-                  <Input
-                    textAlign= 'center'
+                  <TextInput
+                    style={globalStyles.input}
                     placeholder="Address"
                     value={props.values.eventAddress}
                     onChangeText={props.handleChange("eventAddress")}
@@ -269,16 +267,13 @@ export default function EventCreation({ navigation }) {
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventAddress && props.errors.eventAddress}
                   </Text>
-                  <View/>
-                  <View>
-                  <Button
-                    title= "Create Event"
-                    titleStyle={{fontSize: 30, color: 'black'}}
-                    buttonStyle={{borderWidth: 1, borderColor: 'black', titleColor: 'black', backgroundColor: '#ff7b00'}}
-                    style={{padding: 45}}
+
+                  <TouchableOpacity
+                    style={globalStyles.input}
                     onPress={props.handleSubmit}
-                  />
-                  </View>
+                  >
+                    <Text>Create Event</Text>
+                  </TouchableOpacity>
                 </>
               )}
             </Formik>
@@ -297,6 +292,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
     borderRadius: 6,
-    backgroundColor: "#ffab8a",
+    backgroundColor: "rgba(221, 221, 221, 0.5)",
   },
 });
