@@ -271,9 +271,9 @@ export default function EventCreation({ navigation }) {
 
                   <Button
                     title= "Create Event"
-                    titleStyle={{color: 'black'}}
+                    titleStyle={{fontSize: 30, color: 'black'}}
                     buttonStyle={{borderWidth: 1, borderColor: 'black', titleColor: 'black', backgroundColor: '#ff7b00'}}
-                    style={{padding: 10}}
+                    style={{padding: 100}}
                     onPress={props.handleSubmit}
                   />
                 </>
