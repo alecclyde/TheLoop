@@ -139,6 +139,7 @@ export default function EventCreation({ navigation }) {
                   value={props.values.eventName}
                   onChangeText={props.handleChange("eventName")}
                   onBlur={props.handleBlur("eventName")}
+
                   />
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventName && props.errors.eventName}
@@ -268,6 +269,7 @@ export default function EventCreation({ navigation }) {
                   <Text style={globalStyles.errorText}>
                     {props.touched.eventAddress && props.errors.eventAddress}
                   </Text>
+                  <View/>
                   <View>
                   <Button
                     title= "Create Event"
