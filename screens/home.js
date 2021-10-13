@@ -17,15 +17,18 @@ export default function Home({ navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState();
+  const [firstName, setFirstName] = useState();
+  const [lastName, setLastName] = useState();
 
   // Listener to update user data
   function AuthStateChangedListener(user) {
     if (user) {
-      const userData = getUserData(user.uid).then((user) =>
-        displayUserData(user)
+      getUserData(user.uid).then((user) => {
+        setEmail(user.email);
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
+      }
       );
     } else {
       setEmail("");
@@ -70,7 +73,7 @@ export default function Home({ navigation, route }) {
       <View style={{ flex: 1 }}>
         <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
           <Text h2 style={{ textAlign: "center" }}>
-            Welcome Back {"\n"} {firstName}!
+            Welcome Back {"\n"} {firstName || ""}!
           </Text>
         </View>
 
