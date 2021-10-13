@@ -73,5 +73,6 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 2,
     textAlign: 'center',
+    padding: 10
   }
 });
