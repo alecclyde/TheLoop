@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Alert } from 'react-native';
 import { globalStyles } from '../styles/global';
 // import Card from '../shared/card';
-import { MaterialIcons} from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/routers';
+import Icon from "react-native-vector-icons/FontAwesome";
 import moment from 'moment';
 import { Card } from 'react-native-elements/';
 import * as firebase from "firebase";
@@ -76,7 +76,7 @@ export default function CardDetails({ navigation, route }) {
             { route.params?.name }
           </Text> */}
             <Card.Title style={globalStyles.titleText}>{ route.params?.name }</Card.Title>
-            <MaterialIcons onPress={() => navigation.dispatch(StackActions.pop(1))} name='delete' size={25} style={{position: 'absolute', left: 1}}/>
+            <Icon onPress={() => navigation.dispatch(StackActions.pop(1))} name='arrow-left' size={25} style={{position: 'absolute', left: 1}}/>
           </View>
           <Card.Divider/>
         <Text>Address: { route.params?.address }</Text>

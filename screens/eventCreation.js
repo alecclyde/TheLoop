@@ -99,7 +99,7 @@ export default function EventCreation({ navigation }) {
   };
 
   return (
-<View style={{flex: 1, backgroundColor: '#F8F8F8'}}>
+<View style={{borderColor:'orange',borderWidth:7 ,flex: 1, backgroundColor: '#F8F8F8'}}>
 
         <SafeAreaView style={globalStyles.container}>
           <View style={{ alignItems: "center" }}>
@@ -131,6 +131,7 @@ export default function EventCreation({ navigation }) {
             >
               {(props) => (
                 <>
+                
                 <Text style={globalStyles.titleText}></Text>
                 
                   <Input
