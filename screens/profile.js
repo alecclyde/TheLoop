@@ -26,7 +26,9 @@ export default function Profile({ navigation }) {
       .get()
       .then((snap) => {
         snap.docs.forEach((doc) => {
-          if (doc.exists) setEvents((events) => [...events, doc.data()]);
+          if (doc.exists) {
+            setEvents((events) => [...events, {id: doc.id, loop: doc.data().loop, name: doc.data().name}])
+          };
         });
       });
   }, [isFocused]);
@@ -46,10 +48,11 @@ export default function Profile({ navigation }) {
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("CardDetails", {
-                  address: item.address,
-                  attendees: item.attendees,
-                  creator: item.creator,
-                  datetime: item.datetime,
+                  address: "",
+                  attendees: "",
+                  creator: "",
+                  datetime: "",
+                  id: item.id,
                   loop: item.loop,
                   name: item.name,
                 })
