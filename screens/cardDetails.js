@@ -9,7 +9,6 @@ import { Card } from 'react-native-elements/';
 import * as firebase from "firebase";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-
 //Called by favorite and personal when you click on a card to display the content
 export default function CardDetails({ navigation, route }) {
 
@@ -21,25 +20,7 @@ export default function CardDetails({ navigation, route }) {
   const [eventDateTime, setEventDateTime] = useState("");;
   const [eventAddress, setEventAddress] = useState("")
 
-  const listAttendees = attendees.map((attendees) => {
-    <Text>{ attendees }</Text>
-  })
-
-  // const displayAttendee = (attendee) => {
-  //   var attendeeName = 
-
-  // }
-
-  const showAttendees = () => {
-    attendees.forEach((item) => {
-      console.log(item)
-    })
-    console.log(attendees.length)
-  }
-
-
   useEffect(() => {
-    // console.log("useEffect Firing!")
 
     setAttendees([])
     const users = [];
@@ -81,40 +62,8 @@ export default function CardDetails({ navigation, route }) {
         })
       })
     })
-    /*
-    
-    firebase.firestore().collection("users").get()
-    .then((snap) => {
-      snap.docs.forEach((doc) => {
-        // console.log(doc.id);
-        // console.log(doc.data());
-
-        // [Robbie] There may be a much more efficient way to filter attendees
-        route.params?.attendees.forEach((attendee) => {
-          if (attendee == doc.id) {
-            var attendeeName = doc.data().firstName + ' ' + doc.data().lastName;
-            setAttendees((attendees) => [...attendees, attendeeName])
-
-            if (doc.id == route.params?.creator) {
-              setCreator(attendeeName)
-            }
-          }
-
-        })
-      });
-
-      // users.forEach((item) => {
-      //   console.log(item)
-      // })
-
-    });
-
-    */
-
 
   }, []);
-
-
 
   return (
     <View style={globalStyles.container}>
@@ -139,20 +88,6 @@ export default function CardDetails({ navigation, route }) {
         <Text key={attendee.id}>{ attendee.name }</Text>
 
         )}
-
-
-          {/* REMOVE THIS!!! */}
-          
-        {/* <TouchableOpacity
-        onPress={showAttendees}
-        >
-        <Text>PRESS ME</Text>
-
-        </TouchableOpacity> */}
-
-
-
-
 
       </Card>
     </View>
