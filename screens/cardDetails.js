@@ -5,9 +5,10 @@ import { globalStyles } from '../styles/global';
 import { MaterialIcons} from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/routers';
 import moment from 'moment';
-import { Card } from 'react-native-elements/';
+import { Card, Button } from 'react-native-elements/';
 import * as firebase from "firebase";
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { registerEvent, unregisterEvent } from '../shared/firebaseMethods';
 
 //Called by favorite and personal when you click on a card to display the content
 export default function CardDetails({ navigation, route }) {
@@ -20,7 +21,19 @@ export default function CardDetails({ navigation, route }) {
   const [eventDateTime, setEventDateTime] = useState("");
   const [eventAddress, setEventAddress] = useState("");
 
+  const [user, setUser] = useState();
+  const [isAttending, setIsAttending] = useState(false);
+  const [isCreator, setIsCreator] = useState(false);
+
   var eventAtens = [];
+
+  const AuthStateChangedListener = (user) => {
+    if (user) {
+      setUser(user.uid)
+      if (user.uid == route.params?.creator) setIsCreator(true)
+    }
+  }
+
 
   const onResult = (QuerySnapshot) => {
     const eventData = QuerySnapshot.data();
@@ -114,11 +127,31 @@ export default function CardDetails({ navigation, route }) {
   }, []);
   */
 
+  // gets the logged in user until (hopefully) we get some redux action
+  useEffect(() => {
+    const subscriber = firebase.auth().onAuthStateChanged(AuthStateChangedListener);
+
+    return subscriber
+
+  })
+
+  // creates the listener to allow realtime data
   useEffect(() => {
     const subscriber = firebase.firestore().collection("events").doc(route.params?.id).onSnapshot(onResult, onError);
 
     return subscriber
   }, [])
+
+  // determines whether or not the logged in user is attending the selected event
+  useEffect(() => {
+    if (eventAttendees.some((elem) => elem.id == user)) {
+      setIsAttending(true)
+    } else {
+      setIsAttending(false)
+    }
+  }, [eventAttendees, user])
+
+  
 
   // useEffect(() => {
   //   console.log(eventAttendees.length)
@@ -153,6 +186,25 @@ export default function CardDetails({ navigation, route }) {
         )}
 
       </Card>
+      
+      {!isCreator && <Button
+        title = {!isAttending ? "Register" : "Unregister"}
+        onPress = {() => {
+          if (!isAttending) {
+            registerEvent(route.params?.id, user)
+          } else {
+            unregisterEvent(route.params?.id, user)
+          }
+        }}
+      />}
+
+
+      {/* <Text>
+        {isAttending ? "I'm going!" : "I can't go..."}
+      </Text>
+      <Text>
+        {isCreator ? "I'm the creator!" : "This is not my event"}
+      </Text> */}
     </View>
   );
 }
