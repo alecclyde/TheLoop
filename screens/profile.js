@@ -27,7 +27,7 @@ export default function Profile({ navigation }) {
       .then((snap) => {
         snap.docs.forEach((doc) => {
           if (doc.exists) {
-            setEvents((events) => [...events, {id: doc.id, loop: doc.data().loop, name: doc.data().name}])
+            setEvents((events) => [...events, {id: doc.id, loop: doc.data().loop, name: doc.data().name, creator: doc.data().creator}])
           };
         });
       });
@@ -55,6 +55,7 @@ export default function Profile({ navigation }) {
                   id: item.id,
                   loop: item.loop,
                   name: item.name,
+                  creator: item.creator,
                 })
               }
             >

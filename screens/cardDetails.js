@@ -12,14 +12,58 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 //Called by favorite and personal when you click on a card to display the content
 export default function CardDetails({ navigation, route }) {
 
-  const [attendees, setAttendees] = useState([]);
-  const [creator, setCreator] = useState("");
+  const [eventAttendees, setEventAttendees] = useState([]);
+  const [eventCreator, setEventCreator] = useState({id: route.params?.creator, name: ""});
 
   const [eventName, setEventName] = useState(route.params?.name);
   const [eventLoop, setEventLoop] = useState(route.params?.loop);
-  const [eventDateTime, setEventDateTime] = useState("");;
-  const [eventAddress, setEventAddress] = useState("")
+  const [eventDateTime, setEventDateTime] = useState("");
+  const [eventAddress, setEventAddress] = useState("");
 
+  const onResult = (QuerySnapshot) => {
+    const eventData = QuerySnapshot.data();
+
+    setEventName(eventData.name)
+    setEventLoop(eventData.loop)
+    setEventDateTime(eventData.datetime.seconds)
+    setEventAddress(eventData.address)
+    setEventCreator({id: eventData.creator, name: eventCreator.name})
+
+    updateAttendeeList(eventData.attendees)
+
+  }
+
+  const updateAttendeeList = (attendees) => {
+
+    setEventAttendees(eventAttendees.filter((attendee) => attendees.includes(attendee.id)))
+
+    attendees.forEach((attendee) => {
+      if (!eventAttendees.some((elem) => elem.id == attendee)) {
+
+        firebase.firestore().collection("users").doc(attendee).get()
+        .then((snap) => {
+
+          console.log("new read")
+          
+          const attendeeName = snap.data().firstName + ' ' + snap.data().lastName;
+          console.log(attendeeName)
+          setEventAttendees((eventAttendees) => [...eventAttendees, {id: snap.id, name: attendeeName}])
+
+          // if current ID is the creator, set creator accordingly
+          if (snap.id == eventCreator.id) {
+            setEventCreator({id: eventCreator.id, name: attendeeName})
+          }
+
+        })
+      } 
+    })
+  }
+
+  const onError = (error) => {
+    console.log(error);
+  }
+
+  /*
   useEffect(() => {
 
     setAttendees([])
@@ -64,6 +108,13 @@ export default function CardDetails({ navigation, route }) {
     })
 
   }, []);
+  */
+
+  useEffect(() => {
+    const subscriber = firebase.firestore().collection("events").doc(route.params?.id).onSnapshot(onResult, onError);
+
+    return subscriber
+  }, [])
 
   return (
     <View style={globalStyles.container}>
@@ -78,13 +129,13 @@ export default function CardDetails({ navigation, route }) {
           </View>
           <Card.Divider/>
         <Text>Address: { eventAddress }</Text>
-        <Text>Creator: { creator }</Text>
+        <Text>Creator: { eventCreator.name }</Text>
         <Text>Date: { moment.unix(eventDateTime).format("MMMM Do, YYYY") }</Text>
         <Text>Time: { moment.unix(eventDateTime).format("hh:mm A") }</Text>
         <Text>Loop: { eventLoop }</Text>
         <Card.Divider/>
         <Card.Title style={globalStyles.titleText}>Attendees</Card.Title>
-        { attendees.map((attendee) =>
+        { eventAttendees.map((attendee) =>
         <Text key={attendee.id}>{ attendee.name }</Text>
 
         )}
