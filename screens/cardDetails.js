@@ -20,6 +20,8 @@ export default function CardDetails({ navigation, route }) {
   const [eventDateTime, setEventDateTime] = useState("");
   const [eventAddress, setEventAddress] = useState("");
 
+  var eventAtens = [];
+
   const onResult = (QuerySnapshot) => {
     const eventData = QuerySnapshot.data();
 
@@ -35,27 +37,29 @@ export default function CardDetails({ navigation, route }) {
 
   const updateAttendeeList = (attendees) => {
 
-    setEventAttendees(eventAttendees.filter((attendee) => attendees.includes(attendee.id)))
+    eventAtens = eventAtens.filter((attendee) => attendees.includes(attendee.id))
 
+    setEventAttendees(eventAtens)
+  
     attendees.forEach((attendee) => {
-      if (!eventAttendees.some((elem) => elem.id == attendee)) {
+      // if the array of existing attendees doesn't include this possible new one
+      if (!eventAtens.some((elem) => elem.id == attendee)) {        
 
         firebase.firestore().collection("users").doc(attendee).get()
         .then((snap) => {
-
-          console.log("new read")
           
           const attendeeName = snap.data().firstName + ' ' + snap.data().lastName;
-          console.log(attendeeName)
+          // console.log("new read: " + attendeeName)
+
           setEventAttendees((eventAttendees) => [...eventAttendees, {id: snap.id, name: attendeeName}])
+          eventAtens.push({id: snap.id, name: attendeeName})
 
           // if current ID is the creator, set creator accordingly
           if (snap.id == eventCreator.id) {
             setEventCreator({id: eventCreator.id, name: attendeeName})
           }
-
         })
-      } 
+      }
     })
   }
 
@@ -115,6 +119,14 @@ export default function CardDetails({ navigation, route }) {
 
     return subscriber
   }, [])
+
+  // useEffect(() => {
+  //   console.log(eventAttendees.length)
+  // }, [eventAttendees])
+
+  // useEffect(() => {
+  //   setEventAttendees(eventAtens)
+  // }, [eventAtens])
 
   return (
     <View style={globalStyles.container}>
