@@ -27,7 +27,7 @@ export default function EventCreationStack(){
       }}
     >
       <Stack.Screen 
-        name='EventCreation'
+        name='Create a new Event!'
         component={EventCreation}
         options={({ navigation }) => {
           return {
