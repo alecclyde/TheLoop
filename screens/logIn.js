@@ -26,7 +26,6 @@ const LoginSchema = yup.object({
 });
 
 export default function Login({ navigation }) {
-  const [welcomeText, setWelcomeText] = useState("");
   // const [user, setUser] = useState("");
   // const [userLoaded, setUserLoaded] = useState(false);
   // const getUser = async () => getUserData(firebase.auth().currentUser.uid).then((user) => setUser(user))
@@ -109,7 +108,6 @@ export default function Login({ navigation }) {
                   }}
                 />
 
-                <Text>{welcomeText}</Text>
               </ScrollView>
             </>
           )}

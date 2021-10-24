@@ -137,3 +137,25 @@ export async function sendPasswordResetEmail(email, navigation) {
   );
   navigation.pop();
 }
+
+export async function registerEvent(event, user) {
+  try {
+    await firebase.firestore().collection("events").doc(event).update({
+      attendees: firebase.firestore.FieldValue.arrayUnion(user)
+    })
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+export async function unregisterEvent(event, user) {
+  try {
+    await firebase.firestore().collection("events").doc(event).update({
+      attendees: firebase.firestore.FieldValue.arrayRemove(user)
+    })
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
