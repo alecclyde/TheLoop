@@ -48,10 +48,6 @@ export default function Profile({ navigation }) {
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("CardDetails", {
-                  address: "",
-                  attendees: "",
-                  creator: "",
-                  datetime: "",
                   id: item.id,
                   loop: item.loop,
                   name: item.name,

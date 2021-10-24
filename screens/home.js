@@ -12,6 +12,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Divider } from "react-native-elements";
 import * as firebase from "firebase";
+import moment from "moment";
+import { useIsFocused } from "@react-navigation/native";
+
 
 export default function Home({ navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
@@ -20,10 +23,16 @@ export default function Home({ navigation, route }) {
   const [email, setEmail] = useState();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
+  const [userID, setUserID] = useState("");
+
+  const [events, setEvents] = useState([]);
+
+  const isFocused = useIsFocused();
 
   // Listener to update user data
   function AuthStateChangedListener(user) {
     if (user) {
+      setUserID(user.uid);
       getUserData(user.uid).then((user) => {
         setEmail(user.email);
         setFirstName(user.firstName);
@@ -31,27 +40,38 @@ export default function Home({ navigation, route }) {
       }
       );
     } else {
+      setUserID();
       setEmail("");
       setFirstName("");
       setLastName("");
     }
   }
 
-  function displayUserData(user) {
-    setEmail(user.email);
-    setFirstName(user.firstName);
-    setLastName(user.lastName);
-  }
-
   useEffect(() => {
     const unsubscriber = firebase
       .auth()
       .onAuthStateChanged(AuthStateChangedListener);
-
     return () => {
       unsubscriber;
     };
   }, []);
+
+  useEffect(() => {
+    setEvents([]);
+    firebase
+    .firestore()
+    .collection('events')
+    .where('attendees', 'array-contains', userID)
+    .orderBy('datetime')
+    .get()
+
+    .then((snap) => {
+      snap.forEach((doc) => {
+        setEvents((events) => [...events, {id: doc.id, name: doc.data().name, dateTime: doc.data().datetime, creator:doc.data().creator}])
+      })
+    })
+    
+  }, [userID, isFocused])
 
   const list = [
     {
@@ -85,34 +105,46 @@ export default function Home({ navigation, route }) {
 
         <View>
           <ScrollView style={styles.scrollView}>
-            {list.map((l, i) => (
-              <ListItem
-                key={i}
-                bottomDivide
-                bottomDivider={true}
-                Component={TouchableScale}
-                friction={90} //
-                tension={100} // These props are passed to the parent component (here TouchableScale)
-                activeScale={0.95} //
-                linearGradientProps={{
-                  colors: ["#FF9800", "#F44336"],
-                  start: { x: 1, y: 0 },
-                  end: { x: 0.2, y: 0 },
-                }}
-                ViewComponent={LinearGradient}
+            {events.map((event) => (
+              <TouchableOpacity
+              key={event.id}
+              onPress={() => 
+                navigation.navigate("CardDetails", {
+                  id: event.id,
+                  name: event.name,
+                  creator: event.creator,
+                  datetime: event.dateTime,
+                })
+              }
               >
-                <ListItem.Content>
-                  <ListItem.Title
-                    style={{ color: "white", fontWeight: "bold" }}
-                  >
-                    {l.name}
-                  </ListItem.Title>
-                  <ListItem.Subtitle style={{ color: "white" }}>
-                    {l.subtitle}
-                  </ListItem.Subtitle>
-                </ListItem.Content>
-                <ListItem.Chevron color="white" />
-              </ListItem>
+                <ListItem
+                  bottomDivide
+                  bottomDivider={true}
+                  Component={TouchableScale}
+                  friction={90} //
+                  tension={100} // These props are passed to the parent component (here TouchableScale)
+                  activeScale={0.95} //
+                  linearGradientProps={{
+                    colors: ["#FF9800", "#F44336"],
+                    start: { x: 1, y: 0 },
+                    end: { x: 0.2, y: 0 },
+                  }}
+                  ViewComponent={LinearGradient}
+                >
+                  <ListItem.Content>
+                    <ListItem.Title
+                      style={{ color: "white", fontWeight: "bold" }}
+                    >
+                      {event.name}
+                    </ListItem.Title>
+                    <ListItem.Subtitle style={{ color: "white" }}>
+                      {moment.unix(event.dateTime).format("MMMM Do, hh:mm A")}
+                    </ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron color="white" />
+                </ListItem>
+              </TouchableOpacity>
+
             ))}
           </ScrollView>
         </View>

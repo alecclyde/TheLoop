@@ -17,8 +17,8 @@ export default function CardDetails({ navigation, route }) {
   const [eventCreator, setEventCreator] = useState({id: route.params?.creator, name: ""});
 
   const [eventName, setEventName] = useState(route.params?.name);
-  const [eventLoop, setEventLoop] = useState(route.params?.loop);
-  const [eventDateTime, setEventDateTime] = useState("");
+  const [eventLoop, setEventLoop] = useState(route.params?.loop || "");
+  const [eventDateTime, setEventDateTime] = useState(route.params?.datetime || "");
   const [eventAddress, setEventAddress] = useState("");
 
   const [user, setUser] = useState();
@@ -42,7 +42,7 @@ export default function CardDetails({ navigation, route }) {
     setEventLoop(eventData.loop)
     setEventDateTime(eventData.datetime.seconds)
     setEventAddress(eventData.address)
-    setEventCreator({id: eventData.creator, name: eventCreator.name})
+    // setEventCreator({id: eventData.creator, name: eventCreator.name})
 
     updateAttendeeList(eventData.attendees)
 
@@ -80,23 +80,7 @@ export default function CardDetails({ navigation, route }) {
     console.log(error);
   }
 
-  /*
-  useEffect(() => {
-
-    setAttendees([])
-    const users = [];
-
-    firebase.firestore().collection("events").doc(route.params?.id).get()
-    .then((snap) => {
-      const eventData = snap.data()
-      setEventName(eventData.name);
-      setEventLoop(eventData.loop);
-      setEventAddress(eventData.address);
-      setEventDateTime(eventData.datetime.seconds);
-
-      const eventAttendees = eventData.attendees;
-
-      // This is absolutely a better method, but I can't get the documentId field to work. Putting a pin in this now
+      // This may be a better method for reading users from the database, if I can get it to work
 
       // firebase.firestore().collection("users").where(firebase.firestore.FieldPath.documentId(), "in", eventAttendees).get()
       // .then((snap) => {
@@ -108,24 +92,6 @@ export default function CardDetails({ navigation, route }) {
       //   }
       // })
 
-      // This method avoids nested for loops, but has more database reads. Might be a better tradeoff?
-      eventAttendees.forEach((attendee) => {
-        firebase.firestore().collection("users").doc(attendee).get()
-        .then((snap) => {
-          if (snap.exists) {
-            const attendeeName = snap.data().firstName + ' ' + snap.data().lastName;
-            setAttendees((attendees) => [...attendees, {id: snap.id, name: attendeeName}])
-
-            if (snap.id == eventData.creator) {
-              setCreator(attendeeName)
-            }
-          }
-        })
-      })
-    })
-
-  }, []);
-  */
 
   // gets the logged in user until (hopefully) we get some redux action
   useEffect(() => {
@@ -151,24 +117,12 @@ export default function CardDetails({ navigation, route }) {
     }
   }, [eventAttendees, user])
 
-  
-
-  // useEffect(() => {
-  //   console.log(eventAttendees.length)
-  // }, [eventAttendees])
-
-  // useEffect(() => {
-  //   setEventAttendees(eventAtens)
-  // }, [eventAtens])
-
   return (
     <View style={globalStyles.container}>
       <Card>
       
         <View style={globalStyles.rowContainer}>
-          {/* <Text style={globalStyles.titleText}>
-            { route.params?.name }
-          </Text> */}
+
             <Card.Title style={globalStyles.titleText}>{ eventName }</Card.Title>
             <MaterialIcons onPress={() => navigation.dispatch(StackActions.pop(1))} name='delete' size={25} style={{position: 'absolute', left: 1}}/>
           </View>
@@ -197,14 +151,6 @@ export default function CardDetails({ navigation, route }) {
           }
         }}
       />}
-
-
-      {/* <Text>
-        {isAttending ? "I'm going!" : "I can't go..."}
-      </Text>
-      <Text>
-        {isCreator ? "I'm the creator!" : "This is not my event"}
-      </Text> */}
     </View>
   );
 }
