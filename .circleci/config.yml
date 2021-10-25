@@ -34,7 +34,7 @@ jobs:
 
   publish_to_expo_prod:
     environment:
-      EXPO_RELEASE_CHANNEL: continuous_expo_dev
+      EXPO_RELEASE_CHANNEL: main
     <<: *publish
 
 workflows:
@@ -51,5 +51,5 @@ workflows:
       - publish_to_expo_prod:
           filters:
             branches:
-              only: continuous_expo_dev
+              only: main
 # Credit to Josiah for his code in Emotive App.
