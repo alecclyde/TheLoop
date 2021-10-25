@@ -23,6 +23,8 @@ publish: &publish
     - run:
         name: Publish to Expo
         command: npx expo-cli publish --non-interactive --max-workers 1 --release-channel $EXPO_RELEASE_CHANNEL
+        environment:
+          NODE_OPTIONS: --max_old_space_size=4000
 
 jobs:
   #   publish_to_expo_dev:
