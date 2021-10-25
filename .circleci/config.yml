@@ -1,6 +1,6 @@
 version: 2.1
 publish: &publish
-  working_directory: ~/theloop
+  working_directory: ~/TheLoop
   docker:
     - image: circleci/node:14
   steps:
