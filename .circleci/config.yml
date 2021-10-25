@@ -1,47 +1,16 @@
 version: 2.1
-publish: &publish
-  working_directory: ~/theloop
-  docker:
-    - image: circleci/node:14
-  steps:
-    - checkout
-
-    - run:
-        name: Writing dotenv file
-        command: echo "API=${API_URL}" >> .env
-
-    - run:
-        name: Installing dependencies
-        command: npm ci
-
-    - run:
-        name: Login into Expo
-        command: npx expo-cli login -u $EXPO_USERNAME -p $EXPO_PASSWORD
-
-    - run:
-        name: Publish to Expo
-        command: npx expo-cli publish --non-interactive --max-workers 1 --release-channel $EXPO_RELEASE_CHANNEL
-
+orbs:
+  expo: ryanpedersen/expo@0.1.0
 jobs:
-  #   publish_to_expo_dev:
-  #     environment:
-  #       EXPO_RELEASE_CHANNEL: production_branch
-  #     <<: *publish
-
-  publish_to_expo_prod:
-    environment:
-      EXPO_RELEASE_CHANNEL: default
-    <<: *publish
+  example-job:
+    docker:
+      # replace with your preferred image
+      - image: cimg/base:stable
+    steps:
+      - expo/expo-publish:
+          publish_channel: main
 
 workflows:
-  version: 2
-  my_app:
+  example-workflow:
     jobs:
-      # - publish_to_expo_dev:
-      #     filters:
-      #       branches:
-      #         only: test
-      - publish_to_expo_prod:
-          filters:
-            branches:
-              only: main
+      - example-job
