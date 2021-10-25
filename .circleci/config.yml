@@ -1,16 +1,10 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
+# Use a package of configuration called an orb.
 orbs:
-  expo: ryanpedersen/expo@0.1.0
-jobs:
-  example-job:
-    docker:
-      # replace with your preferred image
-      - image: cimg/base:stable
-    steps:
-      - expo/expo-publish:
-          publish_channel: main
-
+  node: circleci/node@4.7.0
 workflows:
-  example-workflow:
+  node-test:
     jobs:
-      - example-job
+      - node/run
+      - run: expo publish
