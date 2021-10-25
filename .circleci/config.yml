@@ -25,7 +25,7 @@ publish: &publish
 jobs:
   publish_to_expo_dev:
     environment:
-      EXPO_RELEASE_CHANNEL: dev
+      EXPO_RELEASE_CHANNEL: production_branch
     <<: *publish
 
   publish_to_expo_prod:
