@@ -35,9 +35,6 @@ jobs:
     <<: *publish
 
 workflows:
-  node-test:
-    jobs:
-      - node/run
   version: 2
   my_app:
     jobs:
