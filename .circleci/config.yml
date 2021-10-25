@@ -25,10 +25,10 @@ publish: &publish
         command: npx expo-cli publish --non-interactive --max-workers 1 --release-channel $EXPO_RELEASE_CHANNEL
 
 jobs:
-  publish_to_expo_dev:
-    environment:
-      EXPO_RELEASE_CHANNEL: production_branch
-    <<: *publish
+  # publish_to_expo_dev:
+  #   environment:
+  #     EXPO_RELEASE_CHANNEL: production_branch
+  #   <<: *publish
 
 publish_to_expo_prod:
   environment:
@@ -42,10 +42,10 @@ workflows:
   version: 2.1
   my_app:
     jobs:
-      - publish_to_expo_dev:
-          filters:
-            branches:
-              only: production_branch
+      # - publish_to_expo_dev:
+      #     filters:
+      #       branches:
+      #         only: production_branch
       - publish_to_expo_prod:
           filters:
             branches:
