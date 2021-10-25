@@ -1,5 +1,6 @@
 version: 2.1
-orbs: circleci/node@4.7.0
+orbs:
+  node: circleci/node@4.7.0
 publish: &publish
   working_directory: ~/TheLoop
   docker:
@@ -35,6 +36,9 @@ jobs:
     <<: *publish
 
 workflows:
+  node-test:
+    jobs:
+      - node/run
   version: 2
   my_app:
     jobs:
