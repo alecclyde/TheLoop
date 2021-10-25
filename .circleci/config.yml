@@ -32,7 +32,7 @@ jobs:
 
   publish_to_expo_prod:
     environment:
-      EXPO_RELEASE_CHANNEL: default
+      EXPO_RELEASE_CHANNEL: continuous_expo_dev
     <<: *publish
 
 workflows:
@@ -49,4 +49,4 @@ workflows:
       - publish_to_expo_prod:
           filters:
             branches:
-              only: main
+              only: continuous_expo_dev
