@@ -19,3 +19,5 @@ export default userReducer;
 
 //should this replace the firebasemethods?
 //should I store all the events in redux?
+//how to replace the user without replacing the entire store
+//how does initialstate work? 
