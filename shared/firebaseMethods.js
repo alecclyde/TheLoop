@@ -19,6 +19,10 @@ export async function registration(
       email: currentUser.email,
       lastName: lastName,
       firstName: firstName,
+      joinedLoops: [],
+      distanceTolerance: 15,
+      myEvents: [],
+      creationTimestamp: firebase.firestore.Timestamp.now(),
     });
     //   navigation.dispatch(StackActions.pop(1));
     //   if(firebase.auth().currentUser !== null){
@@ -69,27 +73,29 @@ export async function getUserData(userID) {
 // Creates a new event and adds the data to Firebase
 // Returns true if event is successfully created, returns false otherwise
 export async function createEvent(
-  eventName,
-  eventLoop,
-  eventDateTime,
-  eventAddress,
-  navigation
+  data
 ) {
   try {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
-    const id = await generateUniqueFirestoreId();
 
     db.collection("events").add({
-      id: id,
-      name: eventName,
-      loop: eventLoop,
-      address: eventAddress,
-      creator: currentUser.uid,
-      datetime: firebase.firestore.Timestamp.fromMillis(eventDateTime),
+      name: data.name,
+      loop: data.loop,
+      // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
+      creatorID: currentUser.uid,
+      address: data.address,
+      recurAutomatically: false,
+      recurFrequency: 1,
+      // datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
+      startDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime),
+      endDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // Will want to query for actual end dateTime later
+      creationTimestamp: firebase.firestore.Timestamp.now(),
       attendees: [currentUser.uid],
+      location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
+    }).then(() => {
+      return true;
     });
-    return true;
 
     // probably should navigate to event page after this
   } catch (err) {
@@ -109,17 +115,17 @@ export async function getEventData(eventID) {
   }
 }
 
-export async function generateUniqueFirestoreId() {
-  // Alphanumeric characters
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let autoId = "";
-  for (let i = 0; i < 20; i++) {
-    autoId += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
+// export async function generateUniqueFirestoreId() {
+//   // Alphanumeric characters
+//   const chars =
+//     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//   let autoId = "";
+//   for (let i = 0; i < 20; i++) {
+//     autoId += chars.charAt(Math.floor(Math.random() * chars.length));
+//   }
 
-  return autoId;
-}
+//   return autoId;
+// }
 
 export async function sendPasswordResetEmail(email, navigation) {
   try {
@@ -143,6 +149,12 @@ export async function registerEvent(event, user) {
     await firebase.firestore().collection("events").doc(event).update({
       attendees: firebase.firestore.FieldValue.arrayUnion(user)
     })
+    
+    // replace this one with a hook (if I find out what Trevor meant)
+    await firebase.firestore().collection("users").doc(user).update({
+      myEvents: firebase.firestore.FieldValue.arrayUnion(event)
+    })
+
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
@@ -154,6 +166,11 @@ export async function unregisterEvent(event, user) {
     await firebase.firestore().collection("events").doc(event).update({
       attendees: firebase.firestore.FieldValue.arrayRemove(user)
     })
+    // replace this one with a hook (if I find out what Trevor meant)
+    await firebase.firestore().collection("users").doc(user).update({
+      myEvents: firebase.firestore.FieldValue.arrayRemove(event)
+    })
+
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
