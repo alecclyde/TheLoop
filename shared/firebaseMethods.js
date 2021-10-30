@@ -19,6 +19,10 @@ export async function registration(
       email: currentUser.email,
       lastName: lastName,
       firstName: firstName,
+      joinedLoops: [],
+      distanceTolerance: 15,
+      myEvents: [],
+      creationTimestamp: firebase.firestore.Timestamp.now(),
     });
     //   navigation.dispatch(StackActions.pop(1));
     //   if(firebase.auth().currentUser !== null){
@@ -78,18 +82,24 @@ export async function createEvent(
   try {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
-    const id = await generateUniqueFirestoreId();
 
     db.collection("events").add({
-      id: id,
       name: eventName,
       loop: eventLoop,
+      creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
+      creatorID: currentUser.uid,
       address: eventAddress,
-      creator: currentUser.uid,
-      datetime: firebase.firestore.Timestamp.fromMillis(eventDateTime),
+      recurAutomatically: false,
+      recurFrequency: 1,
+      datetime: firebase.firestore.Timestamp.fromMillis(eventDateTime), // DEPRECATED, start transitioning to startDateTime
+      startDateTime: firebase.firestore.Timestamp.fromMillis(eventDateTime),
+      endDateTime: firebase.firestore.Timestamp.fromMillis(eventDateTime), // Will want to query for actual end dateTime later
+      creationTimestamp: firebase.firestore.Timestamp.now(),
       attendees: [currentUser.uid],
+      location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
+    }).then(() => {
+      return true;
     });
-    return true;
 
     // probably should navigate to event page after this
   } catch (err) {
@@ -109,17 +119,17 @@ export async function getEventData(eventID) {
   }
 }
 
-export async function generateUniqueFirestoreId() {
-  // Alphanumeric characters
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let autoId = "";
-  for (let i = 0; i < 20; i++) {
-    autoId += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
+// export async function generateUniqueFirestoreId() {
+//   // Alphanumeric characters
+//   const chars =
+//     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//   let autoId = "";
+//   for (let i = 0; i < 20; i++) {
+//     autoId += chars.charAt(Math.floor(Math.random() * chars.length));
+//   }
 
-  return autoId;
-}
+//   return autoId;
+// }
 
 export async function sendPasswordResetEmail(email, navigation) {
   try {

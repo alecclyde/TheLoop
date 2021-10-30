@@ -71,7 +71,7 @@ export default function EventCreation({ navigation }) {
 
   const onConfirm = (selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
+    setShow(false);
 
     if (mode == "date") {
       setDateText(moment(currentDate).format("MMMM Do, YYYY"));
