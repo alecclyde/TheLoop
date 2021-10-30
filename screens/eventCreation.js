@@ -71,6 +71,7 @@ export default function EventCreation({ navigation }) {
 
   const onConfirm = (selectedDate) => {
     const currentDate = selectedDate || date;
+
     setShow(false);
 
     if (mode == "date") {
