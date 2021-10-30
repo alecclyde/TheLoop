@@ -14,11 +14,11 @@ import { registerEvent, unregisterEvent } from '../shared/firebaseMethods';
 export default function CardDetails({ navigation, route }) {
 
   const [eventAttendees, setEventAttendees] = useState([]);
-  const [eventCreator, setEventCreator] = useState({id: route.params?.creator, name: ""});
+  const [eventCreator, setEventCreator] = useState({id: route.params?.creatorID, name: ""});
 
   const [eventName, setEventName] = useState(route.params?.name);
   const [eventLoop, setEventLoop] = useState(route.params?.loop || "");
-  const [eventDateTime, setEventDateTime] = useState(route.params?.datetime || "");
+  const [eventDateTime, setEventDateTime] = useState(route.params?.startDateTime || "");
   const [eventAddress, setEventAddress] = useState("");
 
   const [user, setUser] = useState();
@@ -30,7 +30,7 @@ export default function CardDetails({ navigation, route }) {
   const AuthStateChangedListener = (user) => {
     if (user) {
       setUser(user.uid)
-      if (user.uid == route.params?.creator) setIsCreator(true)
+      if (user.uid == route.params?.creatorID) setIsCreator(true)
     }
   }
 
@@ -40,7 +40,7 @@ export default function CardDetails({ navigation, route }) {
 
     setEventName(eventData.name)
     setEventLoop(eventData.loop)
-    setEventDateTime(eventData.datetime.seconds)
+    setEventDateTime(eventData.startDateTime.seconds)
     setEventAddress(eventData.address)
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
 

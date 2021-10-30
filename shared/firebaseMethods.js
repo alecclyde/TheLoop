@@ -82,12 +82,12 @@ export async function createEvent(
     db.collection("events").add({
       name: data.name,
       loop: data.loop,
-      creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
+      // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
       creatorID: currentUser.uid,
       address: data.address,
       recurAutomatically: false,
       recurFrequency: 1,
-      datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
+      // datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
       startDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime),
       endDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // Will want to query for actual end dateTime later
       creationTimestamp: firebase.firestore.Timestamp.now(),
