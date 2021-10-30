@@ -73,27 +73,23 @@ export async function getUserData(userID) {
 // Creates a new event and adds the data to Firebase
 // Returns true if event is successfully created, returns false otherwise
 export async function createEvent(
-  eventName,
-  eventLoop,
-  eventDateTime,
-  eventAddress,
-  navigation
+  data
 ) {
   try {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
 
     db.collection("events").add({
-      name: eventName,
-      loop: eventLoop,
+      name: data.name,
+      loop: data.loop,
       creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
       creatorID: currentUser.uid,
-      address: eventAddress,
+      address: data.address,
       recurAutomatically: false,
       recurFrequency: 1,
-      datetime: firebase.firestore.Timestamp.fromMillis(eventDateTime), // DEPRECATED, start transitioning to startDateTime
-      startDateTime: firebase.firestore.Timestamp.fromMillis(eventDateTime),
-      endDateTime: firebase.firestore.Timestamp.fromMillis(eventDateTime), // Will want to query for actual end dateTime later
+      datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
+      startDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime),
+      endDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // Will want to query for actual end dateTime later
       creationTimestamp: firebase.firestore.Timestamp.now(),
       attendees: [currentUser.uid],
       location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
