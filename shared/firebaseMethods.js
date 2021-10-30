@@ -149,6 +149,12 @@ export async function registerEvent(event, user) {
     await firebase.firestore().collection("events").doc(event).update({
       attendees: firebase.firestore.FieldValue.arrayUnion(user)
     })
+    
+    // replace this one with a hook (if I find out what Trevor meant)
+    await firebase.firestore().collection("users").doc(user).update({
+      myEvents: firebase.firestore.FieldValue.arrayUnion(event)
+    })
+
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
@@ -160,6 +166,11 @@ export async function unregisterEvent(event, user) {
     await firebase.firestore().collection("events").doc(event).update({
       attendees: firebase.firestore.FieldValue.arrayRemove(user)
     })
+    // replace this one with a hook (if I find out what Trevor meant)
+    await firebase.firestore().collection("users").doc(user).update({
+      myEvents: firebase.firestore.FieldValue.arrayRemove(event)
+    })
+
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
