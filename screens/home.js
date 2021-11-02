@@ -62,12 +62,12 @@ export default function Home({ navigation, route }) {
     .firestore()
     .collection('events')
     .where('attendees', 'array-contains', userID)
-    .orderBy('datetime')
+    .orderBy('startDateTime')
     .get()
 
     .then((snap) => {
       snap.forEach((doc) => {
-        setEvents((events) => [...events, {id: doc.id, name: doc.data().name, dateTime: doc.data().datetime, creator:doc.data().creator}])
+        setEvents((events) => [...events, {id: doc.id, name: doc.data().name, startDateTime: doc.data().startDateTime, creatorID: doc.data().creatorID}])
       })
     })
     
@@ -112,8 +112,8 @@ export default function Home({ navigation, route }) {
                 navigation.navigate("CardDetails", {
                   id: event.id,
                   name: event.name,
-                  creator: event.creator,
-                  datetime: event.dateTime,
+                  creatorID: event.creatorID,
+                  startDateTime: event.startDateTime,
                 })
               }
               >
@@ -138,7 +138,7 @@ export default function Home({ navigation, route }) {
                       {event.name}
                     </ListItem.Title>
                     <ListItem.Subtitle style={{ color: "white" }}>
-                      {moment.unix(event.dateTime).format("MMMM Do, hh:mm A")}
+                      {moment.unix(event.startDateTime).format("MMMM Do, hh:mm A")}
                     </ListItem.Subtitle>
                   </ListItem.Content>
                   <ListItem.Chevron color="white" />

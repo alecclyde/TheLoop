@@ -74,7 +74,8 @@ function EventCreation({ navigation }) {
 
   const onConfirm = (selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
+
+    setShow(false);
 
     if (mode == "date") {
       setDateText(moment(currentDate).format("MMMM Do, YYYY"));
@@ -122,13 +123,15 @@ function EventCreation({ navigation }) {
             }}
             validationSchema={CreateEventSchema}
             onSubmit={(values, actions) => {
-              var success = addEvent({
-                eventName: values.eventName,
-                eventLoop: values.eventLoop,
-                // formats the date and time to be in milliseconds
-                eventDateTime: moment(values.eventDate + " " + values.eventTime).format("x"),
-                eventAddress: values.eventAddress,
-              });
+
+              var success = createEvent(
+                {
+                  name: values.eventName,
+                  loop: values.eventLoop,
+                  startDateTime: moment(values.eventDate + " " + values.eventTime).format("x"),
+                  address: values.eventAddress,
+                }
+              );
               if (success) {
                 Alert.alert("Success!", "Event successfully created!");
                 actions.resetForm();
