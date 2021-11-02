@@ -176,3 +176,19 @@ export async function unregisterEvent(event, user) {
     Alert.alert("something went wrong!", err.message);
   }
 }
+
+export async function createPost(userID, userName, eventID, postText) {
+  try {
+    await firebase.firestore().collection("posts").doc(eventID).collection("posts").add({
+      message: postText,
+      posterID: userID,
+      posterName: userName,
+      creationTimestamp: firebase.firestore.Timestamp.now()
+
+
+    })
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}

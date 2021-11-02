@@ -15,7 +15,10 @@ import {
   registerEvent,
   unregisterEvent,
   getUserData,
+  createPost,
 } from "../shared/firebaseMethods";
+import { Formik } from "formik";
+import { makeName } from "../shared/commonMethods";
 
 //Called by favorite and personal when you click on a card to display the content
 export default function CardDetails({ navigation, route }) {
@@ -42,7 +45,7 @@ export default function CardDetails({ navigation, route }) {
   const AuthStateChangedListener = (user) => {
     if (user) {
       getUserData(user.uid).then((userData) => {
-        setUserName(userData.firstName + " " + userData.lastName);
+        setUserName(makeName(userData));
       });
 
       setUserID(user.uid);
@@ -79,7 +82,7 @@ export default function CardDetails({ navigation, route }) {
           .get()
           .then((snap) => {
             const attendeeName =
-              snap.data().firstName + " " + snap.data().lastName;
+              makeName(snap.data());
             // console.log("new read: " + attendeeName)
 
             setEventAttendees((eventAttendees) => [
@@ -143,59 +146,90 @@ export default function CardDetails({ navigation, route }) {
   }, [eventAttendees, userID]);
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{padding: 20}}>
-        <View style={globalStyles.rowContainer}>
-          <Text style={globalStyles.titleText}>{eventName}</Text>
-          <Icon
-            onPress={() => navigation.dispatch(StackActions.pop(1))}
-            name="arrow-left"
-            size={25}
-            style={{ position: "absolute", left: 1 }}
-          />
-        </View>
-        <Divider orientation="horizontal" />
-        <Text>Address: {eventAddress}</Text>
-        <Text>Creator: {eventCreator.name}</Text>
-        <Text>Date: {moment.unix(eventDateTime).format("MMMM Do, YYYY")}</Text>
-        <Text>Time: {moment.unix(eventDateTime).format("hh:mm A")}</Text>
-        <Text>Loop: {eventLoop}</Text>
-
-        <Divider orientation="horizontal" />
-
-        <Text style={globalStyles.titleText}>Attendees</Text>
-        {eventAttendees.map((attendee) => (
-          <Text key={attendee.id}>{attendee.name}</Text>
-        ))}
-        {!isCreator && (
-          <Button
-            title={!isAttending ? "Register" : "Unregister"}
-            onPress={() => {
-              if (!isAttending) {
-                registerEvent(route.params?.id, userID);
-              } else {
-                unregisterEvent(route.params?.id, userID);
-              }
-            }}
-          />
-        )}
-        <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
-      </View>
-
+    <View style={{ flex: 1 }}>
       <ScrollView
-        style={{ flex: 1, backgroundColor: "red" }}
+        style={{ flex: 1 }}
         keyboardShouldPersistTaps="handled"
+        bounces={false}
       >
-        <Card style={{ backgroundColor: isAttending ? "white" : "gray" }}>
-          <Input
-            placeholder={"Post in " + eventName}
-            disabled={!isAttending}
-            multiline={true}
-            onBlur={Keyboard.dismiss()}
-          />
+        <View style={{ padding: 20 }}>
+          <View style={globalStyles.rowContainer}>
+            <Text style={globalStyles.titleText}>{eventName}</Text>
+            <Icon
+              onPress={() => navigation.dispatch(StackActions.pop(1))}
+              name="arrow-left"
+              size={25}
+              style={{ position: "absolute", left: 1 }}
+            />
+          </View>
+          <Divider orientation="horizontal" />
+          <Text>Address: {eventAddress}</Text>
+          <Text>Creator: {eventCreator.name}</Text>
+          <Text>
+            Date: {moment.unix(eventDateTime).format("MMMM Do, YYYY")}
+          </Text>
+          <Text>Time: {moment.unix(eventDateTime).format("hh:mm A")}</Text>
+          <Text>Loop: {eventLoop}</Text>
 
-          <Button title="Post" disabled={!isAttending} />
-        </Card>
+          <Divider orientation="horizontal" />
+
+          <Text style={globalStyles.titleText}>Attendees</Text>
+          {eventAttendees.map((attendee) => (
+            <Text key={attendee.id}>{attendee.name}</Text>
+          ))}
+          {!isCreator && (
+            <Button
+              title={!isAttending ? "Register" : "Unregister"}
+              onPress={() => {
+                if (!isAttending) {
+                  registerEvent(route.params?.id, userID);
+                } else {
+                  unregisterEvent(route.params?.id, userID);
+                }
+              }}
+            />
+          )}
+          <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
+        </View>
+
+        <ScrollView style={{ flex: 1, backgroundColor: "red" }}>
+          <Card style={{ backgroundColor: isAttending ? "white" : "gray" }}>
+            <Formik
+              initialValues={{
+                postText: "",
+              }}
+              onSubmit={(values, actions) => {
+                if (values.postText === "") {
+                  Alert.alert("Error", "Cannot create a post with no text");
+                } else {
+
+                  var success = createPost(userID, userName, route.params?.id, values.postText)
+                  console.log("TODO: add post to database");
+                  actions.resetForm();
+                }
+              }}
+            >
+              {(props) => (
+                <>
+                  <Input
+                    placeholder={"Post in " + eventName}
+                    disabled={!isAttending}
+                    multiline={true}
+                    value={props.values.postText}
+                    onChangeText={props.handleChange("postText")}
+                    onBlur={props.handleBlur("postText")}
+                  />
+
+                  <Button
+                    title="Post"
+                    disabled={!isAttending}
+                    onPress={props.handleSubmit}
+                  />
+                </>
+              )}
+            </Formik>
+          </Card>
+        </ScrollView>
       </ScrollView>
     </View>
   );
