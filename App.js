@@ -16,7 +16,7 @@ import * as Location from "expo-location";
 import { Provider } from 'react-redux';
 import { connect } from 'react-redux';
 
-import configureStore from './store';
+import configureStore from './store/configureStore';
 
 import { LogBox } from "react-native";
 //https://github.com/firebase/firebase-js-sdk/issues/97

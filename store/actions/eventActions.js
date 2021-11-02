@@ -1,9 +1,21 @@
 import { ADD_EVENT } from '../constants';
 import { GET_EVENTS } from '../constants';
+import * as firebase from "firebase";
 
-export function addEvent(event) {
+export function addEvent(newEvent) {
     return async function addEventThunk(dispatch, getState){
-        const event = await //add event to firebase
+        const currentUser = firebase.auth().currentUser;
+        const id = await generateUniqueFirestoreId();
+
+        const event = firebase.firestore().collection("events").add({
+            id: id,
+            name: newEvent.eventName,
+            loop: newEvent.eventLoop,
+            address: newEvent.eventAddress,
+            creator: currentUser.uid,
+            datetime: firebase.firestore.Timestamp.fromMillis(newEvent.eventDateTime),
+            attendees: [currentUser.uid],
+        });
         dispatch({ type: ADD_EVENT, payload: event})
     }
 }

@@ -22,6 +22,9 @@ import * as yup from "yup";
 import { Formik } from "formik";
 import moment from "moment";
 import { createEvent } from "../shared/firebaseMethods";
+import { addEvent } from "../store/actions/eventActions";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 // Test to make sure that a selected date and time hasn't happened yet
 function isFutureDate(ref, msg) {
@@ -59,7 +62,7 @@ const CreateEventSchema = yup.object({
   eventAddress: yup.string().required("Please enter an address for your event"),
 });
 
-export default function EventCreation({ navigation }) {
+function EventCreation({ navigation }) {
   const date = new Date();
   const [show, setShow] = useState(false);
   const [dateText, setDateText] = useState();
@@ -119,14 +122,13 @@ export default function EventCreation({ navigation }) {
             }}
             validationSchema={CreateEventSchema}
             onSubmit={(values, actions) => {
-              var success = createEvent(
-                values.eventName,
-                values.eventLoop,
+              var success = addEvent({
+                eventName: values.eventName,
+                eventLoop: values.eventLoop,
                 // formats the date and time to be in milliseconds
-                moment(values.eventDate + " " + values.eventTime).format("x"),
-                values.eventAddress,
-                navigation
-              );
+                eventDateTime: moment(values.eventDate + " " + values.eventTime).format("x"),
+                eventAddress: values.eventAddress,
+              });
               if (success) {
                 Alert.alert("Success!", "Event successfully created!");
                 actions.resetForm();
@@ -134,6 +136,8 @@ export default function EventCreation({ navigation }) {
             }}
           >
             {(props) => (
+              // What is this magic diamond and why can't it be removed?
+              // The world may never know.
               <>
                 {/* <Text style={globalStyles.titleText}></Text> */}
 
@@ -424,3 +428,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffab8a",
   },
 });
+
+const mapStateToProps = state => ({
+  events: state.events
+});
+
+const ActionCreators = Object.assign(
+  {},
+  addEvent
+);
+
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(ActionCreators, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(EventCreation)

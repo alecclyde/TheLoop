@@ -1,11 +1,16 @@
 import { ADD_EVENT } from '../constants';
+import { GET_EVENTS } from '../constants';
 
-const eventReducer = (state, action) => {
+const initialState = {
+    events:[]
+}
+
+const eventReducer = (state = initialState, action) => {
     switch(action.type) {
         case ADD_EVENT:
             return {
-                ...state.events, 
-                ...action.event
+                ...state,
+                events: [...state.events, action.event]
             };
         case GET_EVENTS:
             return {
