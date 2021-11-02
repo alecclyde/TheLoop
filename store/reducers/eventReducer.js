@@ -1,19 +1,25 @@
 import { ADD_EVENT } from '../constants';
 
-const initialState = 
-const eventReducer = (state = initialState, action) => {
+const eventReducer = (state, action) => {
     switch(action.type) {
         case ADD_EVENT:
             return {
-                ...state,
+                ...state.events, 
+                ...action.event
             };
+        case GET_EVENTS:
+            return {
+                ...state.events
+            }
     default:
         return state;
     }
 }
 export default eventReducer;
 
-export async function getEvents(dispatch, getState) {
-    const events = await 
-    dispatch({ type: 'GET_EVENTS', payload: events});
-}
+
+//this should probably be in actions
+// export async function getEvents(dispatch, getState) {
+//     const events = await //
+//     dispatch({ type: 'GET_EVENTS', payload: events});
+// }
