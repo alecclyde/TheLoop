@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Alert, Keyboard, ScrollView } from "react-native";
+import { View, Text, Alert, Keyboard, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { globalStyles } from "../styles/global";
 // import Card from '../shared/card';
 import { StackActions } from "@react-navigation/routers";
@@ -19,6 +19,7 @@ import {
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
+import { useIsFocused } from "@react-navigation/core";
 
 //Called by favorite and personal when you click on a card to display the content
 export default function CardDetails({ navigation, route }) {
@@ -27,6 +28,7 @@ export default function CardDetails({ navigation, route }) {
     id: route.params?.creatorID,
     name: "",
   });
+  const [eventPosts, setEventPosts] = useState([]);
 
   const [eventName, setEventName] = useState(route.params?.name);
   const [eventLoop, setEventLoop] = useState(route.params?.loop || "");
@@ -81,8 +83,7 @@ export default function CardDetails({ navigation, route }) {
           .doc(attendee)
           .get()
           .then((snap) => {
-            const attendeeName =
-              makeName(snap.data());
+            const attendeeName = makeName(snap.data());
             // console.log("new read: " + attendeeName)
 
             setEventAttendees((eventAttendees) => [
@@ -103,6 +104,23 @@ export default function CardDetails({ navigation, route }) {
   const onError = (error) => {
     console.log(error);
   };
+
+  const onPostResult = (querySnapshot) => {
+    querySnapshot.docChanges().forEach(change => {
+      var data = change.doc.data()
+      if (change.type === "added") {
+
+        }
+
+
+
+      })
+
+  }
+
+  const onPostError = (error) => {
+    console.log(error);
+  }
 
   // This may be a better method for reading users from the database, if I can get it to work
 
@@ -136,6 +154,13 @@ export default function CardDetails({ navigation, route }) {
     return subscriber;
   }, []);
 
+  // creates a listener for posts
+  useEffect(() => {
+    const subscriber = firebase.firestore().collection("posts").doc(route.params?.id).collection("posts").onSnapshot(onPostResult, onPostError);
+
+    return subscriber;
+  }, [])
+
   // determines whether or not the logged in user is attending the selected event
   useEffect(() => {
     if (eventAttendees.some((elem) => elem.id == userID)) {
@@ -151,8 +176,15 @@ export default function CardDetails({ navigation, route }) {
         style={{ flex: 1 }}
         keyboardShouldPersistTaps="handled"
         bounces={false}
+        stickyHeaderIndices={[0]}
       >
-        <View style={{ padding: 20 }}>
+        <View
+          style={{
+            paddingHorizontal: 20,
+            paddingTop: 20,
+            backgroundColor: "white",
+          }}
+        >
           <View style={globalStyles.rowContainer}>
             <Text style={globalStyles.titleText}>{eventName}</Text>
             <Icon
@@ -163,6 +195,8 @@ export default function CardDetails({ navigation, route }) {
             />
           </View>
           <Divider orientation="horizontal" />
+        </View>
+        <View style={{ paddingHorizontal: 20 }}>
           <Text>Address: {eventAddress}</Text>
           <Text>Creator: {eventCreator.name}</Text>
           <Text>
@@ -191,46 +225,58 @@ export default function CardDetails({ navigation, route }) {
           )}
           <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
         </View>
-
-        <ScrollView style={{ flex: 1, backgroundColor: "red" }}>
-          <Card style={{ backgroundColor: isAttending ? "white" : "gray" }}>
-            <Formik
-              initialValues={{
-                postText: "",
-              }}
-              onSubmit={(values, actions) => {
-                if (values.postText === "") {
-                  Alert.alert("Error", "Cannot create a post with no text");
-                } else {
-
-                  var success = createPost(userID, userName, route.params?.id, values.postText)
-                  console.log("TODO: add post to database");
-                  actions.resetForm();
-                }
-              }}
-            >
-              {(props) => (
-                <>
-                  <Input
-                    placeholder={"Post in " + eventName}
-                    disabled={!isAttending}
-                    multiline={true}
-                    value={props.values.postText}
-                    onChangeText={props.handleChange("postText")}
-                    onBlur={props.handleBlur("postText")}
-                  />
-
-                  <Button
-                    title="Post"
-                    disabled={!isAttending}
-                    onPress={props.handleSubmit}
-                  />
-                </>
-              )}
-            </Formik>
-          </Card>
-        </ScrollView>
       </ScrollView>
+
+      {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
+      
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset = {100}>
+      {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
+        <Card>
+          <Formik
+            initialValues={{
+              postText: "",
+            }}
+            onSubmit={(values, actions) => {
+              if (values.postText === "") {
+                Alert.alert("Error", "Cannot create a post with no text");
+              } else {
+                var success = createPost(
+                  userID,
+                  userName,
+                  route.params?.id,
+                  values.postText
+                );
+                console.log("TODO: add post to database");
+                actions.resetForm();
+              }
+            }}
+          >
+            {(props) => (
+              <>
+                <Input
+                  placeholder={"Post in " + eventName}
+                  disabled={!isAttending}
+                  multiline={true}
+                  value={props.values.postText}
+                  // value="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+                  onChangeText={props.handleChange("postText")}
+                  onBlur={() => {
+                    props.handleBlur("postText");
+                  }}
+                  style={{ maxHeight: 100 }}
+                />
+
+                <Button
+                  title="Post"
+                  disabled={!isAttending}
+                  onPress={props.handleSubmit}
+                />
+              </>
+            )}
+          </Formik>
+        </Card>
+        </KeyboardAvoidingView>
+      {/* </ScrollView> */}
     </View>
   );
 }
