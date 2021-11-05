@@ -1,21 +1,26 @@
 import { ADD_EVENT } from '../constants';
 import { GET_EVENTS } from '../constants';
 
-const initialState = {
-    events:[]
+function nextEventId(todos) {
+    const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
+    return maxId + 1
 }
+
+const initialState = {
+    events: []
+};
 
 const eventReducer = (state = initialState, action) => {
     switch(action.type) {
         case ADD_EVENT:
             return {
                 ...state,
-                events: [...state.events, action.event]
-            };
+                events: [...state.events, action.payload]
+                }
         case GET_EVENTS:
             return {
                 ...state.events
-            }
+            };
     default:
         return state;
     }

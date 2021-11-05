@@ -1,13 +1,14 @@
 import { SET_USER } from '../constants';
 
-const initialState = [
-    user = {}
-]
+const initialState = {
+    user: {}
+}
 const userReducer = (state = initialState, action) => {
     switch(action.type) {
         case SET_USER:
             return {
-                ...state.user = action.user
+                ...state,
+                user: action.payload
             };
     default:
         return state;

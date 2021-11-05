@@ -3,6 +3,6 @@ import userReducer from '../reducers/userReducer';
 import { combineReducers } from 'redux';
 
 export default rootReducer = combineReducers({ 
-    event: eventReducer,
-    user: userReducer
+    events: eventReducer,
+    users: userReducer
 });
