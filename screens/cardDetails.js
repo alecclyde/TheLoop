@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Alert, Keyboard, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import React, { useState, useEffect, useReducer } from "react";
+import {
+  View,
+  Text,
+  Alert,
+  Keyboard,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  ImageEditor,
+} from "react-native";
 import { globalStyles } from "../styles/global";
 // import Card from '../shared/card';
 import { StackActions } from "@react-navigation/routers";
@@ -8,6 +17,7 @@ import moment from "moment";
 import { Card, Button, Divider, Input } from "react-native-elements/";
 import * as firebase from "firebase";
 import {
+  FlatList,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
@@ -28,7 +38,6 @@ export default function CardDetails({ navigation, route }) {
     id: route.params?.creatorID,
     name: "",
   });
-  const [eventPosts, setEventPosts] = useState([]);
 
   const [eventName, setEventName] = useState(route.params?.name);
   const [eventLoop, setEventLoop] = useState(route.params?.loop || "");
@@ -101,26 +110,56 @@ export default function CardDetails({ navigation, route }) {
     });
   };
 
+  const reducer = (state, action) => {
+    let newState;
+
+    switch (action.type) {
+      case "add":
+        return [...state, action.payload];
+      case "update":
+        return [
+          ...state.filter((post) => id !== action.payload.id),
+          action.payload,
+        ]; // could be post.id
+      case "remove":
+        return state.filter((post) => id !== action.payload.id);
+      case "clear":
+        return []
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, []);
+
+
   const onError = (error) => {
     console.log(error);
   };
 
   const onPostResult = (querySnapshot) => {
-    querySnapshot.docChanges().forEach(change => {
-      var data = change.doc.data()
+    querySnapshot.docChanges().forEach((change) => {
+      var data = change.doc.data();
+      var payload = {
+        id: change.doc.id,
+        message: data.message,
+        posterID: data.posterID,
+        posterName: data.posterName,
+        creationTimestamp: data.creationTimestamp
+      };
       if (change.type === "added") {
-
-        }
-
-
-
-      })
-
-  }
+        dispatch({ type: "add", payload: payload });
+      }
+      if (change.type === "modified") {
+        dispatch({ type: "update", payload: payload });
+      }
+      if (change.type === "removed") {
+        dispatch({ type: "remove", payload: payload });
+      }
+    });
+  };
 
   const onPostError = (error) => {
     console.log(error);
-  }
+  };
 
   // This may be a better method for reading users from the database, if I can get it to work
 
@@ -156,10 +195,17 @@ export default function CardDetails({ navigation, route }) {
 
   // creates a listener for posts
   useEffect(() => {
-    const subscriber = firebase.firestore().collection("posts").doc(route.params?.id).collection("posts").onSnapshot(onPostResult, onPostError);
+    const subscriber = firebase
+      .firestore()
+      .collection("posts")
+      .doc(route.params?.id)
+      .collection("posts")
+      .onSnapshot(onPostResult, onPostError);
+
+      dispatch({type: "clear"}) // this could maybe be removed later?
 
     return subscriber;
-  }, [])
+  }, []);
 
   // determines whether or not the logged in user is attending the selected event
   useEffect(() => {
@@ -228,9 +274,27 @@ export default function CardDetails({ navigation, route }) {
       </ScrollView>
 
       {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
-      
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset = {100}>
-      {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
+
+      {/* Post area */}
+      <FlatList
+        data={state}
+        keyExtractor={(item) => item.id}
+        style={{backgroundColor: "gray", flex: 1}}
+        renderItem={({item}) => (
+          <Card>
+            <Text>
+              {item.posterName}
+            </Text>
+            <Text>
+              {item.message}
+            </Text>
+          </Card>
+
+        )}
+      />
+
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={100}>
+        {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
         <Card>
           <Formik
             initialValues={{
@@ -265,7 +329,6 @@ export default function CardDetails({ navigation, route }) {
                   }}
                   style={{ maxHeight: 100 }}
                 />
-
                 <Button
                   title="Post"
                   disabled={!isAttending}
@@ -275,7 +338,7 @@ export default function CardDetails({ navigation, route }) {
             )}
           </Formik>
         </Card>
-        </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
       {/* </ScrollView> */}
     </View>
   );
