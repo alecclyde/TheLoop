@@ -115,7 +115,7 @@ export default function CardDetails({ navigation, route }) {
 
     switch (action.type) {
       case "add":
-        return [...state, action.payload];
+        return [action.payload, ...state]; // I chose to do payload, then everything else so that older posts are towards the bottom
       case "update":
         return [
           ...state.filter((post) => id !== action.payload.id),
@@ -124,12 +124,11 @@ export default function CardDetails({ navigation, route }) {
       case "remove":
         return state.filter((post) => id !== action.payload.id);
       case "clear":
-        return []
+        return [];
     }
   };
 
   const [state, dispatch] = useReducer(reducer, []);
-
 
   const onError = (error) => {
     console.log(error);
@@ -143,7 +142,7 @@ export default function CardDetails({ navigation, route }) {
         message: data.message,
         posterID: data.posterID,
         posterName: data.posterName,
-        creationTimestamp: data.creationTimestamp
+        creationTimestamp: data.creationTimestamp,
       };
       if (change.type === "added") {
         dispatch({ type: "add", payload: payload });
@@ -164,14 +163,6 @@ export default function CardDetails({ navigation, route }) {
   // This may be a better method for reading users from the database, if I can get it to work
 
   // firebase.firestore().collection("users").where(firebase.firestore.FieldPath.documentId(), "in", eventAttendees).get()
-  // .then((snap) => {
-  //   if (snap.exists) {
-  //     console.log("Poggers")
-  //   } else {
-  //     console.log("Not Poggers")
-  //     console.log()
-  //   }
-  // })
 
   // gets the logged in user until (hopefully) we get some redux action
   useEffect(() => {
@@ -200,9 +191,10 @@ export default function CardDetails({ navigation, route }) {
       .collection("posts")
       .doc(route.params?.id)
       .collection("posts")
+      .orderBy("creationTimestamp")
       .onSnapshot(onPostResult, onPostError);
 
-      dispatch({type: "clear"}) // this could maybe be removed later?
+    dispatch({ type: "clear" }); // this could maybe be removed later?
 
     return subscriber;
   }, []);
@@ -218,19 +210,15 @@ export default function CardDetails({ navigation, route }) {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        keyboardShouldPersistTaps="handled"
-        bounces={false}
-        stickyHeaderIndices={[0]}
+      {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingTop: 20,
+          backgroundColor: "white",
+        }}
       >
-        <View
-          style={{
-            paddingHorizontal: 20,
-            paddingTop: 20,
-            backgroundColor: "white",
-          }}
-        >
+        <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
           <View style={globalStyles.rowContainer}>
             <Text style={globalStyles.titleText}>{eventName}</Text>
             <Icon
@@ -241,56 +229,61 @@ export default function CardDetails({ navigation, route }) {
             />
           </View>
           <Divider orientation="horizontal" />
-        </View>
-        <View style={{ paddingHorizontal: 20 }}>
-          <Text>Address: {eventAddress}</Text>
-          <Text>Creator: {eventCreator.name}</Text>
-          <Text>
-            Date: {moment.unix(eventDateTime).format("MMMM Do, YYYY")}
-          </Text>
-          <Text>Time: {moment.unix(eventDateTime).format("hh:mm A")}</Text>
-          <Text>Loop: {eventLoop}</Text>
-
-          <Divider orientation="horizontal" />
-
-          <Text style={globalStyles.titleText}>Attendees</Text>
-          {eventAttendees.map((attendee) => (
-            <Text key={attendee.id}>{attendee.name}</Text>
-          ))}
-          {!isCreator && (
-            <Button
-              title={!isAttending ? "Register" : "Unregister"}
-              onPress={() => {
-                if (!isAttending) {
-                  registerEvent(route.params?.id, userID);
-                } else {
-                  unregisterEvent(route.params?.id, userID);
-                }
-              }}
-            />
-          )}
-          <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
-        </View>
-      </ScrollView>
-
-      {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
+        </ScrollView>
+      </View>
 
       {/* Post area */}
       <FlatList
         data={state}
         keyExtractor={(item) => item.id}
-        style={{backgroundColor: "gray", flex: 1}}
-        renderItem={({item}) => (
+        style={{ flex: 1 }}
+        renderItem={({ item }) => (
           <Card>
-            <Text>
-              {item.posterName}
-            </Text>
-            <Text>
-              {item.message}
-            </Text>
-          </Card>
+            <View style={{flexDirection: "row" }}>
+              <Text>{item.posterName}</Text>
+              <View style={{ flex: 1 }} />
+              <Text style={{color: 'gray'}}>{moment.unix(item.creationTimestamp.seconds).format("MMM Do, hh:mm A")}</Text>
+            </View>
 
+            <Text>{item.message}</Text>
+          </Card>
         )}
+        ListHeaderComponent={
+          <ScrollView
+            // style={{ flex: 1 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text>Address: {eventAddress}</Text>
+              <Text>Creator: {eventCreator.name}</Text>
+              <Text>
+                Date: {moment.unix(eventDateTime).format("MMMM Do, YYYY")}
+              </Text>
+              <Text>Time: {moment.unix(eventDateTime).format("hh:mm A")}</Text>
+              <Text>Loop: {eventLoop}</Text>
+
+              <Divider orientation="horizontal" />
+
+              <Text style={globalStyles.titleText}>Attendees</Text>
+              {eventAttendees.map((attendee) => (
+                <Text key={attendee.id}>{attendee.name}</Text>
+              ))}
+              {!isCreator && (
+                <Button
+                  title={!isAttending ? "Register" : "Unregister"}
+                  onPress={() => {
+                    if (!isAttending) {
+                      registerEvent(route.params?.id, userID);
+                    } else {
+                      unregisterEvent(route.params?.id, userID);
+                    }
+                  }}
+                />
+              )}
+              <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
+            </View>
+          </ScrollView>
+        }
       />
 
       <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={100}>
@@ -322,7 +315,6 @@ export default function CardDetails({ navigation, route }) {
                   disabled={!isAttending}
                   multiline={true}
                   value={props.values.postText}
-                  // value="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
                   onChangeText={props.handleChange("postText")}
                   onBlur={() => {
                     props.handleBlur("postText");
