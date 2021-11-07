@@ -5,7 +5,7 @@ import LogIn from "../screens/logIn";
 import RootStack from "./tabNavigator";
 import ResetPassword from "../screens/resetPassword";
 import Header from "../shared/header";
-import UserEventPreferences from "../screens/userEventPreferences";
+import userEventPreferences from "../screens/userEventPreferences";
 
 //Screens in the profile tab
 
