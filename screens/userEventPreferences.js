@@ -46,18 +46,22 @@ export default function UserEventPreferences({ navigation }) {
       <SafeAreaView style={globalStyles.container}>
         <View style={{ alignItems: "center" }}>
           <Formik
-            // initialValues={{
-            //   loopsInterested: [],
-            // }}
-            validationSchema={setUserLoopsSchema}
-            onSubmit={(values, actions) => {
-              console.log("BLAST" + joinedLoops);
-              var success = setUserLoops({
-                joinedLoops: values.loopsInterested,
-              });
+            initialValues={{
+              loopsInterested: [],
+            }}
+            //validationSchema={setUserLoopsSchema}
+            onSubmit={(values) => {
+              //console.log("BLAST" + joinedLoops);
+              var success = setUserLoops(
+                console.log(
+                  "loopsinterested4" + loopsInterested,
+                  "joinedLoops4" + joinedLoops
+                )
+                //joinedLoops: values.loopsInterested,
+              );
               if (success) {
                 Alert.alert("Success!", "Loop preferences successfully saved!");
-                actions.resetForm();
+                //actions.resetForm();
               }
             }}
           >
@@ -202,7 +206,7 @@ export default function UserEventPreferences({ navigation }) {
                         joinedLoops.push("Media");
                       }
                       console.log(joinedLoops);
-                      //props.setFieldValue("loopsInterested", joinedLoops);
+                      loopsInterested = joinedLoops;
                       props.handleSubmit;
                     }}
                   />
