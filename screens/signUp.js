@@ -131,6 +131,9 @@ export default function SignUp({ navigation }) {
                   onBlur={props.handleBlur("password2")}
                 />
                 <Button
+                  onPress={() => navigation.navigate("userEventPreferences")}
+                />
+                <Button
                   onPress={props.handleSubmit}
                   title="Sign Up"
                   buttonStyle={{ height: 50 }}
