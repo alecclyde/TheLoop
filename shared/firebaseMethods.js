@@ -183,7 +183,10 @@ export async function createPost(userID, userName, eventID, postText) {
       message: postText,
       posterID: userID,
       posterName: userName,
-      creationTimestamp: firebase.firestore.Timestamp.now()
+      creationTimestamp: firebase.firestore.Timestamp.now(),
+      updatedTimestamp: firebase.firestore.Timestamp.now(),
+      edited: false
+
 
 
     })

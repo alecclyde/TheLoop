@@ -111,18 +111,26 @@ export default function CardDetails({ navigation, route }) {
   };
 
   const reducer = (state, action) => {
-    let newState;
+    let newState = state;
+    // console.log(action.type)
 
     switch (action.type) {
       case "add":
         return [action.payload, ...state]; // I chose to do payload, then everything else so that older posts are towards the bottom
       case "update":
-        return [
-          ...state.filter((post) => id !== action.payload.id),
-          action.payload,
-        ]; // could be post.id
+        let oldPost = state.length; // adds the updated post to the end, just in case (although it'll still cause errors)
+        state.forEach((post) => { // gets the index of the updated post so that it can be updated in-place
+          if (post.id === action.payload.id) {
+            oldPost = state.indexOf(post);
+          }
+        })
+
+        newState = newState.filter((post) => post.id !== action.payload.id); // this feels sloppy, surely there's a better way
+        newState.splice(oldPost, 0, action.payload)  // like it works but there should be a way to use splice OR filter and not need both
+
+        return newState; 
       case "remove":
-        return state.filter((post) => id !== action.payload.id);
+        return state.filter((post) => post.id !== action.payload.id);
       case "clear":
         return [];
     }
@@ -143,6 +151,7 @@ export default function CardDetails({ navigation, route }) {
         posterID: data.posterID,
         posterName: data.posterName,
         creationTimestamp: data.creationTimestamp,
+        edited: data.edited
       };
       if (change.type === "added") {
         dispatch({ type: "add", payload: payload });
@@ -246,6 +255,7 @@ export default function CardDetails({ navigation, route }) {
             </View>
 
             <Text>{item.message}</Text>
+            {item.edited && (<Text style = {{color: "gray"}}>(edited)</Text>)}
           </Card>
         )}
         ListHeaderComponent={
@@ -301,9 +311,8 @@ export default function CardDetails({ navigation, route }) {
                   userID,
                   userName,
                   route.params?.id,
-                  values.postText
+                  values.postText.trim()
                 );
-                console.log("TODO: add post to database");
                 actions.resetForm();
               }
             }}
