@@ -17,9 +17,9 @@ import * as yup from "yup";
 import { Formik } from "formik";
 import { setUserLoops } from "../shared/firebaseMethods";
 
-const setUserLoopsSchema = yup.object({
-  //loopsInterested: yup.array.required("Please select at least 1 interest."),
-});
+// const setUserLoopsSchema = yup.object({
+//   joinedLoops: yup.array.required("Please select at least 1 interest."),
+// });
 
 export default function UserEventPreferences({ navigation }) {
   let joinedLoops = [];
@@ -46,15 +46,16 @@ export default function UserEventPreferences({ navigation }) {
       <SafeAreaView style={globalStyles.container}>
         <View style={{ alignItems: "center" }}>
           <Formik
-            initialValues={{
-              loopsInterested: [],
-            }}
+            // initialValues={
+            //   {
+            //     //loopsInterested: [],
+            //   }
+            // }
             //validationSchema={setUserLoopsSchema}
-            onSubmit={(values) => {
-              //console.log("BLAST" + joinedLoops);
-              var success = setUserLoops();
-
-              //joinedLoops: values.loopsInterested,
+            onSubmit={() => {
+              var success = setUserLoops({
+                joinedLoops: joinedLoops,
+              });
               if (success) {
                 Alert.alert("Success!", "Loop preferences successfully saved!");
                 //actions.resetForm();
@@ -265,9 +266,8 @@ export default function UserEventPreferences({ navigation }) {
                         joinedLoops.push("Media");
                       }
                       console.log(joinedLoops);
-                      //loopsInterested = joinedLoops;
-                      props.handleSubmit;
                     }}
+                    onPress={props.handleSubmit}
                   />
                 </View>
               </>

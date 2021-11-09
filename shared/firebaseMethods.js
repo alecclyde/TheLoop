@@ -55,18 +55,14 @@ export async function loggingOut(navigation) {
   }
 }
 
-export async function setUserLoops(data) {
+export async function setUserLoops(joinedLoops) {
   try {
     const currentUser = firebase.auth().currentUser;
-    const db = firebase.firestore;
+    const db = firebase.firestore();
 
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser)
-      .update({
-        joinedLoops: db.FieldValue.arrayUnion(data.joinedLoops),
-      });
+    await firebase.firestore().collection("users").doc(currentUser).update({
+      joinedLoops: joinedLoops,
+    });
     //navigation.navigate("rootStack");
   } catch (err) {
     console.log(err);
