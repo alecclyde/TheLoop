@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Platform,
   Alert,
+  Switch,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -22,8 +23,6 @@ import { setUserLoops } from "../shared/firebaseMethods";
 // });
 
 export default function UserEventPreferences({ navigation }) {
-  let joinedLoops = [];
-
   const [checkSports, setCheckSports] = useState(false);
   const [checkMusic, setCheckMusic] = useState(false);
   const [checkVolunteer, setCheckVolunteer] = useState(false);
@@ -46,15 +45,21 @@ export default function UserEventPreferences({ navigation }) {
       <SafeAreaView style={globalStyles.container}>
         <View style={{ alignItems: "center" }}>
           <Formik
-            // initialValues={
-            //   {
-            //     //loopsInterested: [],
-            //   }
-            // }
+            initialValues={{
+              Sports: false,
+              Music: false,
+              Volunteer: false,
+              Game: false,
+              Social: false,
+              Arts: false,
+              Outdoors: false,
+              Academic: false,
+              Media: false,
+            }}
             //validationSchema={setUserLoopsSchema}
-            onSubmit={() => {
+            onSubmit={(joinedLoops) => {
               var success = setUserLoops({
-                joinedLoops: joinedLoops,
+                joinedLoops,
               });
               if (success) {
                 Alert.alert("Success!", "Loop preferences successfully saved!");
@@ -77,11 +82,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkSports}
                       onPress={() => {
                         setCheckSports(!checkSports);
-                        // if (joinedLoops[0] == "Sports") {
-                        //   joinedLoops.splice(0);
-                        // } else {
-                        //   joinedLoops[0] = "Sports";
-                        // }
+                        props.setFieldValue("Sports", !checkSports);
                       }}
                     />
                   </View>
@@ -93,11 +94,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkMusic}
                       onPress={() => {
                         setCheckMusic(!checkMusic);
-                        // if (joinedLoops[1] == "Music") {
-                        //   joinedLoops.splice(1);
-                        // } else {
-                        //   joinedLoops[1] = "Music";
-                        // }
+                        props.setFieldValue("Music", !checkMusic);
                       }}
                     />
                   </View>
@@ -109,11 +106,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkVolunteer}
                       onPress={() => {
                         setCheckVolunteer(!checkVolunteer);
-                        // if (joinedLoops[2] == "Volunteer") {
-                        //   joinedLoops.splice(2);
-                        // } else {
-                        //   joinedLoops[2] = "Volunteer";
-                        // }
+                        props.setFieldValue("Volunteer", !checkVolunteer);
                       }}
                     />
                   </View>
@@ -127,11 +120,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkGame}
                       onPress={() => {
                         setCheckGame(!checkGame);
-                        // if (joinedLoops[3] == "Game") {
-                        //   joinedLoops.splice(3);
-                        // } else {
-                        //   joinedLoops[3] = "Game";
-                        // }
+                        props.setFieldValue("Game", !checkGame);
                       }}
                     />
                   </View>
@@ -143,11 +132,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkSocial}
                       onPress={() => {
                         setCheckSocial(!checkSocial);
-                        // if (joinedLoops[4] == "Social") {
-                        //   joinedLoops.splice(4);
-                        // } else {
-                        //   joinedLoops[4] = "Social";
-                        // }
+                        props.setFieldValue("Social", !checkSocial);
                       }}
                     />
                   </View>
@@ -159,11 +144,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkArts}
                       onPress={() => {
                         setCheckArts(!checkArts);
-                        // if (joinedLoops[5] == "Arts") {
-                        //   joinedLoops.splice(5);
-                        // } else {
-                        //   joinedLoops[5] = "Arts";
-                        // }
+                        props.setFieldValue("Arts", !checkArts);
                       }}
                     />
                   </View>
@@ -176,11 +157,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkOutdoors}
                       onPress={() => {
                         setCheckOutdoors(!checkOutdoors);
-                        // if (joinedLoops[6] == "Outdoors") {
-                        //   joinedLoops.splice(6);
-                        // } else {
-                        //   joinedLoops[6] = "Outdoors";
-                        // }
+                        props.setFieldValue("Outdoors", !checkOutdoors);
                       }}
                     />
                   </View>
@@ -192,11 +169,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkAcademic}
                       onPress={() => {
                         setCheckAcademic(!checkAcademic);
-                        // if (joinedLoops[7] == "Academic") {
-                        //   joinedLoops.splice(7);
-                        // } else {
-                        //   joinedLoops[7] = "Academic";
-                        // }
+                        props.setFieldValue("Academic", !checkAcademic);
                       }}
                     />
                   </View>
@@ -208,11 +181,7 @@ export default function UserEventPreferences({ navigation }) {
                       checked={checkMedia}
                       onPress={() => {
                         setCheckMedia(!checkMedia);
-                        // if (joinedLoops[8] == "Media") {
-                        //   joinedLoops.splice(8);
-                        // } else {
-                        //   joinedLoops[8] = "Media";
-                        // }
+                        props.setFieldValue("Media", !checkMedia);
                       }}
                     />
                   </View>
@@ -234,40 +203,10 @@ export default function UserEventPreferences({ navigation }) {
                       backgroundColor: "#ff7b00",
                     }}
                     style={{ padding: 45 }}
-                    onPress={() => {
-                      if (checkSports && !joinedLoops.includes("Sports")) {
-                        joinedLoops.push("Sports");
-                      }
-                      if (checkMusic && !joinedLoops.includes("Music")) {
-                        joinedLoops.push("Music");
-                      }
-                      if (
-                        checkVolunteer &&
-                        !joinedLoops.includes("Volunteer")
-                      ) {
-                        joinedLoops.push("Volunteer");
-                      }
-                      if (checkGame && !joinedLoops.includes("Game")) {
-                        joinedLoops.push("Game");
-                      }
-                      if (checkSocial && !joinedLoops.includes("Social")) {
-                        joinedLoops.push("Social");
-                      }
-                      if (checkArts && !joinedLoops.includes("Arts")) {
-                        joinedLoops.push("Arts");
-                      }
-                      if (checkOutdoors && !joinedLoops.includes("Outdoors")) {
-                        joinedLoops.push("Outdoors");
-                      }
-                      if (checkAcademic && !joinedLoops.includes("Academic")) {
-                        joinedLoops.push("Academic");
-                      }
-                      if (checkMedia && !joinedLoops.includes("Media")) {
-                        joinedLoops.push("Media");
-                      }
-                      console.log(joinedLoops);
-                    }}
                     onPress={props.handleSubmit}
+                    onPress={() => {
+                      console.log(props.values);
+                    }}
                   />
                 </View>
               </>
