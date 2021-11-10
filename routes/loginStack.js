@@ -19,11 +19,11 @@ export default function ProfileStack() {
     >
       <Stack.Screen name="LogIn" component={LogIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
-      <Stack.Screen name="RootStack" component={RootStack} />
       <Stack.Screen
         name="userEventPreferences"
         component={userEventPreferences}
       />
+      <Stack.Screen name="RootStack" component={RootStack} />
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
     </Stack.Navigator>
   );

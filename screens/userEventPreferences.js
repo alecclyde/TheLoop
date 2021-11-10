@@ -6,7 +6,7 @@ import {
   Alert,
 } from "react-native";
 import React, { useState } from "react";
-
+import Icon from "react-native-vector-icons/FontAwesome";
 import { CheckBox, Card, Button, Text } from "react-native-elements";
 
 import { globalStyles } from "../styles/global";
@@ -61,9 +61,7 @@ export default function UserEventPreferences({ navigation }) {
               }}
               //validationSchema={setUserLoopsSchema}
               onSubmit={(joinedLoops) => {
-                var success = setUserLoops({
-                  joinedLoops,
-                });
+                var success = setUserLoops(joinedLoops, navigation);
                 if (success) {
                   Alert.alert(
                     "Success!",
@@ -81,6 +79,7 @@ export default function UserEventPreferences({ navigation }) {
                   </Text>
                   <View style={{ flexDirection: "row" }}>
                     <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
+                      <Icon name="futbol-o" size={24} color="black" />
                       <CheckBox
                         left
                         title="Sports"
@@ -103,6 +102,7 @@ export default function UserEventPreferences({ navigation }) {
                           props.setFieldValue("Music", !checkMusic);
                         }}
                       />
+                      <Icon name="music" size={24} color="black" />
                     </View>
                   </View>
                   <View style={{ flexDirection: "row" }}>
