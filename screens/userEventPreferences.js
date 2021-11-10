@@ -2,12 +2,9 @@ import {
   ImageBackground,
   View,
   SafeAreaView,
-  ScrollView,
   Keyboard,
   StyleSheet,
-  Platform,
   Alert,
-  Switch,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -204,9 +201,9 @@ export default function UserEventPreferences({ navigation }) {
                     }}
                     style={{ padding: 45 }}
                     onPress={props.handleSubmit}
-                    onPress={() => {
-                      console.log(props.values);
-                    }}
+                    // onPress={() => {
+                    //   console.log(props.values);
+                    // }}
                   />
                 </View>
               </>

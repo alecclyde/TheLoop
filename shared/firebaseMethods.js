@@ -60,13 +60,20 @@ export async function setUserLoops(joinedLoops) {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
 
-    await firebase.firestore().collection("users").doc(currentUser).update({
-      joinedLoops: joinedLoops,
-    });
-    //navigation.navigate("rootStack");
+    db.collection("users")
+      .doc(currentUser)
+      .add({
+        joinedLoops: joinedLoops,
+      })
+      .then(() => {
+        return true;
+      });
+
+    // probably should navigate to event page after this
   } catch (err) {
     console.log(err);
-    Alert.alert("something went wrong!", err.message);
+    Alert.alert("Something went wrong!", err.message);
+    return false;
   }
 }
 
