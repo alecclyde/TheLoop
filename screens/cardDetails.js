@@ -92,18 +92,20 @@ export default function CardDetails({ navigation, route }) {
           .doc(attendee)
           .get()
           .then((snap) => {
-            const attendeeName = makeName(snap.data());
-            // console.log("new read: " + attendeeName)
+            if (snap.exists) { // prevents errors if a user gets deleted
+              const attendeeName = makeName(snap.data());
+              // console.log("new read: " + attendeeName)
 
-            setEventAttendees((eventAttendees) => [
-              ...eventAttendees,
-              { id: snap.id, name: attendeeName },
-            ]);
-            eventAtens.push({ id: snap.id, name: attendeeName });
+              setEventAttendees((eventAttendees) => [
+                ...eventAttendees,
+                { id: snap.id, name: attendeeName },
+              ]);
+              eventAtens.push({ id: snap.id, name: attendeeName });
 
-            // if current ID is the creator, set creator accordingly
-            if (snap.id == eventCreator.id) {
-              setEventCreator({ id: eventCreator.id, name: attendeeName });
+              // if current ID is the creator, set creator accordingly
+              if (snap.id == eventCreator.id) {
+                setEventCreator({ id: eventCreator.id, name: attendeeName });
+              }
             }
           });
       }
@@ -119,16 +121,17 @@ export default function CardDetails({ navigation, route }) {
         return [action.payload, ...state]; // I chose to do payload, then everything else so that older posts are towards the bottom
       case "update":
         let oldPost = state.length; // adds the updated post to the end, just in case (although it'll still cause errors)
-        state.forEach((post) => { // gets the index of the updated post so that it can be updated in-place
+        state.forEach((post) => {
+          // gets the index of the updated post so that it can be updated in-place
           if (post.id === action.payload.id) {
             oldPost = state.indexOf(post);
           }
-        })
+        });
 
         newState = newState.filter((post) => post.id !== action.payload.id); // this feels sloppy, surely there's a better way
-        newState.splice(oldPost, 0, action.payload)  // like it works but there should be a way to use splice OR filter and not need both
+        newState.splice(oldPost, 0, action.payload); // like it works but there should be a way to use splice OR filter and not need both
 
-        return newState; 
+        return newState;
       case "remove":
         return state.filter((post) => post.id !== action.payload.id);
       case "clear":
@@ -151,7 +154,7 @@ export default function CardDetails({ navigation, route }) {
         posterID: data.posterID,
         posterName: data.posterName,
         creationTimestamp: data.creationTimestamp,
-        edited: data.edited
+        edited: data.edited,
       };
       if (change.type === "added") {
         dispatch({ type: "add", payload: payload });
@@ -248,14 +251,18 @@ export default function CardDetails({ navigation, route }) {
         style={{ flex: 1 }}
         renderItem={({ item }) => (
           <Card>
-            <View style={{flexDirection: "row" }}>
+            <View style={{ flexDirection: "row" }}>
               <Text>{item.posterName}</Text>
               <View style={{ flex: 1 }} />
-              <Text style={{color: 'gray'}}>{moment.unix(item.creationTimestamp.seconds).format("MMM Do, hh:mm A")}</Text>
+              <Text style={{ color: "gray" }}>
+                {moment
+                  .unix(item.creationTimestamp.seconds)
+                  .format("MMM Do, hh:mm A")}
+              </Text>
             </View>
 
             <Text>{item.message}</Text>
-            {item.edited && (<Text style = {{color: "gray"}}>(edited)</Text>)}
+            {item.edited && <Text style={{ color: "gray" }}>(edited)</Text>}
           </Card>
         )}
         ListHeaderComponent={
