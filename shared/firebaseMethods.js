@@ -61,10 +61,11 @@ export async function setUserLoops(joinedLoops) {
     const db = firebase.firestore();
 
     db.collection("users")
-      .doc(currentUser)
-      .add({
-        joinedLoops: joinedLoops,
+      .doc(currentUser.uid)
+      .update({
+        joinedLoops: firebase.firestore.FieldValue.arrayUnion(joinedLoops),
       })
+
       .then(() => {
         return true;
       });
