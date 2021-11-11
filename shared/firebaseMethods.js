@@ -55,6 +55,28 @@ export async function loggingOut(navigation) {
   }
 }
 
+export async function setUserLoops(joinedLoops, navigation) {
+  try {
+    const currentUser = firebase.auth().currentUser;
+    const db = firebase.firestore();
+
+    db.collection("users")
+      .doc(currentUser.uid)
+      .update({ joinedLoops: joinedLoops })
+
+      .then(() => {
+        navigation.navigate("RootStack");
+        return true;
+      });
+
+    // probably should navigate to event page after this
+  } catch (err) {
+    console.log(err);
+    Alert.alert("Something went wrong!", err.message);
+    return false;
+  }
+}
+
 // Grabs a single user's data
 export async function getUserData(userID) {
   try {
@@ -146,15 +168,22 @@ export async function sendPasswordResetEmail(email, navigation) {
 
 export async function registerEvent(event, user) {
   try {
-    await firebase.firestore().collection("events").doc(event).update({
-      attendees: firebase.firestore.FieldValue.arrayUnion(user)
-    })
-    
-    // replace this one with a hook (if I find out what Trevor meant)
-    await firebase.firestore().collection("users").doc(user).update({
-      myEvents: firebase.firestore.FieldValue.arrayUnion(event)
-    })
+    await firebase
+      .firestore()
+      .collection("events")
+      .doc(event)
+      .update({
+        attendees: firebase.firestore.FieldValue.arrayUnion(user),
+      });
 
+    // replace this one with a hook (if I find out what Trevor meant)
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(user)
+      .update({
+        myEvents: firebase.firestore.FieldValue.arrayUnion(event),
+      });
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
@@ -163,16 +192,67 @@ export async function registerEvent(event, user) {
 
 export async function unregisterEvent(event, user) {
   try {
-    await firebase.firestore().collection("events").doc(event).update({
-      attendees: firebase.firestore.FieldValue.arrayRemove(user)
-    })
+    await firebase
+      .firestore()
+      .collection("events")
+      .doc(event)
+      .update({
+        attendees: firebase.firestore.FieldValue.arrayRemove(user),
+      });
     // replace this one with a hook (if I find out what Trevor meant)
-    await firebase.firestore().collection("users").doc(user).update({
-      myEvents: firebase.firestore.FieldValue.arrayRemove(event)
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(user)
+      .update({
+        myEvents: firebase.firestore.FieldValue.arrayRemove(event),
+      });
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+export async function createPost(userID, userName, eventID, postText) {
+  try {
+    await firebase.firestore().collection("posts").doc(eventID).collection("posts").add({
+      message: postText,
+      posterID: userID,
+      posterName: userName,
+      creationTimestamp: firebase.firestore.Timestamp.now(),
+      updatedTimestamp: firebase.firestore.Timestamp.now(),
+      edited: false
+
+    })
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+export async function editPost(eventID, postID, newMessage) {
+  try {
+    await firebase.firestore().collection("posts").doc(eventID).collection("posts").doc(postID).update({
+      message: newMessage,
+      updatedTimestamp: firebase.firestore.Timestamp.now(),
+      edited: true
     })
 
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
   }
+
+}
+
+export async function deletePost(eventID, postID) {
+  try {
+    await firebase.firestore().collection("posts").doc(eventID).collection("posts").doc(postID).delete()
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+
+  // do stuff
 }

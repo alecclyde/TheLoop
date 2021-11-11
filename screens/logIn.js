@@ -44,10 +44,10 @@ function Login(props, { navigation }) {
       .auth()
       .onAuthStateChanged(AuthStateChangedListener);
 
-    return () => {
-      unsubscriber;
-    };
-  });
+  //   return () => {
+  //     unsubscriber;
+  //   };
+  // });
 
   // if(userLoaded){
   return (
@@ -108,7 +108,6 @@ function Login(props, { navigation }) {
                     borderRadius: 10, // adds the rounded corners
                   }}
                 />
-
               </ScrollView>
             </>
           )}
