@@ -7,7 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
 } from "react-native";
-import { signIn, getUserData } from "../shared/firebaseMethods";
+//import { signIn, getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
@@ -16,6 +16,9 @@ import { Image } from "react-native-elements";
 import { Input } from "react-native-elements";
 import { Text } from "react-native-elements";
 import AppLoading from "expo-app-loading";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { signIn } from "../store/actions/userActions";
 
 import * as firebase from "firebase";
 import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
@@ -25,7 +28,7 @@ const LoginSchema = yup.object({
   password: yup.string().required("Please enter your password"),
 });
 
-export default function Login({ navigation }) {
+function Login(props, { navigation }) {
   // const [user, setUser] = useState("");
   // const [userLoaded, setUserLoaded] = useState(false);
   // const getUser = async () => getUserData(firebase.auth().currentUser.uid).then((user) => setUser(user))
@@ -33,9 +36,7 @@ export default function Login({ navigation }) {
 
   function AuthStateChangedListener(user) {
     if (user) {
-      getUserData(user.uid).then((user) => {
-        navigation.navigate("RootStack", { userData: user });
-      });
+      props.navigation.navigate("RootStack");
     }
   }
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function Login({ navigation }) {
           initialValues={{ email: "", password: "" }}
           validationSchema={LoginSchema}
           onSubmit={(values) => {
-            signIn(values.email, values.password, navigation);
+            props.signIn(values.email, values.password, props.navigation);
           }}
         >
           {(props) => (
@@ -123,7 +124,7 @@ export default function Login({ navigation }) {
               borderRadius: 10, // adds the rounded corners
             }}
             title="Sign Up"
-            onPress={() => navigation.navigate("SignUp")}
+            onPress={() => props.navigation.navigate("SignUp")}
           ></Button>
         </View>
 
@@ -138,7 +139,7 @@ export default function Login({ navigation }) {
               borderRadius: 10, // adds the rounded corners
             }}
             title="Reset Password"
-            onPress={() => navigation.navigate("ResetPassword")}
+            onPress={() => props.navigation.navigate("ResetPassword")}
           ></Button>
         </View>
       </View>
@@ -156,4 +157,13 @@ export default function Login({ navigation }) {
   // }
 }
 
+const mapStateToProps = state => ({
+  users: state.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  signIn: (email, password, navigation) => dispatch(signIn(email, password, navigation))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
 // Thanks Caden for giving me a framework for the login screen!

@@ -133,7 +133,7 @@ function EventCreation(props) {
               );
               if (success) {
                 Alert.alert("Success!", "Event successfully created!");
-                console.log(props.events);
+                //console.log(props.events);
                 //actions.resetForm();
               }
             }}

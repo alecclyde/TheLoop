@@ -1,5 +1,8 @@
 import { ADD_EVENT } from '../constants';
 import { GET_EVENTS } from '../constants';
+import { REGISTER_EVENT } from '../constants';
+import { UNREGISTER_EVENT } from '../constants';
+
 import * as firebase from "firebase";
 
 export function addEvent(newEvent) {
@@ -28,8 +31,30 @@ export function addEvent(newEvent) {
 }
 
 export async function getEvents() {
-    return async function getEventsThink(dispatch, getState){
+    return async function getEventsThunk(dispatch, getState){
         const events = await //get events from database
         dispatch({ type: GET_EVENTS, payload: events});
+    }
+}
+
+export async function registerEvent(event, user){
+    return async function registerEventThunk(dispatch, getState){
+        try {
+            await firebase.firestore().collection("events").doc(event).update({
+              attendees: firebase.firestore.FieldValue.arrayUnion(user)
+            })
+            
+            // replace this one with a hook (if I find out what Trevor meant)
+            await firebase.firestore().collection("users").doc(user).update({
+              myEvents: firebase.firestore.FieldValue.arrayUnion(event)
+            })
+
+            console.log(getState);
+        
+          } catch (err) {
+            console.log(err);
+            Alert.alert("something went wrong!", err.message);
+          }
+        dispatch({ type: REGISTER_EVENT, payload: {event, user}})
     }
 }

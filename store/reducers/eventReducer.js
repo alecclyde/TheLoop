@@ -1,5 +1,7 @@
 import { ADD_EVENT } from '../constants';
 import { GET_EVENTS } from '../constants';
+import { REGISTER_EVENT } from '../constants';
+import { UNREGISTER_EVENT } from '../constants';
 
 function nextEventId(todos) {
     const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
@@ -20,6 +22,14 @@ const eventReducer = (state = initialState, action) => {
         case GET_EVENTS:
             return {
                 ...state.events
+            };
+        case REGISTER_EVENT:
+            return {
+                
+            };
+        case UNREGISTER_EVENT:
+            return {
+
             };
     default:
         return state;

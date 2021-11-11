@@ -8,10 +8,13 @@ import moment from 'moment';
 import { Card, Button } from 'react-native-elements/';
 import * as firebase from "firebase";
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { registerEvent, unregisterEvent } from '../shared/firebaseMethods';
+import { unregisterEvent } from '../shared/firebaseMethods';
+import { registerEvent } from "../store/actions/eventActions";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 //Called by favorite and personal when you click on a card to display the content
-export default function CardDetails({ navigation, route }) {
+function CardDetails(props, { navigation, route }) {
 
   const [eventAttendees, setEventAttendees] = useState([]);
   const [eventCreator, setEventCreator] = useState({id: route.params?.creatorID, name: ""});
@@ -146,7 +149,7 @@ export default function CardDetails({ navigation, route }) {
         title = {!isAttending ? "Register" : "Unregister"}
         onPress = {() => {
           if (!isAttending) {
-            registerEvent(route.params?.id, user)
+            props.registerEvent(route.params?.id, user)
           } else {
             unregisterEvent(route.params?.id, user)
           }
@@ -155,3 +158,13 @@ export default function CardDetails({ navigation, route }) {
     </View>
   );
 }
+
+const mapStateToProps = state => ({
+  events: state.events
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  registerEvent: (event) => dispatch(registerEvent(event))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(CardDetails);
