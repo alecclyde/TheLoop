@@ -13,6 +13,10 @@ import {
 import * as firebase from "firebase";
 import LoginStack from "./routes/loginStack";
 import * as Location from "expo-location";
+import { Provider } from 'react-redux';
+import { connect } from 'react-redux';
+
+import configureStore from './store/configureStore';
 
 import { LogBox } from "react-native";
 //https://github.com/firebase/firebase-js-sdk/issues/97
@@ -35,10 +39,14 @@ if (!firebase.apps.length) {
   firebase.app(); // if already initialized, use that one
 }
 
+const store = configureStore();
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <LoginStack />
-    </NavigationContainer>
+    <Provider store = { store }>
+      <NavigationContainer>
+        <LoginStack />
+      </NavigationContainer>
+    </Provider>
   );
 }
