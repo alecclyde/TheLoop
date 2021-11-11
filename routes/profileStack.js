@@ -23,7 +23,14 @@ export default function ProfileStack({navigation}){
         cardStyle: {
           backgroundColor: '#fefefe'
         },
-        headerLeft: ()=> (
+      }}
+      >
+      <Stack.Screen 
+        name='Profile'
+        component={Profile}
+        options={({ navigation }) => {
+          return {
+            headerLeft: ()=> (
           <Button
         buttonStyle={{backgroundColor: 'transparent'}}
         icon={
@@ -43,14 +50,6 @@ export default function ProfileStack({navigation}){
         headerStyle: {
           backgroundColor: 'white',
         }
-      }}
-    >
-      <Stack.Screen 
-        name='Profile'
-        component={Profile}
-        options={({ navigation }) => {
-          return {
-            headerRight: () => <Header navigation={navigation} />
           }
         }}
       />
