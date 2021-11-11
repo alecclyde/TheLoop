@@ -26,7 +26,7 @@ import { Button, ListItem, Avatar } from "react-native-elements";
 
 export default function Search({ navigation }) {
   const [events, setEvents] = useState([]);
-  const [search, setSearch] = useState([]);
+  const [search, setSearch] = useState({text: ''});
   const isFocused = useIsFocused();
 
 
@@ -53,8 +53,8 @@ export default function Search({ navigation }) {
     <View>
         <SearchBar
   placeholder="Type Here..."
-  onChangeText={(text)=> {setSearch(text)}}
-  value={search}
+  onChangeText={(text)=> {setSearch({text})}}
+  value={search.text}
 />
       <ImageBackground
         source={{
