@@ -26,7 +26,7 @@ export async function registration(
     });
     //   navigation.dispatch(StackActions.pop(1));
     //   if(firebase.auth().currentUser !== null){
-    navigation.navigate("RootStack");
+    navigation.navigate("userEventPreferences");
     //   }
   } catch (err) {
     Alert.alert("There is something wrong!", err.message);
@@ -55,6 +55,28 @@ export async function loggingOut(navigation) {
   }
 }
 
+export async function setUserLoops(joinedLoops, navigation) {
+  try {
+    const currentUser = firebase.auth().currentUser;
+    const db = firebase.firestore();
+
+    db.collection("users")
+      .doc(currentUser.uid)
+      .update({ joinedLoops: joinedLoops })
+
+      .then(() => {
+        navigation.navigate("RootStack");
+        return true;
+      });
+
+    // probably should navigate to event page after this
+  } catch (err) {
+    console.log(err);
+    Alert.alert("Something went wrong!", err.message);
+    return false;
+  }
+}
+
 // Grabs a single user's data
 export async function getUserData(userID) {
   try {
@@ -72,30 +94,34 @@ export async function getUserData(userID) {
 
 // Creates a new event and adds the data to Firebase
 // Returns true if event is successfully created, returns false otherwise
-export async function createEvent(
-  data
-) {
+export async function createEvent(data) {
   try {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
 
-    db.collection("events").add({
-      name: data.name,
-      loop: data.loop,
-      // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
-      creatorID: currentUser.uid,
-      address: data.address,
-      recurAutomatically: false,
-      recurFrequency: 1,
-      // datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
-      startDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime),
-      endDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // Will want to query for actual end dateTime later
-      creationTimestamp: firebase.firestore.Timestamp.now(),
-      attendees: [currentUser.uid],
-      location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
-    }).then(() => {
-      return true;
-    });
+    db.collection("events")
+      .add({
+        name: data.name,
+        loop: data.loop,
+        // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
+        creatorID: currentUser.uid,
+        address: data.address,
+        recurAutomatically: false,
+        recurFrequency: 1,
+        // datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
+        startDateTime: firebase.firestore.Timestamp.fromMillis(
+          data.startDateTime
+        ),
+        endDateTime: firebase.firestore.Timestamp.fromMillis(
+          data.startDateTime
+        ), // Will want to query for actual end dateTime later
+        creationTimestamp: firebase.firestore.Timestamp.now(),
+        attendees: [currentUser.uid],
+        location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
+      })
+      .then(() => {
+        return true;
+      });
 
     // probably should navigate to event page after this
   } catch (err) {
@@ -146,15 +172,22 @@ export async function sendPasswordResetEmail(email, navigation) {
 
 export async function registerEvent(event, user) {
   try {
-    await firebase.firestore().collection("events").doc(event).update({
-      attendees: firebase.firestore.FieldValue.arrayUnion(user)
-    })
-    
-    // replace this one with a hook (if I find out what Trevor meant)
-    await firebase.firestore().collection("users").doc(user).update({
-      myEvents: firebase.firestore.FieldValue.arrayUnion(event)
-    })
+    await firebase
+      .firestore()
+      .collection("events")
+      .doc(event)
+      .update({
+        attendees: firebase.firestore.FieldValue.arrayUnion(user),
+      });
 
+    // replace this one with a hook (if I find out what Trevor meant)
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(user)
+      .update({
+        myEvents: firebase.firestore.FieldValue.arrayUnion(event),
+      });
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
@@ -163,14 +196,21 @@ export async function registerEvent(event, user) {
 
 export async function unregisterEvent(event, user) {
   try {
-    await firebase.firestore().collection("events").doc(event).update({
-      attendees: firebase.firestore.FieldValue.arrayRemove(user)
-    })
+    await firebase
+      .firestore()
+      .collection("events")
+      .doc(event)
+      .update({
+        attendees: firebase.firestore.FieldValue.arrayRemove(user),
+      });
     // replace this one with a hook (if I find out what Trevor meant)
-    await firebase.firestore().collection("users").doc(user).update({
-      myEvents: firebase.firestore.FieldValue.arrayRemove(event)
-    })
-
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(user)
+      .update({
+        myEvents: firebase.firestore.FieldValue.arrayRemove(event),
+      });
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
