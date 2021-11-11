@@ -44,10 +44,10 @@ function Login(props, { navigation }) {
       .auth()
       .onAuthStateChanged(AuthStateChangedListener);
 
-  //   return () => {
-  //     unsubscriber;
-  //   };
-  // });
+    return () => {
+      unsubscriber;
+    };
+  });
 
   // if(userLoaded){
   return (
@@ -155,7 +155,6 @@ function Login(props, { navigation }) {
   //   )
   // }
 }
-
 const mapStateToProps = state => ({
   users: state.user
 });
