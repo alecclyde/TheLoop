@@ -13,7 +13,6 @@ import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
 import { setUserLoops } from "../shared/firebaseMethods";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 // const setUserLoopsSchema = yup.object({
 //   joinedLoops: yup.array.required("Please select at least 1 interest."),
@@ -33,7 +32,7 @@ export default function UserEventPreferences({ navigation }) {
   return (
     <View
       style={{
-        //borderColor: "#ffa835",
+        borderColor: "#ffa835",
         borderWidth: 7,
         flex: 1,
         backgroundColor: "#F8F8F8",
@@ -76,16 +75,14 @@ export default function UserEventPreferences({ navigation }) {
                 <>
                   <Text style={globalStyles.titleText}></Text>
                   <Text style={globalStyles.titleText}>
-                    Please select at least 1 area of interest.
+                    Please select 1 area of interest.
                   </Text>
                   <View style={{ flexDirection: "row" }}>
                     <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
+                      <Icon name="futbol-o" size={24} color="black" />
                       <CheckBox
                         left
                         title="Sports"
-                        checkedIcon="futbol-o"
-                        uncheckedIcon="futbol-o"
-                        checkedColor="#ffa835"
                         checked={checkSports}
                         onPress={() => {
                           setCheckSports(!checkSports);
@@ -98,9 +95,6 @@ export default function UserEventPreferences({ navigation }) {
                     <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
                       <CheckBox
                         left
-                        checkedIcon="music"
-                        uncheckedIcon="music"
-                        checkedColor="#ffa835"
                         title="Music"
                         checked={checkMusic}
                         onPress={() => {
@@ -108,6 +102,7 @@ export default function UserEventPreferences({ navigation }) {
                           props.setFieldValue("Music", !checkMusic);
                         }}
                       />
+                      <Icon name="music" size={24} color="black" />
                     </View>
                   </View>
                   <View style={{ flexDirection: "row" }}>
@@ -115,9 +110,6 @@ export default function UserEventPreferences({ navigation }) {
                       <CheckBox
                         left
                         title="Volunteer"
-                        checkedColor="#ffa835"
-                        checkedIcon="plus"
-                        uncheckedIcon="plus"
                         checked={checkVolunteer}
                         onPress={() => {
                           setCheckVolunteer(!checkVolunteer);
@@ -131,9 +123,6 @@ export default function UserEventPreferences({ navigation }) {
                       <CheckBox
                         left
                         title="Game"
-                        checkedIcon="gamepad"
-                        uncheckedIcon="gamepad"
-                        checkedColor="#ffa835"
                         checked={checkGame}
                         onPress={() => {
                           setCheckGame(!checkGame);
@@ -147,9 +136,6 @@ export default function UserEventPreferences({ navigation }) {
                       <CheckBox
                         left
                         title="Social"
-                        checkedIcon="users"
-                        uncheckedIcon="users"
-                        checkedColor="#ffa835"
                         checked={checkSocial}
                         onPress={() => {
                           setCheckSocial(!checkSocial);
@@ -163,9 +149,6 @@ export default function UserEventPreferences({ navigation }) {
                       <CheckBox
                         left
                         title="Arts"
-                        checkedIcon="paint-brush"
-                        uncheckedIcon="paint-brush"
-                        checkedColor="#ffa835"
                         checked={checkArts}
                         onPress={() => {
                           setCheckArts(!checkArts);
@@ -179,9 +162,6 @@ export default function UserEventPreferences({ navigation }) {
                       <CheckBox
                         left
                         title="Outdoors"
-                        checkedIcon="pagelines"
-                        uncheckedIcon="pagelines"
-                        checkedColor="#ffa835"
                         checked={checkOutdoors}
                         onPress={() => {
                           setCheckOutdoors(!checkOutdoors);
@@ -195,9 +175,6 @@ export default function UserEventPreferences({ navigation }) {
                       <CheckBox
                         left
                         title="Academic"
-                        checkedIcon="book"
-                        uncheckedIcon="book"
-                        checkedColor="#ffa835"
                         checked={checkAcademic}
                         onPress={() => {
                           setCheckAcademic(!checkAcademic);
@@ -211,9 +188,6 @@ export default function UserEventPreferences({ navigation }) {
                       <CheckBox
                         left
                         title="Media"
-                        checkedIcon="camera"
-                        uncheckedIcon="camera"
-                        checkedColor="#ffa835"
                         checked={checkMedia}
                         onPress={() => {
                           setCheckMedia(!checkMedia);

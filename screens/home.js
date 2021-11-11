@@ -97,6 +97,7 @@ export default function Home({ navigation, route }) {
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }}>
         <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
+          <Button onPress={() => navigation.navigate("userEventPreferences")} />
           <Text h2 style={{ textAlign: "center" }}>
             Welcome Back {"\n"} {firstName || ""}!
           </Text>
