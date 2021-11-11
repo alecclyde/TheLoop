@@ -232,7 +232,6 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Sports");
                       }}
                     >
-                      <Icon name="futbol-o" size={24} color="black" />
                       <Text>Sports</Text>
                     </TouchableOpacity>
                   </View>
@@ -250,7 +249,6 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Music");
                       }}
                     >
-                      <Icon name="music" size={24} color="black" />
                       <Text>Music</Text>
                     </TouchableOpacity>
                   </View>
@@ -268,7 +266,6 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Volunteer");
                       }}
                     >
-                      <Icon name="plus" size={24} color="black" />
                       <Text>Volunteer</Text>
                     </TouchableOpacity>
                   </View>
@@ -288,7 +285,6 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Game");
                       }}
                     >
-                      <Icon name="gamepad" size={24} color="black" />
                       <Text>Game</Text>
                     </TouchableOpacity>
                   </View>
@@ -306,7 +302,6 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Social");
                       }}
                     >
-                      <Icon name="users" size={24} color="black" />
                       <Text>Social</Text>
                     </TouchableOpacity>
                   </View>
@@ -324,12 +319,10 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Arts");
                       }}
                     >
-                    <Icon name="paint-brush" size={24} color="black" />
                       <Text>Arts</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
                     <TouchableOpacity
@@ -344,7 +337,6 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Outdoors");
                       }}
                     >
-                      <Icon name="pagelines" size={24} color="black" />
                       <Text>Outdoors</Text>
                     </TouchableOpacity>
                   </View>
@@ -362,7 +354,6 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Academic");
                       }}
                     >
-                      <Icon name="book" size={24} color="black" />
                       <Text>Academic</Text>
                     </TouchableOpacity>
                   </View>
@@ -380,7 +371,6 @@ export default function EventCreation({ navigation }) {
                         props.setFieldValue("eventLoop", "Media");
                       }}
                     >
-                      <Icon name="camera" size={24} color="black" />
                       <Text>Media</Text>
                     </TouchableOpacity>
                   </View>
