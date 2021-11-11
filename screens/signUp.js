@@ -130,7 +130,6 @@ export default function SignUp({ navigation }) {
                   secureTextEntry={true}
                   onBlur={props.handleBlur("password2")}
                 />
-
                 <Button
                   onPress={props.handleSubmit}
                   title="Sign Up"
