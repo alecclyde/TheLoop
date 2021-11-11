@@ -216,3 +216,47 @@ export async function unregisterEvent(event, user) {
     Alert.alert("something went wrong!", err.message);
   }
 }
+
+export async function createPost(userID, userName, eventID, postText) {
+  try {
+    await firebase.firestore().collection("posts").doc(eventID).collection("posts").add({
+      message: postText,
+      posterID: userID,
+      posterName: userName,
+      creationTimestamp: firebase.firestore.Timestamp.now(),
+      updatedTimestamp: firebase.firestore.Timestamp.now(),
+      edited: false
+
+    })
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+export async function editPost(eventID, postID, newMessage) {
+  try {
+    await firebase.firestore().collection("posts").doc(eventID).collection("posts").doc(postID).update({
+      message: newMessage,
+      updatedTimestamp: firebase.firestore.Timestamp.now(),
+      edited: true
+    })
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+
+}
+
+export async function deletePost(eventID, postID) {
+  try {
+    await firebase.firestore().collection("posts").doc(eventID).collection("posts").doc(postID).delete()
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+
+  // do stuff
+}
