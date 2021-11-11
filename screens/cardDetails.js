@@ -7,7 +7,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  ImageEditor,
+  Modal,
 } from "react-native";
 import { globalStyles } from "../styles/global";
 // import Card from '../shared/card';
@@ -26,6 +26,8 @@ import {
   unregisterEvent,
   getUserData,
   createPost,
+  editPost,
+  deletePost,
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
@@ -50,6 +52,9 @@ export default function CardDetails({ navigation, route }) {
   const [userName, setUserName] = useState();
   const [isAttending, setIsAttending] = useState(false);
   const [isCreator, setIsCreator] = useState(false);
+
+  const [editMode, setEditMode] = useState(false);
+  const [postEditID, setPostEditID] = useState();
 
   var eventAtens = [];
 
@@ -92,7 +97,8 @@ export default function CardDetails({ navigation, route }) {
           .doc(attendee)
           .get()
           .then((snap) => {
-            if (snap.exists) { // prevents errors if a user gets deleted
+            if (snap.exists) {
+              // prevents errors if a user gets deleted
               const attendeeName = makeName(snap.data());
               // console.log("new read: " + attendeeName)
 
@@ -172,6 +178,37 @@ export default function CardDetails({ navigation, route }) {
     console.log(error);
   };
 
+  const enterEditMode = (post) => {
+    setEditMode(true);
+    setPostEditID(post.id);
+  };
+
+  const exitEditMode = () => {
+    setEditMode(false);
+    setPostEditID();
+  };
+
+  // const handleEditPost = (post) => {
+  //   editPost(route.params?.id, post.id)
+  //   exitEditMode();
+  // };
+
+  const handleDeletePost = (post) => {
+    Alert.alert(
+      "Really delete?",
+      "Are you sure you want to delete this post?",
+      [
+        {
+          text: "Cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => deletePost(route.params?.id, post.id),
+        },
+      ]
+    );
+  };
+
   // This may be a better method for reading users from the database, if I can get it to work
 
   // firebase.firestore().collection("users").where(firebase.firestore.FieldPath.documentId(), "in", eventAttendees).get()
@@ -249,10 +286,12 @@ export default function CardDetails({ navigation, route }) {
         data={state}
         keyExtractor={(item) => item.id}
         style={{ flex: 1 }}
+        // the actual posts
         renderItem={({ item }) => (
           <Card>
+            {/* poster name and post creation time */}
             <View style={{ flexDirection: "row" }}>
-              <Text>{item.posterName}</Text>
+              <Text style={{ fontWeight: "bold" }}>{item.posterName}</Text>
               <View style={{ flex: 1 }} />
               <Text style={{ color: "gray" }}>
                 {moment
@@ -261,8 +300,99 @@ export default function CardDetails({ navigation, route }) {
               </Text>
             </View>
 
-            <Text>{item.message}</Text>
-            {item.edited && <Text style={{ color: "gray" }}>(edited)</Text>}
+            {postEditID != item.id && (
+              <View>
+                {/* post message */}
+                <Text>{item.message}</Text>
+
+                {/* 'edited' tag */}
+                {/* literally the only reason I put this <Text> in a view was because it */}
+                {/* broke my code coloration in VSCode and it drove me crazy. -Robbie */}
+
+                {item.edited && (
+                  <View>
+                    <Text style={{ color: "gray" }}>(edited)</Text>
+                  </View>
+                )}
+              </View>
+            )}
+
+            {postEditID == item.id && (
+              <View>
+                <Formik
+                  initialValues={{
+                    postText: item.message,
+                  }}
+                  onSubmit={(values, actions) => {
+                    if (values.postText === "") {
+                      Alert.alert("Error", "Cannot create a post with no text");
+                    } else {
+                      editPost(
+                        route.params?.id,
+                        item.id,
+                        values.postText.trim()
+                      );
+                      exitEditMode();
+                    }
+                  }}
+                >
+                  {(props) => (
+                    <>
+                      <Input
+                        placeholder={"Post in " + eventName}
+                        disabled={!isAttending}
+                        multiline={true}
+                        value={props.values.postText}
+                        onChangeText={props.handleChange("postText")}
+                        onBlur={() => {
+                          props.handleBlur("postText");
+                        }}
+                        style={{ maxHeight: 250 }}
+                      />
+                      <View style={{ flexDirection: "row" }}>
+                        <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                          <Button
+                            title="Cancel"
+                            onPress={() => exitEditMode()}
+                          />
+                        </View>
+                        <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                          <Button
+                            title="Edit"
+                            onPress={props.handleSubmit}
+                          />
+                        </View>
+                      </View>
+                    </>
+                  )}
+                </Formik>
+              </View>
+            )}
+
+            {/* pencil and trashcan icons */}
+            {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
+            {!editMode && (
+              <View style={{ flexDirection: "row" }}>
+                {item.posterID == userID && (
+                  <Icon
+                    name="pencil"
+                    color="#517fa4"
+                    size={20}
+                    onPress={() => enterEditMode(item)}
+                  />
+                )}
+
+                <View style={{ flex: 1 }} />
+                {(item.posterID == userID || isCreator) && (
+                  <Icon
+                    name="trash"
+                    color="#517fa4"
+                    size={20}
+                    onPress={() => handleDeletePost(item)}
+                  />
+                )}
+              </View>
+            )}
           </Card>
         )}
         ListHeaderComponent={
@@ -303,7 +433,11 @@ export default function CardDetails({ navigation, route }) {
         }
       />
 
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={100}>
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={100}
+        enabled={!editMode}
+      >
         {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
         <Card>
           <Formik
@@ -328,7 +462,7 @@ export default function CardDetails({ navigation, route }) {
               <>
                 <Input
                   placeholder={"Post in " + eventName}
-                  disabled={!isAttending}
+                  disabled={!isAttending || editMode}
                   multiline={true}
                   value={props.values.postText}
                   onChangeText={props.handleChange("postText")}
@@ -339,7 +473,7 @@ export default function CardDetails({ navigation, route }) {
                 />
                 <Button
                   title="Post"
-                  disabled={!isAttending}
+                  disabled={!isAttending || editMode}
                   onPress={props.handleSubmit}
                 />
               </>
