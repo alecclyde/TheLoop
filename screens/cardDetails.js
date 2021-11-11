@@ -285,6 +285,7 @@ export default function CardDetails({ navigation, route }) {
       <FlatList
         data={state}
         keyExtractor={(item) => item.id}
+        removeClippedSubviews={false}
         style={{ flex: 1 }}
         // the actual posts
         renderItem={({ item }) => (
@@ -433,10 +434,11 @@ export default function CardDetails({ navigation, route }) {
         }
       />
 
-      <KeyboardAvoidingView
-        behavior="position"
+      {!(Platform.OS == "android" && editMode) && (<KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "position" : "height"}
         keyboardVerticalOffset={100}
         enabled={!editMode}
+        
       >
         {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
         <Card>
@@ -480,7 +482,8 @@ export default function CardDetails({ navigation, route }) {
             )}
           </Formik>
         </Card>
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView>)}
+
       {/* </ScrollView> */}
     </View>
   );
