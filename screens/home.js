@@ -57,21 +57,32 @@ export default function Home({ navigation, route }) {
   }, []);
 
   useEffect(() => {
-    setEvents([]);
-    firebase
-    .firestore()
-    .collection('events')
-    .where('attendees', 'array-contains', userID)
-    .orderBy('startDateTime')
-    .get()
 
-    .then((snap) => {
-      snap.forEach((doc) => {
-        setEvents((events) => [...events, {id: doc.id, name: doc.data().name, startDateTime: doc.data().startDateTime, creatorID: doc.data().creatorID}])
-      })
-    })
-    
-  }, [userID, isFocused])
+    if (userID != null) {
+      setEvents([]);
+      firebase
+        .firestore()
+        .collection("events")
+        .where("attendees", "array-contains", userID)
+        .orderBy("startDateTime")
+        .get()
+
+        .then((snap) => {
+          snap.forEach((doc) => {
+            setEvents((events) => [
+              ...events,
+              {
+                id: doc.id,
+                name: doc.data().name,
+                startDateTime: doc.data().startDateTime,
+                creatorID: doc.data().creatorID,
+              },
+            ]);
+          });
+        });
+    }
+  }, [userID, isFocused]);
+
 
   const list = [
     {
