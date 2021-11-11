@@ -33,6 +33,8 @@ import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
 import { useIsFocused } from "@react-navigation/core";
 
+// yuh yuh
+
 //Called by favorite and personal when you click on a card to display the content
 export default function CardDetails({ navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
