@@ -9,6 +9,7 @@ function nextEventId(todos) {
 }
 
 const initialState = {
+    id: {},
     events: []
 };
 
@@ -24,8 +25,9 @@ const eventReducer = (state = initialState, action) => {
                 ...state.events
             };
         case REGISTER_EVENT:
+            const newState = state.events.filter(x => x.id != action.payload.id).map(x => x.id);
             return {
-                
+                events: [...newState, action.payload]
             };
         case UNREGISTER_EVENT:
             return {

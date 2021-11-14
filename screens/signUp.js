@@ -72,7 +72,7 @@ function SignUp(props, { navigation }) {
               values.password,
               values.lastName,
               values.firstName,
-              navigation
+              props.navigation
             );
           }}
         >
@@ -160,7 +160,7 @@ function SignUp(props, { navigation }) {
               borderRadius: 10, // adds the rounded corners
             }}
             title="  Sign In"
-            onPress={() => navigation.navigate("LogIn")}
+            onPress={() => props.navigation.navigate("LogIn")}
           ></Button>
         </View>
       </View>
@@ -192,7 +192,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  registration: (email, password, lastName, navigation) => dispatch(registration(email, password, lastName, navigation))
+  registration: (email, password, lastName, firstName, navigation) => dispatch(registration(email, password, lastName, firstName, navigation))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

@@ -30,16 +30,16 @@ export function addEvent(newEvent) {
     }
 }
 
-export async function getEvents() {
+export function getEvents() {
     return async function getEventsThunk(dispatch, getState){
         const events = await //get events from database
         dispatch({ type: GET_EVENTS, payload: events});
     }
 }
 
-export async function registerEvent(event, user){
+export function registerEvent(event, user){
     return async function registerEventThunk(dispatch, getState){
-        try {
+        // try {
             await firebase.firestore().collection("events").doc(event).update({
               attendees: firebase.firestore.FieldValue.arrayUnion(user)
             })
@@ -48,13 +48,15 @@ export async function registerEvent(event, user){
             await firebase.firestore().collection("users").doc(user).update({
               myEvents: firebase.firestore.FieldValue.arrayUnion(event)
             })
-
-            console.log(getState);
-        
-          } catch (err) {
-            console.log(err);
-            Alert.alert("something went wrong!", err.message);
-          }
-        dispatch({ type: REGISTER_EVENT, payload: {event, user}})
+            console.log(event);
+            console.log(user);
+            console.log(test);
+            updatedEvent = getState.events.find(x => x.id === event);
+            updatedEvent.attendees.push(user);
+            dispatch({ type: REGISTER_EVENT, payload: updatedEvent})
+          // } catch (err) {
+          //   console.log(err);
+          //   Alert.alert("something went wrong!", err.message);
+          // }
     }
 }

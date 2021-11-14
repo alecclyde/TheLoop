@@ -1,7 +1,7 @@
 import { SET_USER } from '../constants';
 
 const initialState = {
-    user: {}
+    user: null
 }
 const userReducer = (state = initialState, action) => {
     switch(action.type) {
@@ -9,6 +9,11 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 user: action.payload
+            };
+        case REMOVE_USER:
+            return{
+                ...state,
+                user: null
             };
     default:
         return state;

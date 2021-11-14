@@ -34,20 +34,20 @@ function Login(props, { navigation }) {
   // const getUser = async () => getUserData(firebase.auth().currentUser.uid).then((user) => setUser(user))
   // console.log(user);
 
-  function AuthStateChangedListener(user) {
-    if (user) {
-      props.navigation.navigate("RootStack");
-    }
-  }
-  useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
+  // function AuthStateChangedListener(user) {
+  //   if (user) {
+  //     props.navigation.navigate("RootStack");
+  //   }
+  // }
+  // useEffect(() => {
+  //   const unsubscriber = firebase
+  //     .auth()
+  //     .onAuthStateChanged(AuthStateChangedListener);
 
-    return () => {
-      unsubscriber;
-    };
-  });
+  //   return () => {
+  //     unsubscriber;
+  //   };
+  // });
 
   // if(userLoaded){
   return (
