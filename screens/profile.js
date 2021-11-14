@@ -73,7 +73,6 @@ function Profile(props, { navigation }) {
                 <ListItem.Content>
                   <ListItem.Title style={styles.listingItem}>
                     {item.name}
-                    {console.log(item)}
                   </ListItem.Title>
                   <ListItem.Subtitle style={styles.descriptionItem}>
                     {item.loop}

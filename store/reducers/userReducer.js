@@ -1,4 +1,5 @@
 import { SET_USER } from '../constants';
+import { REMOVE_USER } from '../constants';
 
 const initialState = {
     user: null

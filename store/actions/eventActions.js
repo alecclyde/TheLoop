@@ -48,9 +48,6 @@ export function registerEvent(event, user){
             await firebase.firestore().collection("users").doc(user).update({
               myEvents: firebase.firestore.FieldValue.arrayUnion(event)
             })
-            console.log(event);
-            console.log(user);
-            console.log(test);
             updatedEvent = getState.events.find(x => x.id === event);
             updatedEvent.attendees.push(user);
             dispatch({ type: REGISTER_EVENT, payload: updatedEvent})

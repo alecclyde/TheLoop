@@ -43,10 +43,10 @@ export function signIn(email, password, navigation){
             .collection("users")
             .doc(currentUser.uid)
             .get();
-            if (user) {
-              dispatch({ type: SET_USER, payload: user})
+
+            //console.log(user.data());
+            dispatch({ type: SET_USER, payload: user.data()})
               navigation.navigate("RootStack");
-            }
         } catch (err) {
             console.log(err);
             Alert.alert("There is something wrong!", "Email or Password are incorrect");

@@ -96,13 +96,14 @@ function Home(props, { navigation, route }) {
       subtitle: "or location",
     },
   ];
+  console.log(props.user);
 
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }}>
         <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
           <Text h2 style={{ textAlign: "center" }}>
-            Welcome Back {"\n"} {firstName || ""}!
+            Welcome Back {"\n"} {firstName || ""}
           </Text>
         </View>
 
@@ -118,7 +119,7 @@ function Home(props, { navigation, route }) {
               <TouchableOpacity
                 key={event.id}
                 onPress={() =>
-                  navigation.navigate("CardDetails", {
+                  props.navigation.navigate("CardDetails", {
                     id: event.id,
                     name: event.name,
                     creatorID: event.creatorID,

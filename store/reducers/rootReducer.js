@@ -4,5 +4,5 @@ import { combineReducers } from 'redux';
 
 export default rootReducer = combineReducers({ 
     events: eventReducer,
-    users: userReducer
+    user: userReducer
 });

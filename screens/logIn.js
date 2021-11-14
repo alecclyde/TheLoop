@@ -29,27 +29,26 @@ const LoginSchema = yup.object({
 });
 
 function Login(props, { navigation }) {
-  // const [user, setUser] = useState("");
-  // const [userLoaded, setUserLoaded] = useState(false);
+  const [user, setUser] = useState("");
+  const [userLoaded, setUserLoaded] = useState(false);
   // const getUser = async () => getUserData(firebase.auth().currentUser.uid).then((user) => setUser(user))
   // console.log(user);
 
-  // function AuthStateChangedListener(user) {
-  //   if (user) {
-  //     props.navigation.navigate("RootStack");
-  //   }
-  // }
-  // useEffect(() => {
-  //   const unsubscriber = firebase
-  //     .auth()
-  //     .onAuthStateChanged(AuthStateChangedListener);
+  function AuthStateChangedListener(user) {
+    if (user) {
+      props.navigation.navigate("RootStack");
+    }
+  }
+  useEffect(() => {
+    const unsubscriber = firebase
+      .auth()
+      .onAuthStateChanged(AuthStateChangedListener);
 
-  //   return () => {
-  //     unsubscriber;
-  //   };
-  // });
+    return () => {
+      unsubscriber;
+    };
+  });
 
-  // if(userLoaded){
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }} />
