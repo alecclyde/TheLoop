@@ -31,9 +31,7 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
-  console.log('in !firebaseapplen - true', firebaseConfig);
 } else {
-  console.log('in !firebaseapplen - false', firebaseConfig);
   firebase.app(); // if already initialized, use that one
 }
 
