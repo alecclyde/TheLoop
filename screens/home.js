@@ -103,7 +103,7 @@ function Home(props, { navigation, route }) {
       <View style={{ flex: 1 }}>
         <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
           <Text h2 style={{ textAlign: "center" }}>
-            Welcome Back {"\n"} {firstName || ""}
+            Welcome Back {"\n"} {props.user.user.firstName || ""}
           </Text>
         </View>
 

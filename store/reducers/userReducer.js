@@ -2,7 +2,10 @@ import { SET_USER } from '../constants';
 import { REMOVE_USER } from '../constants';
 
 const initialState = {
-    user: null
+    user: {
+        firstName: null,
+        lastName: null
+    }
 }
 const userReducer = (state = initialState, action) => {
     switch(action.type) {
