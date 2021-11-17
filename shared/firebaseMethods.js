@@ -46,14 +46,14 @@ import { StackActions } from "@react-navigation/native";
 //   }
 // }
 
-export async function loggingOut(navigation) {
-  try {
-    await firebase.auth().signOut();
-    navigation.navigate("LogIn");
-  } catch (err) {
-    Alert.alert("There is something wrong!", err.message);
-  }
-}
+// export async function loggingOut(navigation) {
+//   try {
+//     await firebase.auth().signOut();
+//     navigation.navigate("LogIn");
+//   } catch (err) {
+//     Alert.alert("There is something wrong!", err.message);
+//   }
+// }
 
 export async function setUserLoops(joinedLoops, navigation) {
   try {
