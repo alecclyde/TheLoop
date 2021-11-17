@@ -1,4 +1,5 @@
 import { SET_USER } from '../constants';
+import { UPDATE_USER } from '../constants';
 
 import * as firebase from "firebase";
 import { Alert } from 'react-native';
@@ -59,6 +60,24 @@ export function signOut(navigation){
         await firebase.auth().signOut();
         navigation.navigate("LogIn");
         dispatch({ type: REMOVE_USER, payload: null})
+    }
+}
+
+export function setUserLoops(joinedLoops, navigation) {
+    return async function signOutThunk(dispatch, getState){
+            const currentUser = firebase.auth().currentUser;
+            const db = firebase.firestore();
+        
+            const user = db.collection("users")
+              .doc(currentUser.uid)
+              .update({ joinedLoops: joinedLoops })
+        
+              .then(() => {
+                navigation.navigate("RootStack");
+              });
+            console.log(user);
+            dispatch({ type: UPDATE_USER, })
+            // probably should navigate to event page after this
     }
 }
 
