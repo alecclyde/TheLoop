@@ -21,7 +21,9 @@ import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
 import moment from "moment";
-import { createEvent } from "../shared/firebaseMethods";
+import { addEvent } from "../store/actions/eventActions";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 // Test to make sure that a selected date and time hasn't happened yet
 function isFutureDate(ref, msg) {
@@ -59,7 +61,7 @@ const CreateEventSchema = yup.object({
   eventAddress: yup.string().required("Please enter an address for your event"),
 });
 
-export default function EventCreation({ navigation }) {
+function EventCreation(props) {
   const date = new Date();
   const [show, setShow] = useState(false);
   const [dateText, setDateText] = useState();
@@ -119,8 +121,9 @@ export default function EventCreation({ navigation }) {
               eventAddress: "",
             }}
             validationSchema={CreateEventSchema}
-            onSubmit={(values, actions) => {
-              var success = createEvent(
+            onSubmit={(values) => {
+
+              var success = props.addEvent(
                 {
                   name: values.eventName,
                   loop: values.eventLoop,
@@ -130,11 +133,14 @@ export default function EventCreation({ navigation }) {
               );
               if (success) {
                 Alert.alert("Success!", "Event successfully created!");
-                actions.resetForm();
+                //console.log(props.events);
+                //actions.resetForm();
               }
             }}
           >
             {(props) => (
+              // What is this magic diamond and why can't it be removed?
+              // The world may never know.
               <>
                 {/* <Text style={globalStyles.titleText}></Text> */}
 
@@ -425,3 +431,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffab8a",
   },
 });
+
+const mapStateToProps = state => ({
+  events: state.events
+});
+
+// const ActionCreators = Object.assign(
+//   {},
+//   addEvent()
+// );
+
+// const mapDispatchToProps = dispatch => ({
+//   actions: bindActionCreators(ActionCreators, dispatch),
+// });
+
+const mapDispatchToProps = (dispatch) => ({
+  addEvent: (event) => dispatch(addEvent(event))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(EventCreation);

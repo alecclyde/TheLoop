@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { loggingOut, getUserData } from "../shared/firebaseMethods";
+import { getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import { Text } from "react-native-elements";
 import { Header } from "react-native-elements";
@@ -14,14 +14,16 @@ import { Divider } from "react-native-elements";
 import * as firebase from "firebase";
 import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
+import { connect } from "react-redux";
+import { signOut } from "../store/actions/userActions";
 
-export default function Home({ navigation, route }) {
+function Home(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [userID, setUserID] = useState("");
 
   const [events, setEvents] = useState([]);
@@ -94,13 +96,14 @@ export default function Home({ navigation, route }) {
       subtitle: "or location",
     },
   ];
+  console.log(props.user);
 
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }}>
         <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
           <Text h2 style={{ textAlign: "center" }}>
-            Welcome Back {"\n"} {firstName || ""}!
+            Welcome Back {"\n"} {props.user.user.firstName || ""}
           </Text>
         </View>
 
@@ -116,7 +119,7 @@ export default function Home({ navigation, route }) {
               <TouchableOpacity
                 key={event.id}
                 onPress={() =>
-                  navigation.navigate("CardDetails", {
+                  props.navigation.navigate("CardDetails", {
                     id: event.id,
                     name: event.name,
                     creatorID: event.creatorID,
@@ -162,7 +165,7 @@ export default function Home({ navigation, route }) {
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <Button
             title="Sign Out"
-            onPress={() => loggingOut(navigation)}
+            onPress={() => props.signOut(props.navigation)}
           ></Button>
         </View>
         <View style={{ flex: 0.3 }}></View>
@@ -172,3 +175,13 @@ export default function Home({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({});
+
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  signOut: (navigation) => dispatch(signOut(navigation))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

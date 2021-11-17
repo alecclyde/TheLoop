@@ -12,8 +12,9 @@ import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
+import { connect } from "react-redux";
 
-export default function Profile({ navigation }) {
+function Profile(props, { navigation }) {
   const [events, setEvents] = useState([]);
   const isFocused = useIsFocused();
 
@@ -47,7 +48,7 @@ export default function Profile({ navigation }) {
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate("CardDetails", {
+                props.navigation.navigate("CardDetails", {
                   id: item.id,
                   loop: item.loop,
                   name: item.name,
@@ -97,3 +98,12 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
+
+const mapStateToProps = state => ({
+  events: state.events
+});
+
+const mapDispatchToProps = (dispatch) => ({
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

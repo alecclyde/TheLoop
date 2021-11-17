@@ -22,7 +22,6 @@ import {
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import {
-  registerEvent,
   unregisterEvent,
   getUserData,
   createPost,
@@ -32,21 +31,26 @@ import {
 import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
 import { useIsFocused } from "@react-navigation/core";
+import { connect } from "react-redux";
+import { registerEvent } from "../store/actions/eventActions";
+import { bindActionCreators } from "redux";
+
 
 // yuh yuh
 
 //Called by favorite and personal when you click on a card to display the content
-export default function CardDetails({ navigation, route }) {
+function CardDetails(props, { navigation, route }) {
+
   const [eventAttendees, setEventAttendees] = useState([]);
   const [eventCreator, setEventCreator] = useState({
-    id: route.params?.creatorID,
+    id: props.route.params?.creatorID,
     name: "",
   });
 
-  const [eventName, setEventName] = useState(route.params?.name);
-  const [eventLoop, setEventLoop] = useState(route.params?.loop || "");
+  const [eventName, setEventName] = useState(props.route.params?.name);
+  const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
   const [eventDateTime, setEventDateTime] = useState(
-    route.params?.startDateTime || ""
+    props.route.params?.startDateTime || ""
   );
   const [eventAddress, setEventAddress] = useState("");
 
@@ -67,7 +71,7 @@ export default function CardDetails({ navigation, route }) {
       });
 
       setUserID(user.uid);
-      if (user.uid == route.params?.creatorID) setIsCreator(true);
+      if (user.uid == props.route.params?.creatorID) setIsCreator(true);
     }
   };
 
@@ -205,7 +209,7 @@ export default function CardDetails({ navigation, route }) {
         },
         {
           text: "Delete",
-          onPress: () => deletePost(route.params?.id, post.id),
+          onPress: () => deletePost(props.route.params?.id, post.id),
         },
       ]
     );
@@ -229,7 +233,7 @@ export default function CardDetails({ navigation, route }) {
     const subscriber = firebase
       .firestore()
       .collection("events")
-      .doc(route.params?.id)
+      .doc(props.route.params?.id)
       .onSnapshot(onResult, onError);
 
     return subscriber;
@@ -240,7 +244,7 @@ export default function CardDetails({ navigation, route }) {
     const subscriber = firebase
       .firestore()
       .collection("posts")
-      .doc(route.params?.id)
+      .doc(props.route.params?.id)
       .collection("posts")
       .orderBy("creationTimestamp")
       .onSnapshot(onPostResult, onPostError);
@@ -273,7 +277,7 @@ export default function CardDetails({ navigation, route }) {
           <View style={globalStyles.rowContainer}>
             <Text style={globalStyles.titleText}>{eventName}</Text>
             <Icon
-              onPress={() => navigation.dispatch(StackActions.pop(1))}
+              onPress={() => props.navigation.dispatch(StackActions.pop(1))}
               name="arrow-left"
               size={25}
               style={{ position: "absolute", left: 1 }}
@@ -331,7 +335,7 @@ export default function CardDetails({ navigation, route }) {
                       Alert.alert("Error", "Cannot create a post with no text");
                     } else {
                       editPost(
-                        route.params?.id,
+                        props.route.params?.id,
                         item.id,
                         values.postText.trim()
                       );
@@ -423,9 +427,9 @@ export default function CardDetails({ navigation, route }) {
                   title={!isAttending ? "Register" : "Unregister"}
                   onPress={() => {
                     if (!isAttending) {
-                      registerEvent(route.params?.id, userID);
+                      props.registerEvent(props.route.params?.id, userID);
                     } else {
-                      unregisterEvent(route.params?.id, userID);
+                      unregisterEvent(props.route.params?.id, userID);
                     }
                   }}
                 />
@@ -455,7 +459,7 @@ export default function CardDetails({ navigation, route }) {
                 var success = createPost(
                   userID,
                   userName,
-                  route.params?.id,
+                  props.route.params?.id,
                   values.postText.trim()
                 );
                 actions.resetForm();
@@ -490,3 +494,13 @@ export default function CardDetails({ navigation, route }) {
     </View>
   );
 }
+
+const mapStateToProps = state => ({
+  events: state.events
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  registerEvent: (event, user) => dispatch(registerEvent(event, user))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(CardDetails);
