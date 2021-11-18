@@ -8,7 +8,6 @@ import {
   SafeAreaView,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { registration } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
@@ -17,6 +16,9 @@ import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 import { Text } from "react-native-elements";
+import { registration } from "../store/actions/userActions";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 //https://github.com/jquense/yup/issues/97#issuecomment-306547261
 //checks to see if both passwords are the same
@@ -50,7 +52,7 @@ const SignUpSchema = yup.object({
   password2: yup.string().equalTo(yup.ref("password")),
 });
 
-export default function SignUp({ navigation }) {
+function SignUp(props, { navigation }) {
   return (
     <SafeAreaView style={globalStyles.container}>
       <View>
@@ -65,12 +67,12 @@ export default function SignUp({ navigation }) {
           validationSchema={SignUpSchema}
           //What happens when you submit the form
           onSubmit={(values) => {
-            registration(
+            props.registration(
               values.email,
               values.password,
               values.lastName,
               values.firstName,
-              navigation
+              props.navigation
             );
           }}
         >
@@ -158,7 +160,7 @@ export default function SignUp({ navigation }) {
               borderRadius: 10, // adds the rounded corners
             }}
             title="  Sign In"
-            onPress={() => navigation.navigate("LogIn")}
+            onPress={() => props.navigation.navigate("LogIn")}
           ></Button>
         </View>
       </View>
@@ -184,3 +186,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+const mapStateToProps = state => ({
+  users: state.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  registration: (email, password, lastName, firstName, navigation) => dispatch(registration(email, password, lastName, firstName, navigation))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

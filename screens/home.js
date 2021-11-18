@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import {
-  BorderlessButton,
-  TouchableOpacity,
-} from "react-native-gesture-handler";
-import { loggingOut, getUserData } from "../shared/firebaseMethods";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import { Text } from "react-native-elements";
 import { Header } from "react-native-elements";
@@ -17,14 +14,16 @@ import { Divider } from "react-native-elements";
 import * as firebase from "firebase";
 import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
+import { connect } from "react-redux";
+import { signOut } from "../store/actions/userActions";
 
-export default function Home({ navigation, route }) {
+function Home(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [userID, setUserID] = useState("");
 
   const [events, setEvents] = useState([]);
@@ -97,18 +96,14 @@ export default function Home({ navigation, route }) {
       subtitle: "or location",
     },
   ];
+  console.log(props.user);
 
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ flex: 1 }}>
         <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
-          <Text
-            adjustsFontSizeToFit
-            numberOfLines={2}
-            h2
-            style={{ textAlign: "center" }}
-          >
-            Welcome Back {"\n"} {firstName || ""}!
+          <Text h2 style={{ textAlign: "center" }}>
+            Welcome Back {"\n"} {props.user.user.firstName || ""}
           </Text>
         </View>
 
@@ -119,16 +114,12 @@ export default function Home({ navigation, route }) {
         </View>
 
         <View>
-          <ScrollView
-            height={380}
-            persistentScrollbar={true}
-            style={styles.scrollView}
-          >
+          <ScrollView style={styles.scrollView}>
             {events.map((event) => (
               <TouchableOpacity
                 key={event.id}
                 onPress={() =>
-                  navigation.navigate("CardDetails", {
+                  props.navigation.navigate("CardDetails", {
                     id: event.id,
                     name: event.name,
                     creatorID: event.creatorID,
@@ -136,17 +127,15 @@ export default function Home({ navigation, route }) {
                   })
                 }
               >
-                <ListItem //.Swipeable
+                <ListItem
                   bottomDivide
-                  //onRightSwipe
-                  //onLeftSwipe
                   bottomDivider={true}
                   Component={TouchableScale}
                   friction={90} //
                   tension={100} // These props are passed to the parent component (here TouchableScale)
                   activeScale={0.95} //
                   linearGradientProps={{
-                    colors: ["#ffa835", "#F44336"],
+                    colors: ["#FF9800", "#F44336"],
                     start: { x: 1, y: 0 },
                     end: { x: 0.2, y: 0 },
                   }}
@@ -169,26 +158,30 @@ export default function Home({ navigation, route }) {
               </TouchableOpacity>
             ))}
           </ScrollView>
-
-          <View style={{ flex: 1 }} />
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              margin: 10,
-            }}
-          >
-            <Button
-              title="Sign Out"
-              onPress={() => loggingOut(navigation)}
-            ></Button>
-          </View>
-          <View style={{ flex: 0.3 }}></View>
         </View>
+
+        <View style={{ flex: 1 }} />
+
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Button
+            title="Sign Out"
+            onPress={() => props.signOut(props.navigation)}
+          ></Button>
+        </View>
+        <View style={{ flex: 0.3 }}></View>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({});
+
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  signOut: (navigation) => dispatch(signOut(navigation))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
