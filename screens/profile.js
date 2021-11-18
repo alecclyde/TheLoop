@@ -27,8 +27,16 @@ export default function Profile({ navigation }) {
       .then((snap) => {
         snap.docs.forEach((doc) => {
           if (doc.exists) {
-            setEvents((events) => [...events, {id: doc.id, loop: doc.data().loop, name: doc.data().name, creatorID: doc.data().creatorID}])
-          };
+            setEvents((events) => [
+              ...events,
+              {
+                id: doc.id,
+                loop: doc.data().loop,
+                name: doc.data().name,
+                creatorID: doc.data().creatorID,
+              },
+            ]);
+          }
         });
       });
   }, [isFocused]);
@@ -42,6 +50,7 @@ export default function Profile({ navigation }) {
         style={{ width: "100%", height: "100%" }}
       >
         <FlatList
+          persistentScrollbar={true}
           data={events}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
