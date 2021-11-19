@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
 import { connect } from "react-redux";
+import { ScrollView } from "react-native-gesture-handler";
 
 function Profile(props, { navigation }) {
   const [events, setEvents] = useState([]);
@@ -45,17 +46,19 @@ function Profile(props, { navigation }) {
     <View>
       <ImageBackground
         source={{
-          uri: "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?size=626&ext=jpg",
+          uri: "https://wallpaperaccess.com/full/1260080.jpg",
         }}
         resizeMode="cover"
         style={{ width: "100%", height: "100%" }}
       >
         <FlatList
+          //contentContainerStyle={{ paddingBottom: }}
           persistentScrollbar={true}
           data={events}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <TouchableOpacity
+              style={styles.clickable}
               onPress={() =>
                 props.navigation.navigate("CardDetails", {
                   id: item.id,
@@ -66,19 +69,29 @@ function Profile(props, { navigation }) {
               }
             >
               <ListItem
+                // width={350}
+                // height={100}
+                pad={16}
                 bottomDivide
-                bottomDivider={true}
+                //bottomDivider={true}
                 Component={TouchableScale}
                 friction={90} //
                 tension={100} // These props are passed to the parent component (here TouchableScale)
                 activeScale={0.95} //
                 linearGradientProps={{
-                  colors: ["#FF9800", "#F44336"],
+                  colors: ["#151515", "#151515"],
                   start: { x: 1, y: 0 },
                   end: { x: 0.2, y: 0 },
                 }}
                 ViewComponent={LinearGradient}
               >
+                <Avatar
+                  size="large"
+                  //change this to either be icon of loop or that groups profile picture
+                  source={{
+                    uri: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pngitem.com%2Fmiddle%2FhhmRJo_profile-icon-png-image-free-download-searchpng-employee%2F&psig=AOvVaw1nu2_4XE-Qi1_c2NTmGh8m&ust=1637426818221000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCMCUhbHwpPQCFQAAAAAdAAAAABAD",
+                  }}
+                />
                 <ListItem.Content>
                   <ListItem.Title style={styles.listingItem}>
                     {item.name}
@@ -106,13 +119,23 @@ const styles = StyleSheet.create({
   descriptionItem: {
     color: "white",
   },
+  clickable: {
+    justifyContent: "center",
+    backgroundColor: "#151515",
+    alignSelf: "center",
+    borderWidth: 0,
+    width: 365,
+    borderRadius: 10,
+    borderColor: "#151515",
+    paddingVertical: 5,
+    margin: 5,
+  },
 });
 
-const mapStateToProps = state => ({
-  events: state.events
+const mapStateToProps = (state) => ({
+  events: state.events,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-})
+const mapDispatchToProps = (dispatch) => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
