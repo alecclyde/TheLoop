@@ -36,6 +36,7 @@ function Profile(props, { navigation }) {
                 loop: doc.data().loop,
                 name: doc.data().name,
                 creatorID: doc.data().creatorID,
+                address: doc.data().address,
               },
             ]);
           }
@@ -65,6 +66,7 @@ function Profile(props, { navigation }) {
                   loop: item.loop,
                   name: item.name,
                   creatorID: item.creatorID,
+                  address: item.address,
                 })
               }
             >
@@ -89,7 +91,7 @@ function Profile(props, { navigation }) {
                   size="large"
                   //change this to either be icon of loop or that groups profile picture
                   source={{
-                    uri: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pngitem.com%2Fmiddle%2FhhmRJo_profile-icon-png-image-free-download-searchpng-employee%2F&psig=AOvVaw1nu2_4XE-Qi1_c2NTmGh8m&ust=1637426818221000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCMCUhbHwpPQCFQAAAAAdAAAAABAD",
+                    uri: "https://64.media.tumblr.com/51ce939c3b7570134515eea1c7eb59ff/tumblr_n2pgeb86ro1tw7pebo1_400.jpg",
                   }}
                   resizeMode="cover"
                   //style={{ width: "100%", height: "100%" }}
@@ -100,6 +102,9 @@ function Profile(props, { navigation }) {
                   </ListItem.Title>
                   <ListItem.Subtitle style={styles.descriptionItem}>
                     {item.loop}
+                  </ListItem.Subtitle>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    {item.address}
                   </ListItem.Subtitle>
                 </ListItem.Content>
                 <ListItem.Chevron color="white" />
