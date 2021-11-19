@@ -79,7 +79,7 @@ function Profile(props, { navigation }) {
                 tension={100} // These props are passed to the parent component (here TouchableScale)
                 activeScale={0.95} //
                 linearGradientProps={{
-                  colors: ["#151515", "#151515"],
+                  colors: ["#232323", "#232323"],
                   start: { x: 1, y: 0 },
                   end: { x: 0.2, y: 0 },
                 }}
@@ -91,6 +91,8 @@ function Profile(props, { navigation }) {
                   source={{
                     uri: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pngitem.com%2Fmiddle%2FhhmRJo_profile-icon-png-image-free-download-searchpng-employee%2F&psig=AOvVaw1nu2_4XE-Qi1_c2NTmGh8m&ust=1637426818221000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCMCUhbHwpPQCFQAAAAAdAAAAABAD",
                   }}
+                  resizeMode="cover"
+                  //style={{ width: "100%", height: "100%" }}
                 />
                 <ListItem.Content>
                   <ListItem.Title style={styles.listingItem}>
@@ -121,12 +123,12 @@ const styles = StyleSheet.create({
   },
   clickable: {
     justifyContent: "center",
-    backgroundColor: "#151515",
+    backgroundColor: "#232323",
     alignSelf: "center",
     borderWidth: 0,
     width: 365,
     borderRadius: 10,
-    borderColor: "#151515",
+    borderColor: "#232323",
     paddingVertical: 5,
     margin: 5,
   },
