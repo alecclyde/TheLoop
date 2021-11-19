@@ -21,9 +21,9 @@ function Home(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [userID, setUserID] = useState("");
 
   const [events, setEvents] = useState([]);
@@ -114,7 +114,11 @@ function Home(props, { navigation, route }) {
         </View>
 
         <View>
-          <ScrollView style={styles.scrollView}>
+          <ScrollView
+            height={380}
+            persistentScrollbar={true}
+            style={styles.scrollView}
+          >
             {events.map((event) => (
               <TouchableOpacity
                 key={event.id}
@@ -176,12 +180,12 @@ function Home(props, { navigation, route }) {
 
 const styles = StyleSheet.create({});
 
-const mapStateToProps = state => ({
-  user: state.user
+const mapStateToProps = (state) => ({
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  signOut: (navigation) => dispatch(signOut(navigation))
-})
+  signOut: (navigation) => dispatch(signOut(navigation)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
