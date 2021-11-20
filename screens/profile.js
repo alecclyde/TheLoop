@@ -80,7 +80,7 @@ function Profile(props, { navigation }) {
                 tension={100} // These props are passed to the parent component (here TouchableScale)
                 activeScale={0.95} //
                 linearGradientProps={{
-                  colors: ["#232323", "#232323"],
+                  colors: ["#2C2C2C", "#2C2C2C"],
                   start: { x: 1, y: 0 },
                   end: { x: 0.2, y: 0 },
                 }}
@@ -129,12 +129,12 @@ const styles = StyleSheet.create({
   },
   clickable: {
     justifyContent: "center",
-    backgroundColor: "#232323",
+    backgroundColor: "#2C2C2C",
     alignSelf: "center",
     borderWidth: 0,
     width: 365,
     borderRadius: 10,
-    borderColor: "#232323",
+    borderColor: "#2C2C2C",
     paddingVertical: 5,
     margin: 5,
   },

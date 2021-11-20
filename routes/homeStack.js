@@ -1,50 +1,51 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import Home from '../screens/home'
-import CardDetails from '../screens/cardDetails';
-import React from 'react';
-import Header from '../shared/header';
-
+import { createStackNavigator } from "@react-navigation/stack";
+import Home from "../screens/home";
+import CardDetails from "../screens/cardDetails";
+import React from "react";
+import Header from "../shared/header";
 
 //Screens in the Home tab
 
 const Stack = createStackNavigator();
 
-export default function HomeStack(){
-  return(
+export default function HomeStack() {
+  return (
     <Stack.Navigator
-      initialRouteName='Home'
+      initialRouteName="Home"
       // screenOptions={{ headerShown: false}}
       screenOptions={{
         cardStyle: {
-          backgroundColor: '#fefefe'
+          backgroundColor: "#fefefe",
         },
-        headerLeft: ()=> null, 
-        headerTitleAlign: 'center',
+        headerLeft: () => null,
+        headerTitleAlign: "center",
+
         headerBackTitle: null,
-        headerTintColor: 'black',
+        headerTintColor: "black",
         headerStyle: {
-          backgroundColor: 'white',
-        }
+          backgroundColor: "#2C2C2C",
+          height: "20",
+        },
       }}
     >
-      <Stack.Screen 
-        name='Home'
+      <Stack.Screen
+        name="Home"
         component={Home}
         options={({ navigation }) => {
           return {
-            headerRight: () => <Header navigation={navigation} />
-          }
+            headerRight: () => <Header navigation={navigation} />,
+          };
         }}
       />
-      <Stack.Screen 
-        name='CardDetails'
+      <Stack.Screen
+        name="CardDetails"
         component={CardDetails}
         options={({ navigation }) => {
           return {
-            headerRight: () => <Header navigation={navigation} />
-          }
+            headerRight: () => <Header navigation={navigation} />,
+          };
         }}
       />
     </Stack.Navigator>
-  )
+  );
 }
