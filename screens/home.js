@@ -95,7 +95,7 @@ function Home(props, { navigation, route }) {
   return (
     <ImageBackground
       source={{
-        uri: "https://wallpaperaccess.com/full/1260080.jpg",
+        uri: "https://cdn.wallpapersafari.com/30/57/G7hlDi.jpg",
       }}
       resizeMode="cover"
       style={{ width: "100%", height: "100%" }}
