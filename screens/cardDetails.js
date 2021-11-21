@@ -155,6 +155,7 @@ export default function CardDetails({ navigation, route }) {
 
   const onPostResult = (querySnapshot) => {
     querySnapshot.docChanges().forEach((change) => {
+      console.log(change.doc.data());
       var data = change.doc.data();
       var payload = {
         id: change.doc.id,
