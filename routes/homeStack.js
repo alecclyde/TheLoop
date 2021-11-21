@@ -24,7 +24,7 @@ export default function HomeStack() {
         headerTintColor: "black",
         headerStyle: {
           backgroundColor: "#2C2C2C",
-          height: "20",
+          height: 55,
         },
       }}
     >

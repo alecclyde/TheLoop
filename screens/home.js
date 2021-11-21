@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  ImageBackground,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
@@ -16,6 +22,7 @@ import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
+import { color } from "react-native-elements/dist/helpers";
 
 function Home(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
@@ -73,112 +80,142 @@ function Home(props, { navigation, route }) {
               {
                 id: doc.id,
                 name: doc.data().name,
+                loop: doc.data().loop,
                 startDateTime: doc.data().startDateTime,
                 creatorID: doc.data().creatorID,
+                address: doc.data().address,
               },
             ]);
           });
         });
     }
   }, [userID, isFocused]);
-
-  const list = [
-    {
-      name: "Event 1",
-      subtitle: "Short Descrp",
-    },
-    {
-      name: "Event 2",
-      subtitle: "Short Descrp",
-    },
-    {
-      name: "Event3",
-      subtitle: "or location",
-    },
-  ];
   console.log(props.user);
 
   return (
-    <SafeAreaView style={globalStyles.container}>
-      <View style={{ flex: 1 }}>
-        <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
-          <Text h2 style={{ textAlign: "center" }}>
-            Welcome Back {"\n"} {props.user.user.firstName || ""}
-          </Text>
-        </View>
+    <ImageBackground
+      source={{
+        uri: "https://wallpaperaccess.com/full/1260080.jpg",
+      }}
+      resizeMode="cover"
+      style={{ width: "100%", height: "100%" }}
+    >
+      <SafeAreaView style={globalStyles.container}>
+        <View style={{ flex: 1 }}>
+          <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
+            <Text h2 style={{ textAlign: "center", color: "white" }}>
+              Welcome Back {"\n"} {props.user.user.firstName || ""}
+            </Text>
+          </View>
 
-        <View style={{ backgroundColor: "black" }}>
-          <Text h3 style={{ textAlign: "center", color: "orange" }}>
-            Your Upcoming Events...
-          </Text>
-        </View>
+          <View style={{ backgroundColor: "black" }}>
+            <Text h3 style={{ textAlign: "center", color: "#ffa835" }}>
+              Your Upcoming Events...
+            </Text>
+          </View>
 
-        <View>
-          <ScrollView
-            height={380}
-            persistentScrollbar={true}
-            style={styles.scrollView}
-          >
-            {events.map((event) => (
-              <TouchableOpacity
-                key={event.id}
-                onPress={() =>
-                  props.navigation.navigate("CardDetails", {
-                    id: event.id,
-                    name: event.name,
-                    creatorID: event.creatorID,
-                    startDateTime: event.startDateTime,
-                  })
-                }
-              >
-                <ListItem
-                  bottomDivide
-                  bottomDivider={true}
-                  Component={TouchableScale}
-                  friction={90} //
-                  tension={100} // These props are passed to the parent component (here TouchableScale)
-                  activeScale={0.95} //
-                  linearGradientProps={{
-                    colors: ["#FF9800", "#F44336"],
-                    start: { x: 1, y: 0 },
-                    end: { x: 0.2, y: 0 },
-                  }}
-                  ViewComponent={LinearGradient}
+          <View>
+            <ScrollView
+              height={390}
+              persistentScrollbar={true}
+              style={styles.scrollView}
+            >
+              {events.map((event) => (
+                <TouchableOpacity
+                  style={styles.clickable}
+                  key={event.id}
+                  onPress={() =>
+                    props.navigation.navigate("CardDetails", {
+                      id: event.id,
+                      name: event.name,
+                      loop: event.loop,
+                      creatorID: event.creatorID,
+                      startDateTime: event.startDateTime,
+                      address: event.address,
+                    })
+                  }
                 >
-                  <ListItem.Content>
-                    <ListItem.Title
-                      style={{ color: "white", fontWeight: "bold" }}
-                    >
-                      {event.name}
-                    </ListItem.Title>
-                    <ListItem.Subtitle style={{ color: "white" }}>
-                      {moment
-                        .unix(event.startDateTime)
-                        .format("MMMM Do, hh:mm A")}
-                    </ListItem.Subtitle>
-                  </ListItem.Content>
-                  <ListItem.Chevron color="white" />
-                </ListItem>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+                  <ListItem
+                    pad={16}
+                    bottomDivide={true}
+                    Component={TouchableScale}
+                    button
+                    friction={90}
+                    tension={100} // These props are passed to the parent component (here TouchableScale)
+                    activeScale={0.95} //
+                    linearGradientProps={{
+                      colors: ["#2C2C2C", "#2C2C2C"],
+                      start: { x: 1, y: 0 },
+                      end: { x: 0.2, y: 0 },
+                    }}
+                    ViewComponent={LinearGradient}
+                  >
+                    <Avatar
+                      size="large"
+                      //change this to either be icon of loop or that groups profile picture
+                      source={{
+                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                      }}
+                      resizeMode="cover"
+                      //style={{ width: "100%", height: "100%" }}
+                    />
+                    <ListItem.Content>
+                      <ListItem.Title style={styles.listingItem}>
+                        {event.name}
+                      </ListItem.Title>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        {event.loop}
+                      </ListItem.Subtitle>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        <Icon name="map-marker" size={16} color="white" />
+                        {"  "}
+                        {event.address}
+                      </ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron color="gray" />
+                  </ListItem>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
 
-        <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }} />
 
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Button
-            title="Sign Out"
-            onPress={() => props.signOut(props.navigation)}
-          ></Button>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <Button
+              title="Sign Out"
+              onPress={() => props.signOut(props.navigation)}
+            ></Button>
+          </View>
+          <View style={{ flex: 0.3 }}></View>
         </View>
-        <View style={{ flex: 0.3 }}></View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  listingItem: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  descriptionItem: {
+    color: "white",
+  },
+  clickable: {
+    justifyContent: "center",
+    backgroundColor: "#2C2C2C",
+    alignSelf: "center",
+    borderWidth: 0,
+    width: 365,
+    borderRadius: 10,
+    borderColor: "#2C2C2C",
+    paddingVertical: 5,
+
+    //margin: 5,
+  },
+});
 
 const mapStateToProps = (state) => ({
   user: state.user,
