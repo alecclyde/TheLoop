@@ -58,6 +58,18 @@ export default function CardDetails({ navigation, route }) {
   const [editMode, setEditMode] = useState(false);
   const [postEditID, setPostEditID] = useState();
 
+  const testObject = {
+    id1: [
+      { id: "1", message: "hello" },
+      { id: "2", message: "hi" },
+    ],
+
+    id2: [
+      { id: "1", message: "hey there" },
+      { id: "2", message: "aloha" },
+      { id: "3", message: "hola" },
+    ],
+  };
   var eventAtens = [];
 
   const AuthStateChangedListener = (user) => {
@@ -120,14 +132,14 @@ export default function CardDetails({ navigation, route }) {
     });
   };
 
-  const reducer = (state, action) => {
+  const postReducer = (state, action) => {
     let newState = state;
     // console.log(action.type)
 
     switch (action.type) {
-      case "add":
+      case "added":
         return [action.payload, ...state]; // I chose to do payload, then everything else so that older posts are towards the bottom
-      case "update":
+      case "modified":
         let oldPost = state.length; // adds the updated post to the end, just in case (although it'll still cause errors)
         state.forEach((post) => {
           // gets the index of the updated post so that it can be updated in-place
@@ -140,14 +152,41 @@ export default function CardDetails({ navigation, route }) {
         newState.splice(oldPost, 0, action.payload); // like it works but there should be a way to use splice OR filter and not need both
 
         return newState;
-      case "remove":
+      case "removed":
         return state.filter((post) => post.id !== action.payload.id);
       case "clear":
         return [];
     }
   };
 
-  const [state, dispatch] = useReducer(reducer, []);
+  const [postState, postDispatch] = useReducer(postReducer, []);
+
+  const replyReducer = (state, action) => {
+    let newstate = state;
+
+    switch (action.type) {
+      case "added":
+        // create new array if one doesn't exist for posts, otherwise add to it
+        if (newState[action.replyPostID] == undefined) {
+          newState[action.replyPostID] = [action.payload];
+        } else {
+          newState[action.relpyPostID] = [ action.payload, ...newState[action.relpyPostID] ]
+        }
+        return;
+      case "modified":
+        // do more stuff
+        return;
+
+      case "removed":
+        // do even more stuff
+        return;
+
+      case "clear":
+        return [];
+    }
+  };
+
+  const [replyState, replyDispatch] = useReducer(replyReducer, []);
 
   const onError = (error) => {
     console.log(error);
@@ -155,7 +194,6 @@ export default function CardDetails({ navigation, route }) {
 
   const onPostResult = (querySnapshot) => {
     querySnapshot.docChanges().forEach((change) => {
-      console.log(change.doc.data());
       var data = change.doc.data();
       var payload = {
         id: change.doc.id,
@@ -164,15 +202,18 @@ export default function CardDetails({ navigation, route }) {
         posterName: data.posterName,
         creationTimestamp: data.creationTimestamp,
         edited: data.edited,
+        // replyID: data.replyID,
       };
-      if (change.type === "added") {
-        dispatch({ type: "add", payload: payload });
-      }
-      if (change.type === "modified") {
-        dispatch({ type: "update", payload: payload });
-      }
-      if (change.type === "removed") {
-        dispatch({ type: "remove", payload: payload });
+
+      // change.type is either added, modified, or removed
+      if (data.replyID == 0 || data.replyID == undefined) {
+        postDispatch({ type: change.type, payload: payload });
+      } else {
+        replyDispatch({
+          type: change.type,
+          payload: payload,
+          replyPostID: data.replyPostID,
+        });
       }
     });
   };
@@ -246,7 +287,7 @@ export default function CardDetails({ navigation, route }) {
       .orderBy("creationTimestamp")
       .onSnapshot(onPostResult, onPostError);
 
-    dispatch({ type: "clear" }); // this could maybe be removed later?
+    postDispatch({ type: "clear" }); // this could maybe be removed later?
 
     return subscriber;
   }, []);
@@ -259,6 +300,22 @@ export default function CardDetails({ navigation, route }) {
       setIsAttending(false);
     }
   }, [eventAttendees, userID]);
+
+  // // DELETE LATER: for testing complex objects
+  // useEffect(() => {
+
+  //   let index = "id1"
+  //   let newIndex = "id3"
+  //   let newState = testObject;
+  //   // this works
+  //   // newState[index] = [...newState[index], { id: "3", message: "bonjour"}]
+  //   console.log(newState[newIndex] == undefined)
+  //   // newState[newIndex] = [ { id: "1", message: "bonjour"}]
+  //   console.log("================");
+  //   console.log(testObject);
+  //   console.log("----------------");
+  //   // console.log(newState);
+  // }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -286,7 +343,7 @@ export default function CardDetails({ navigation, route }) {
 
       {/* Post area */}
       <FlatList
-        data={state}
+        data={postState}
         keyExtractor={(item) => item.id}
         removeClippedSubviews={false}
         style={{ flex: 1 }}
@@ -361,10 +418,7 @@ export default function CardDetails({ navigation, route }) {
                           />
                         </View>
                         <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                          <Button
-                            title="Edit"
-                            onPress={props.handleSubmit}
-                          />
+                          <Button title="Edit" onPress={props.handleSubmit} />
                         </View>
                       </View>
                     </>
@@ -377,21 +431,25 @@ export default function CardDetails({ navigation, route }) {
             {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
             {!editMode && (
               <View style={{ flexDirection: "row" }}>
+                <Icon name="comment" color="#517fa4" size={22} />
+
+                <View style={{ flex: 1 }} />
+
                 {item.posterID == userID && (
                   <Icon
                     name="pencil"
                     color="#517fa4"
-                    size={20}
+                    size={22}
+                    style={{ paddingHorizontal: 5 }}
                     onPress={() => enterEditMode(item)}
                   />
                 )}
 
-                <View style={{ flex: 1 }} />
                 {(item.posterID == userID || isCreator) && (
                   <Icon
                     name="trash"
                     color="#517fa4"
-                    size={20}
+                    size={22}
                     onPress={() => handleDeletePost(item)}
                   />
                 )}
@@ -437,55 +495,56 @@ export default function CardDetails({ navigation, route }) {
         }
       />
 
-      {!(Platform.OS == "android" && editMode) && (<KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "position" : "height"}
-        keyboardVerticalOffset={100}
-        enabled={!editMode}
-        
-      >
-        {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
-        <Card>
-          <Formik
-            initialValues={{
-              postText: "",
-            }}
-            onSubmit={(values, actions) => {
-              if (values.postText === "") {
-                Alert.alert("Error", "Cannot create a post with no text");
-              } else {
-                var success = createPost(
-                  userID,
-                  userName,
-                  route.params?.id,
-                  values.postText.trim()
-                );
-                actions.resetForm();
-              }
-            }}
-          >
-            {(props) => (
-              <>
-                <Input
-                  placeholder={"Post in " + eventName}
-                  disabled={!isAttending || editMode}
-                  multiline={true}
-                  value={props.values.postText}
-                  onChangeText={props.handleChange("postText")}
-                  onBlur={() => {
-                    props.handleBlur("postText");
-                  }}
-                  style={{ maxHeight: 100 }}
-                />
-                <Button
-                  title="Post"
-                  disabled={!isAttending || editMode}
-                  onPress={props.handleSubmit}
-                />
-              </>
-            )}
-          </Formik>
-        </Card>
-      </KeyboardAvoidingView>)}
+      {!(Platform.OS == "android" && editMode) && (
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "position" : "height"}
+          keyboardVerticalOffset={100}
+          enabled={!editMode}
+        >
+          {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
+          <Card>
+            <Formik
+              initialValues={{
+                postText: "",
+              }}
+              onSubmit={(values, actions) => {
+                if (values.postText === "") {
+                  Alert.alert("Error", "Cannot create a post with no text");
+                } else {
+                  var success = createPost(
+                    userID,
+                    userName,
+                    route.params?.id,
+                    values.postText.trim()
+                  );
+                  actions.resetForm();
+                }
+              }}
+            >
+              {(props) => (
+                <>
+                  <Input
+                    placeholder={"Post in " + eventName}
+                    disabled={!isAttending || editMode}
+                    multiline={true}
+                    value={props.values.postText}
+                    onChangeText={props.handleChange("postText")}
+                    onBlur={() => {
+                      props.handleBlur("postText");
+                    }}
+                    style={{ maxHeight: 100 }}
+                  />
+                  <Button
+                    title="Post"
+                    disabled={!isAttending || editMode}
+                    onPress={props.handleSubmit}
+                  />
+                </>
+              )}
+            </Formik>
+          </Card>
+        </KeyboardAvoidingView>
+      )}
 
       {/* </ScrollView> */}
     </View>

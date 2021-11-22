@@ -217,12 +217,15 @@ export async function unregisterEvent(event, user) {
   }
 }
 
-export async function createPost(userID, userName, eventID, postText) {
+
+export async function createPost(userID, userName, eventID, postText, replyID) {
+  
   try {
     await firebase.firestore().collection("posts").doc(eventID).collection("posts").add({
       message: postText,
       posterID: userID,
       posterName: userName,
+      replyPostID: replyID == undefined ? 0 : replyID,
       creationTimestamp: firebase.firestore.Timestamp.now(),
       updatedTimestamp: firebase.firestore.Timestamp.now(),
       edited: false
