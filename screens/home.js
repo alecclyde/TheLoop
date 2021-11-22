@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   ScrollView,
   ImageBackground,
+  StatusBar,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUserData } from "../shared/firebaseMethods";
@@ -101,8 +102,9 @@ function Home(props, { navigation, route }) {
       style={{ width: "100%", height: "100%" }}
     >
       <SafeAreaView style={globalStyles.container}>
+        <StatusBar barStyle={"white"} backgroundColor={"#2C2C2C"} />
         <View style={{ flex: 1 }}>
-          <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
+          <View style={{ borderBottomColor: "black", borderBottomWidth: 0 }}>
             <Text h2 style={{ textAlign: "center", color: "white" }}>
               Welcome Back {"\n"} {props.user.user.firstName || ""}
             </Text>
