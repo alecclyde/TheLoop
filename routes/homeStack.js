@@ -3,6 +3,7 @@ import Home from "../screens/home";
 import CardDetails from "../screens/cardDetails";
 import React from "react";
 import Header from "../shared/header";
+import { withTheme } from "react-native-elements";
 
 //Screens in the Home tab
 
@@ -22,6 +23,9 @@ export default function HomeStack() {
 
         headerBackTitle: null,
         headerTintColor: "black",
+        headerTitleStyle: {
+          color: "white",
+        },
         headerStyle: {
           backgroundColor: "#2C2C2C",
           height: 100,
