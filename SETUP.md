@@ -27,6 +27,8 @@ https://youtu.be/pflXnUNMsNk?list=PL4cUxeGkcC9ixPU-QkScoRBVxtPPzVjrQ&t=502
 ```
 npm install -g firebase-tools
 ```
+## .env file
+Contact one of our developers for the .env file. Put that file in the root directory of this project.
 
 ## Run the app
 Start expo to view the app by running this command in the terminal.
