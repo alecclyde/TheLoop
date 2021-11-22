@@ -95,7 +95,7 @@ function Home(props, { navigation, route }) {
   return (
     <ImageBackground
       source={{
-        uri: "https://cdn.wallpapersafari.com/30/57/G7hlDi.jpg",
+        uri: "https://c4.wallpaperflare.com/wallpaper/347/436/990/purple-red-black-form-wallpaper-preview.jpg",
       }}
       resizeMode="cover"
       style={{ width: "100%", height: "100%" }}
