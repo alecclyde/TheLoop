@@ -1,3 +1,19 @@
+/**
+ * HOW TO REPLICATE BUGGED REPLY BEHAVIOR
+ * ======================================
+ * 1. Start simulating the app (npm start or equivalent)
+ * 
+ * 2. Log into the app as normal, navigate to the event called "Yeah"
+ *    - There should be two posts in the event right now. One has 
+ *      a single reply and the other has two
+ * 
+ * 3. Have this file (cardDetails.js) open in VSCode and hit Ctrl+S to save
+ * 
+ * 4. The reply text should appear beneath the two posts
+ *    - If you close the 'Yeah' event screen and navigate back to it, you should
+ *      see the reply texts appear for a split second.
+ */
+
 import React, { useState, useEffect, useReducer } from "react";
 import {
   View,
