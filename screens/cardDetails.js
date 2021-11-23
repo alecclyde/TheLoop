@@ -162,31 +162,51 @@ export default function CardDetails({ navigation, route }) {
   const [postState, postDispatch] = useReducer(postReducer, []);
 
   const replyReducer = (state, action) => {
-    let newstate = state;
+    let newState = state;
+    var postID = action.replyPostID;
+
+    // prevents duplicate entries
+    if (
+      newState[postID] != undefined &&
+      newState[postID].includes(action.payload)
+    ) {
+      return newState;
+    }
+
+    console.log(action.type)
 
     switch (action.type) {
       case "added":
         // create new array if one doesn't exist for posts, otherwise add to it
-        if (newState[action.replyPostID] == undefined) {
-          newState[action.replyPostID] = [action.payload];
+        if (newState[postID] == undefined) {
+          newState[postID] = [action.payload];
         } else {
-          newState[action.relpyPostID] = [ action.payload, ...newState[action.relpyPostID] ]
+          newState[postID] = [action.payload, ...newState[postID]];
         }
-        return;
+
+        // return state, {id: action.payload.id
+        console.log("----NEW STATE:")
+        console.log(newState)
+        return newState;
+
+
       case "modified":
         // do more stuff
-        return;
+        return newState;
 
       case "removed":
         // do even more stuff
-        return;
+        return newState;
 
       case "clear":
-        return [];
+        return {};
+
+      default:
+        return newState;
     }
   };
 
-  const [replyState, replyDispatch] = useReducer(replyReducer, []);
+  const [replyState, replyDispatch] = useReducer(replyReducer, {});
 
   const onError = (error) => {
     console.log(error);
@@ -202,11 +222,10 @@ export default function CardDetails({ navigation, route }) {
         posterName: data.posterName,
         creationTimestamp: data.creationTimestamp,
         edited: data.edited,
-        // replyID: data.replyID,
       };
 
       // change.type is either added, modified, or removed
-      if (data.replyID == 0 || data.replyID == undefined) {
+      if (data.replyPostID == "0" || data.replyPostID == undefined) {
         postDispatch({ type: change.type, payload: payload });
       } else {
         replyDispatch({
@@ -253,6 +272,12 @@ export default function CardDetails({ navigation, route }) {
     );
   };
 
+  const renderReply = ({ item }) => (
+    <View>
+      <Text>{item.message}</Text>
+    </View>
+  );
+
   // This may be a better method for reading users from the database, if I can get it to work
 
   // firebase.firestore().collection("users").where(firebase.firestore.FieldPath.documentId(), "in", eventAttendees).get()
@@ -279,6 +304,9 @@ export default function CardDetails({ navigation, route }) {
 
   // creates a listener for posts
   useEffect(() => {
+    postDispatch({ type: "clear" }); // this could maybe be removed later?
+    replyDispatch({ type: "clear" });
+
     const subscriber = firebase
       .firestore()
       .collection("posts")
@@ -286,8 +314,6 @@ export default function CardDetails({ navigation, route }) {
       .collection("posts")
       .orderBy("creationTimestamp")
       .onSnapshot(onPostResult, onPostError);
-
-    postDispatch({ type: "clear" }); // this could maybe be removed later?
 
     return subscriber;
   }, []);
@@ -300,22 +326,6 @@ export default function CardDetails({ navigation, route }) {
       setIsAttending(false);
     }
   }, [eventAttendees, userID]);
-
-  // // DELETE LATER: for testing complex objects
-  // useEffect(() => {
-
-  //   let index = "id1"
-  //   let newIndex = "id3"
-  //   let newState = testObject;
-  //   // this works
-  //   // newState[index] = [...newState[index], { id: "3", message: "bonjour"}]
-  //   console.log(newState[newIndex] == undefined)
-  //   // newState[newIndex] = [ { id: "1", message: "bonjour"}]
-  //   console.log("================");
-  //   console.log(testObject);
-  //   console.log("----------------");
-  //   // console.log(newState);
-  // }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -344,33 +354,33 @@ export default function CardDetails({ navigation, route }) {
       {/* Post area */}
       <FlatList
         data={postState}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(postItem) => postItem.id}
         removeClippedSubviews={false}
         style={{ flex: 1 }}
         // the actual posts
-        renderItem={({ item }) => (
+        renderItem={({ item: postItem }) => (
           <Card>
             {/* poster name and post creation time */}
             <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontWeight: "bold" }}>{item.posterName}</Text>
+              <Text style={{ fontWeight: "bold" }}>{postItem.posterName}</Text>
               <View style={{ flex: 1 }} />
               <Text style={{ color: "gray" }}>
                 {moment
-                  .unix(item.creationTimestamp.seconds)
+                  .unix(postItem.creationTimestamp.seconds)
                   .format("MMM Do, hh:mm A")}
               </Text>
             </View>
 
-            {postEditID != item.id && (
+            {postEditID != postItem.id && (
               <View>
                 {/* post message */}
-                <Text>{item.message}</Text>
+                <Text>{postItem.message}</Text>
 
                 {/* 'edited' tag */}
                 {/* literally the only reason I put this <Text> in a view was because it */}
                 {/* broke my code coloration in VSCode and it drove me crazy. -Robbie */}
 
-                {item.edited && (
+                {postItem.edited && (
                   <View>
                     <Text style={{ color: "gray" }}>(edited)</Text>
                   </View>
@@ -378,11 +388,11 @@ export default function CardDetails({ navigation, route }) {
               </View>
             )}
 
-            {postEditID == item.id && (
+            {postEditID == postItem.id && (
               <View>
                 <Formik
                   initialValues={{
-                    postText: item.message,
+                    postText: postItem.message,
                   }}
                   onSubmit={(values, actions) => {
                     if (values.postText === "") {
@@ -390,7 +400,7 @@ export default function CardDetails({ navigation, route }) {
                     } else {
                       editPost(
                         route.params?.id,
-                        item.id,
+                        postItem.id,
                         values.postText.trim()
                       );
                       exitEditMode();
@@ -431,30 +441,52 @@ export default function CardDetails({ navigation, route }) {
             {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
             {!editMode && (
               <View style={{ flexDirection: "row" }}>
-                <Icon name="comment" color="#517fa4" size={22} />
+                <Icon
+                  name="comment"
+                  color="#517fa4"
+                  size={22}
+                />
 
                 <View style={{ flex: 1 }} />
 
-                {item.posterID == userID && (
+                {postItem.posterID == userID && (
                   <Icon
                     name="pencil"
                     color="#517fa4"
                     size={22}
                     style={{ paddingHorizontal: 5 }}
-                    onPress={() => enterEditMode(item)}
+                    onPress={() => enterEditMode(postItem)}
                   />
                 )}
 
-                {(item.posterID == userID || isCreator) && (
+                {(postItem.posterID == userID || isCreator) && (
                   <Icon
                     name="trash"
                     color="#517fa4"
                     size={22}
-                    onPress={() => handleDeletePost(item)}
+                    onPress={() => handleDeletePost(postItem)}
                   />
                 )}
               </View>
             )}
+
+            {/* replies go here */}
+
+            <FlatList
+              data={replyState[postItem.id]}
+              keyExtractor={(replyItem, index) => replyItem.id}
+              style={{ flex: 1 }}
+              removeClippedSubviews={false}
+
+              // the replies
+
+              renderItem={({item: replyItem}) => (
+                <View>
+                  <Text>{replyItem.message}</Text>
+                </View>
+              )}
+              extraData={replyState}
+            />
           </Card>
         )}
         ListHeaderComponent={

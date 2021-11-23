@@ -225,7 +225,7 @@ export async function createPost(userID, userName, eventID, postText, replyID) {
       message: postText,
       posterID: userID,
       posterName: userName,
-      replyPostID: replyID == undefined ? 0 : replyID,
+      replyPostID: replyID == undefined ? "0" : replyID,
       creationTimestamp: firebase.firestore.Timestamp.now(),
       updatedTimestamp: firebase.firestore.Timestamp.now(),
       edited: false
