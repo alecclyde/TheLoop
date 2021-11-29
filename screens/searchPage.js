@@ -42,7 +42,7 @@ function Search({ navigation }) {
   const [address, setAddress] = useState(null);
   // const [getLocation, setGetLocation] = useState(false);
 
-  let apiKey = "AIzaSyDA4TOzdobj6rCrH_A51mi26nZ-Las3VkM";
+  let apiKey = "";
 
   //getLocation();
 
