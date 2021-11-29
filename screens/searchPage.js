@@ -37,12 +37,46 @@ function Search({ navigation }) {
   const longitude = -77.041924;
   const position = 0;
 
-  if (Location.hasServicesEnabledAsync() == true) {
-    Location.getLastKnownPositionAsync(position);
-    longitude = longitude + 50;
-  } else {
-    Location.requestForegroundPermissionsAsync();
-  }
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [address, setAddress] = useState(null);
+  // const [getLocation, setGetLocation] = useState(false);
+
+  let apiKey = "AIzaSyDA4TOzdobj6rCrH_A51mi26nZ-Las3VkM";
+
+  //getLocation();
+
+  const getLocation = () => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+      }
+
+      Location.setGoogleApiKey(apiKey);
+
+      console.log(status);
+
+      let { coords } = await Location.getCurrentPositionAsync();
+
+      setLocation(coords);
+
+      console.log(coords);
+
+      if (coords) {
+        let { longitude, latitude } = coords;
+
+        let regionName = await Location.reverseGeocodeAsync({
+          longitude,
+          latitude,
+        });
+        setAddress(regionName[0]);
+        console.log(regionName, "nothing");
+      }
+
+      // console.log();
+    })();
+  };
 
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
@@ -140,7 +174,7 @@ function Search({ navigation }) {
               longitudeDelta: 0.05,
             }}
             customMapStyle={mapStyle}
-            onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
+            //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >
             <Marker
               draggable
