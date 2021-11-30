@@ -64,21 +64,20 @@ export default function Login({ navigation }) {
             <>
               <View style={{ flexDirection: "row", justifyContent: "center" }}>
                 <Image
-                  source={require("../assets/The-Loop-4.png")}
+                  source={require("../assets/The-Loop-8.png")}
                   style={{
-                    width: 150,
-                    height: 150,
+                    width: 380,
+                    height: 170,
                     marginRight: 10,
                     marginBottom: 15,
-                    marginTop: 12,
+                    marginTop: 10,
                   }}
                 />
               </View>
-              <ScrollView onBlur={Keyboard.dismiss}>
                 {/* Email */}
                 <Input
                   placeholder="Enter your email"
-                  errorStyle={{ color: "red" }}
+                  errorStyle={{ color: "orange" }}
                   errorMessage={props.touched.email && props.errors.email}
                   value={props.values.email}
                   onChangeText={props.handleChange("email")}
@@ -89,7 +88,7 @@ export default function Login({ navigation }) {
                 {/* Password */}
                 <Input
                   placeholder="Enter your password"
-                  errorStyle={{ color: "red" }}
+                  errorStyle={{ color: "orange" }}
                   errorMessage={props.touched.password && props.errors.password}
                   value={props.values.password}
                   onChangeText={props.handleChange("password")}
@@ -108,12 +107,11 @@ export default function Login({ navigation }) {
                   }}
                 />
 
-              </ScrollView>
             </>
           )}
         </Formik>
         <View style={{ alignItems: "center" }}>
-          <Text h5 style={{ textAlign: "center", padding: 20 }}>
+          <Text h5 style={{ textAlign: "center", padding: 20, marginTop: 70, }}>
             Don't have an account?
           </Text>
         </View>
@@ -145,6 +143,8 @@ export default function Login({ navigation }) {
       <View style={{ flex: 1 }} />
     </SafeAreaView>
   );
+
+
   // }else{
   //   return(
   //     <AppLoading
@@ -154,6 +154,7 @@ export default function Login({ navigation }) {
   //   />
   //   )
   // }
+
 }
 
 // Thanks Caden for giving me a framework for the login screen!
