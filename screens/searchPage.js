@@ -1,8 +1,8 @@
 // import { StyleSheet, View, Text, Dimensions, Searchbar } from "react-native";
 // import MapView, { Marker } from "react-native-maps";
+// import { FontAwesome } from "@expo/vector-icons";
 // import * as Location from "expo-location";
 
-import { FontAwesome } from "@expo/vector-icons";
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -16,9 +16,8 @@ import MapView, { Marker } from "react-native-maps";
 import Geolocation, {
   getCurrentPosition,
 } from "react-native-geolocation-service";
-import Icon from "react-native-vector-icons/FontAwesome";
 import * as Location from "expo-location";
-import { SearchBar, withTheme } from "react-native-elements";
+import { SearchBar } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
 import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
@@ -26,18 +25,58 @@ import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
-import { TouchableHighlight } from "react-native-gesture-handler";
 
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
 
-function Search(props, { navigation }) {
+function Search({ navigation }) {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
   const latitude = 41.241489;
   const longitude = -77.041924;
   const position = 0;
+
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [address, setAddress] = useState(null);
+  // const [getLocation, setGetLocation] = useState(false);
+
+  let apiKey = "";
+
+  //getLocation();
+
+  const getLocation = () => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+      }
+
+      Location.setGoogleApiKey(apiKey);
+
+      console.log(status);
+
+      let { coords } = await Location.getCurrentPositionAsync();
+
+      setLocation(coords);
+
+      console.log(coords);
+
+      if (coords) {
+        let { longitude, latitude } = coords;
+
+        let regionName = await Location.reverseGeocodeAsync({
+          longitude,
+          latitude,
+        });
+        setAddress(regionName[0]);
+        console.log(regionName, "nothing");
+      }
+
+      // console.log();
+    })();
+  };
 
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
@@ -56,7 +95,6 @@ function Search(props, { navigation }) {
                 loop: doc.data().loop,
                 name: doc.data().name,
                 creatorID: doc.data().creatorID,
-                address: doc.data().address,
               },
             ]);
           }
@@ -82,49 +120,35 @@ function Search(props, { navigation }) {
             value={search.text}
           />
         </View>
-        <View style={[styles.container, { flex: 2 }]}>
+        <View style={[styles.paragraph, { flex: 2 }]}>
           <FlatList
-            //contentContainerStyle={{ paddingBottom: }}
-            persistentScrollbar={true}
             data={events}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
-                style={styles.clickable}
                 onPress={() =>
-                  props.navigation.navigate("CardDetails", {
+                  navigation.navigate("CardDetails", {
                     id: item.id,
                     loop: item.loop,
                     name: item.name,
                     creatorID: item.creatorID,
-                    address: item.address,
                   })
                 }
               >
                 <ListItem
-                  pad={16}
                   bottomDivide
+                  bottomDivider={true}
                   Component={TouchableScale}
-                  button
                   friction={90}
-                  tension={100} // These props are passed to the parent component (here TouchableScale)
-                  activeScale={0.95} //
+                  tension={100}
+                  activeScale={0.95}
                   linearGradientProps={{
-                    colors: ["#2C2C2C", "#2C2C2C"],
-                    start: { x: 1, y: 0 },
+                    colors: ["#FF9800", "#F44336"],
+                    start: { x: 1, y: 4 },
                     end: { x: 0.2, y: 0 },
                   }}
                   ViewComponent={LinearGradient}
                 >
-                  <Avatar
-                    size="large"
-                    //change this to either be icon of loop or that groups profile picture
-                    source={{
-                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                    }}
-                    resizeMode="cover"
-                    //style={{ width: "100%", height: "100%" }}
-                  />
                   <ListItem.Content>
                     <ListItem.Title style={styles.listingItem}>
                       {item.name}
@@ -132,13 +156,8 @@ function Search(props, { navigation }) {
                     <ListItem.Subtitle style={styles.descriptionItem}>
                       {item.loop}
                     </ListItem.Subtitle>
-                    <ListItem.Subtitle style={styles.descriptionItem}>
-                      <Icon name="map-marker" size={16} color="white" />
-                      {"  "}
-                      {item.address}
-                    </ListItem.Subtitle>
                   </ListItem.Content>
-                  <ListItem.Chevron color="gray" />
+                  <ListItem.Chevron color="white" />
                 </ListItem>
               </TouchableOpacity>
             )}
@@ -155,7 +174,6 @@ function Search(props, { navigation }) {
               longitudeDelta: 0.05,
             }}
             customMapStyle={mapStyle}
-
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >
             <Marker
@@ -169,18 +187,6 @@ function Search(props, { navigation }) {
               description={"position"}
             />
           </MapView>
-          <TouchableOpacity
-            style={styles.expander}
-            onPress={() => props.navigation.navigate("mapView")}
-          >
-            <Icon
-              //style={styles.icon}
-              //reverse
-              name="expand"
-              color="white"
-              size={20}
-            />
-          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -270,22 +276,18 @@ const mapStyle = [
 
 const styles = StyleSheet.create({
   container: {
-    color: "white",
-    margin: 5,
+    //position: "absolute",
+    //height: height,
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
+    //alignItems: "center",
+    //alignContent: "stretch",
   },
   holder: {
     flex: 1,
-    //padding: 0,
-  },
-  expander: {
-    width: 65,
-    height: 65,
-    justifyContent: "center",
-    alignItems: "center",
-    opacity: 0.6,
-    borderRadius: 75,
-    backgroundColor: "#696969",
-    left: 315,
+    padding: 0,
   },
   mapStyle: {
     position: "absolute",
@@ -295,13 +297,12 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   paragraph: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-
-    //marginTop: -50,
+    // position: "absolute",
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
+    marginTop: -60,
   },
   listingItem: {
     color: "white",
