@@ -294,8 +294,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
   setUserLoops: (joinedLoops, navigation) => dispatch(setUserLoops(joinedLoops, navigation))
 
-  }
 })
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
 //Credit to Robbie for his eventCreation.js code.
