@@ -1,5 +1,6 @@
 import { SET_USER } from '../constants';
 import { UPDATE_USER } from '../constants';
+import { REMOVE_USER } from '../constants';
 
 import * as firebase from "firebase";
 import { Alert } from 'react-native';

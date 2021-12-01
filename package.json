@@ -44,8 +44,10 @@
     "react-redux": "^7.2.6",
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.0",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "@react-native-async-storage/async-storage": "~1.15.0"
   },
   "devDependencies": {
     "babel-preset-expo": "8.5.1",
