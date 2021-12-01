@@ -21,8 +21,11 @@ export default function EventCreationStack(){
         headerTitleAlign: 'center',
         headerBackTitle: null,
         headerTintColor: 'black',
+        headerTitleStyle: {
+          color: "white",
+        },
         headerStyle: {
-          backgroundColor: 'white',
+          backgroundColor: '#2C2C2C',
         }
       }}
     >
