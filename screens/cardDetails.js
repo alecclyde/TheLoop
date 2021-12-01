@@ -3,11 +3,13 @@ import {
   View,
   Text,
   Alert,
+  SafeAreaView,
   Keyboard,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   Modal,
+  StyleSheet,
 } from "react-native";
 import { globalStyles } from "../styles/global";
 // import Card from '../shared/card';
@@ -264,18 +266,28 @@ function CardDetails(props, { navigation, route }) {
   }, [eventAttendees, userID]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={globalStyles.container}>
+    <View style={{backgroundColor: "#D3D3D3", flex: 1 }}>
+    
+    
+    
+      {/* // Title Area */}
       {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
       <View
         style={{
           paddingHorizontal: 20,
           paddingTop: 20,
-          backgroundColor: "white",
+          backgroundColor: "#D3D3D3",
+          borderBottomColor: 'black',
+          borderBottomWidth: 5,
+          marginBottom: 15,
         }}
       >
         <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
-          <View style={globalStyles.rowContainer}>
-            <Text style={globalStyles.titleText}>{eventName}</Text>
+          <View>
+            <Text style={styles.Title}>{eventName} </Text>
+            <Text style={styles.subt}> By: {eventCreator.name} </Text>
+            <Text style={{ position: "absolute", right: 0.1 }}> ICON {eventLoop}</Text>
             <Icon
               onPress={() => props.navigation.dispatch(StackActions.pop(1))}
               name="arrow-left"
@@ -287,6 +299,10 @@ function CardDetails(props, { navigation, route }) {
         </ScrollView>
       </View>
 
+      
+
+
+      
       {/* Post area */}
       <FlatList
         data={state}
@@ -305,8 +321,10 @@ function CardDetails(props, { navigation, route }) {
                   .unix(item.creationTimestamp.seconds)
                   .format("MMM Do, hh:mm A")}
               </Text>
-            </View>
 
+
+            </View>
+              
             {postEditID != item.id && (
               <View>
                 {/* post message */}
@@ -376,6 +394,8 @@ function CardDetails(props, { navigation, route }) {
               </View>
             )}
 
+
+
             {/* pencil and trashcan icons */}
             {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
             {!editMode && (
@@ -402,28 +422,41 @@ function CardDetails(props, { navigation, route }) {
             )}
           </Card>
         )}
+
+
+
         ListHeaderComponent={
           <ScrollView
             // style={{ flex: 1 }}
             keyboardShouldPersistTaps="handled"
           >
+
+
             <View style={{ paddingHorizontal: 20 }}>
-              <Text>Address: {eventAddress}</Text>
-              <Text>Creator: {eventCreator.name}</Text>
-              <Text>
-                Date: {moment.unix(eventDateTime).format("MMMM Do, YYYY")}
-              </Text>
-              <Text>Time: {moment.unix(eventDateTime).format("hh:mm A")}</Text>
-              <Text>Loop: {eventLoop}</Text>
+              <Text style={styles.titlesub}> Where? </Text>
+              <Text style={styles.sub}> {eventAddress} </Text>
+              <Text style={styles.titlesub}> When? </Text>
+              <Text style={styles.sub}>{moment.unix(eventDateTime).format("MMMM Do, YYYY")} at {moment.unix(eventDateTime).format("h:mm A")}</Text>
+              
+              
+              <Text style={styles.titlesub}>Attendees</Text>
+              {eventAttendees.map((attendee) => (
+                <Text key={attendee.id} style={styles.subp}>{attendee.name}</Text>
+              ))}
 
               <Divider orientation="horizontal" />
 
-              <Text style={globalStyles.titleText}>Attendees</Text>
-              {eventAttendees.map((attendee) => (
-                <Text key={attendee.id}>{attendee.name}</Text>
-              ))}
+
+
               {!isCreator && (
                 <Button
+                  titleStyle={{ color: "black" }}
+                  buttonStyle={{
+                    borderWidth: 1,
+                    borderColor: "black",
+                    titleColor: "black",
+                    backgroundColor: "orange",
+                    }}
                   title={!isAttending ? "Register" : "Unregister"}
                   onPress={() => {
                     if (!isAttending) {
@@ -439,6 +472,9 @@ function CardDetails(props, { navigation, route }) {
           </ScrollView>
         }
       />
+      
+
+
 
       {!(Platform.OS == "android" && editMode) && (<KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "position" : "height"}
@@ -480,6 +516,13 @@ function CardDetails(props, { navigation, route }) {
                   style={{ maxHeight: 100 }}
                 />
                 <Button
+                  titleStyle={{ color: "white" }}
+                  buttonStyle={{
+                    borderWidth: 1,
+                    borderColor: "black",
+                    titleColor: "black",
+                    backgroundColor: "#517fa4",
+                    }}
                   title="Post"
                   disabled={!isAttending || editMode}
                   onPress={props.handleSubmit}
@@ -492,6 +535,7 @@ function CardDetails(props, { navigation, route }) {
 
       {/* </ScrollView> */}
     </View>
+    </SafeAreaView>
   );
 }
 
@@ -504,3 +548,36 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardDetails);
+
+const styles = StyleSheet.create({
+  
+  Title:{
+    marginBottom:5,
+    fontSize:35,
+    color:"#FF5F15",
+    fontWeight:'bold',
+    textAlign: 'center',
+  },
+  titlesub:{
+    fontSize: 25,
+    paddingBottom: 2,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  sub:{
+    fontSize:20,
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  subt:{
+    fontSize:18,
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  subp:{
+    fontSize:12,
+    textAlign: 'center',
+    paddingBottom: 5,
+  },
+
+});    

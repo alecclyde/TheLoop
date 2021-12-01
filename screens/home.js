@@ -93,24 +93,14 @@ function Home(props, { navigation, route }) {
   console.log(props.user);
 
   return (
-    <ImageBackground
-      source={{
-        uri: "https://c4.wallpaperflare.com/wallpaper/347/436/990/purple-red-black-form-wallpaper-preview.jpg",
-      }}
-      resizeMode="cover"
-      style={{ width: "100%", height: "100%" }}
-    >
       <SafeAreaView style={globalStyles.container}>
-        <View style={{ flex: 1 }}>
+        <View style={{backgroundColor:"#D3D3D3", flex: 1 }}>
           <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
-            <Text h2 style={{ textAlign: "center", color: "white" }}>
-              Welcome Back {"\n"} {props.user.user.firstName || ""}
-            </Text>
           </View>
 
           <View style={{ backgroundColor: "black" }}>
             <Text h3 style={{ textAlign: "center", color: "#ffa835" }}>
-              Your Upcoming Events...
+              Upcoming Events
             </Text>
           </View>
 
@@ -190,7 +180,6 @@ function Home(props, { navigation, route }) {
           <View style={{ flex: 0.3 }}></View>
         </View>
       </SafeAreaView>
-    </ImageBackground>
   );
 }
 
