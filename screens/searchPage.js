@@ -1,8 +1,8 @@
 // import { StyleSheet, View, Text, Dimensions, Searchbar } from "react-native";
 // import MapView, { Marker } from "react-native-maps";
-// import { FontAwesome } from "@expo/vector-icons";
 // import * as Location from "expo-location";
 
+import { FontAwesome } from "@expo/vector-icons";
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -16,8 +16,9 @@ import MapView, { Marker } from "react-native-maps";
 import Geolocation, {
   getCurrentPosition,
 } from "react-native-geolocation-service";
+import { Icon } from "react-native-elements";
 import * as Location from "expo-location";
-import { SearchBar } from "react-native-elements";
+import { SearchBar, withTheme } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
 import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
@@ -25,7 +26,7 @@ import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
-import RNLocation from "react-native-location";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
@@ -148,6 +149,19 @@ function Search({ navigation }) {
               description={"position"}
             />
           </MapView>
+          <TouchableOpacity
+            //onPress={buttonClickedHandler}
+            style={styles.expander}
+            //icon="expand-arrows-alt"
+          >
+            <Icon
+              //style={styles.icon}
+              //reverse
+              name="expand"
+              color="white"
+              size={20}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -237,18 +251,21 @@ const mapStyle = [
 
 const styles = StyleSheet.create({
   container: {
-    //position: "absolute",
-    //height: height,
-    // top: 0,
-    // left: 0,
-    // right: 0,
-    // bottom: 0,
-    //alignItems: "center",
-    //alignContent: "stretch",
+    color: "white",
   },
   holder: {
     flex: 1,
     padding: 0,
+  },
+  expander: {
+    width: 75,
+    height: 75,
+    justifyContent: "center",
+    alignItems: "center",
+    opacity: 0.6,
+    borderRadius: 75,
+    backgroundColor: "#696969",
+    left: 305,
   },
   mapStyle: {
     position: "absolute",
