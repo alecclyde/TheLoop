@@ -16,7 +16,7 @@ import MapView, { Marker } from "react-native-maps";
 import Geolocation, {
   getCurrentPosition,
 } from "react-native-geolocation-service";
-import { Icon } from "react-native-elements";
+import Icon from "react-native-vector-icons/FontAwesome";
 import * as Location from "expo-location";
 import { SearchBar, withTheme } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
@@ -31,7 +31,7 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
 
-function Search({ navigation }) {
+function Search(props, { navigation }) {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
@@ -56,6 +56,7 @@ function Search({ navigation }) {
                 loop: doc.data().loop,
                 name: doc.data().name,
                 creatorID: doc.data().creatorID,
+                address: doc.data().address,
               },
             ]);
           }
@@ -81,35 +82,49 @@ function Search({ navigation }) {
             value={search.text}
           />
         </View>
-        <View style={[styles.paragraph, { flex: 2 }]}>
+        <View style={[styles.container, { flex: 2 }]}>
           <FlatList
+            //contentContainerStyle={{ paddingBottom: }}
+            persistentScrollbar={true}
             data={events}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
+                style={styles.clickable}
                 onPress={() =>
-                  navigation.navigate("CardDetails", {
+                  props.navigation.navigate("CardDetails", {
                     id: item.id,
                     loop: item.loop,
                     name: item.name,
                     creatorID: item.creatorID,
+                    address: item.address,
                   })
                 }
               >
                 <ListItem
+                  pad={16}
                   bottomDivide
-                  bottomDivider={true}
                   Component={TouchableScale}
+                  button
                   friction={90}
-                  tension={100}
-                  activeScale={0.95}
+                  tension={100} // These props are passed to the parent component (here TouchableScale)
+                  activeScale={0.95} //
                   linearGradientProps={{
-                    colors: ["#FF9800", "#F44336"],
-                    start: { x: 1, y: 4 },
+                    colors: ["#2C2C2C", "#2C2C2C"],
+                    start: { x: 1, y: 0 },
                     end: { x: 0.2, y: 0 },
                   }}
                   ViewComponent={LinearGradient}
                 >
+                  <Avatar
+                    size="large"
+                    //change this to either be icon of loop or that groups profile picture
+                    source={{
+                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                    }}
+                    resizeMode="cover"
+                    //style={{ width: "100%", height: "100%" }}
+                  />
                   <ListItem.Content>
                     <ListItem.Title style={styles.listingItem}>
                       {item.name}
@@ -117,8 +132,13 @@ function Search({ navigation }) {
                     <ListItem.Subtitle style={styles.descriptionItem}>
                       {item.loop}
                     </ListItem.Subtitle>
+                    <ListItem.Subtitle style={styles.descriptionItem}>
+                      <Icon name="map-marker" size={16} color="white" />
+                      {"  "}
+                      {item.address}
+                    </ListItem.Subtitle>
                   </ListItem.Content>
-                  <ListItem.Chevron color="white" />
+                  <ListItem.Chevron color="gray" />
                 </ListItem>
               </TouchableOpacity>
             )}
@@ -150,9 +170,8 @@ function Search({ navigation }) {
             />
           </MapView>
           <TouchableOpacity
-            //onPress={buttonClickedHandler}
             style={styles.expander}
-            //icon="expand-arrows-alt"
+            onPress={() => props.navigation.navigate("mapView")}
           >
             <Icon
               //style={styles.icon}
@@ -252,20 +271,21 @@ const mapStyle = [
 const styles = StyleSheet.create({
   container: {
     color: "white",
+    margin: 5,
   },
   holder: {
     flex: 1,
-    padding: 0,
+    //padding: 0,
   },
   expander: {
-    width: 75,
-    height: 75,
+    width: 65,
+    height: 65,
     justifyContent: "center",
     alignItems: "center",
     opacity: 0.6,
     borderRadius: 75,
     backgroundColor: "#696969",
-    left: 305,
+    left: 315,
   },
   mapStyle: {
     position: "absolute",
@@ -275,12 +295,13 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   paragraph: {
-    // position: "absolute",
-    // top: 0,
-    // left: 0,
-    // right: 0,
-    // bottom: 0,
-    marginTop: -60,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+
+    //marginTop: -50,
   },
   listingItem: {
     color: "white",
