@@ -25,6 +25,7 @@ import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
+import RNLocation from "react-native-location";
 
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
@@ -36,47 +37,6 @@ function Search({ navigation }) {
   const latitude = 41.241489;
   const longitude = -77.041924;
   const position = 0;
-
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [address, setAddress] = useState(null);
-  // const [getLocation, setGetLocation] = useState(false);
-
-  let apiKey = "";
-
-  //getLocation();
-
-  const getLocation = () => {
-    (async () => {
-      let { status } = await Location.requestPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-      }
-
-      Location.setGoogleApiKey(apiKey);
-
-      console.log(status);
-
-      let { coords } = await Location.getCurrentPositionAsync();
-
-      setLocation(coords);
-
-      console.log(coords);
-
-      if (coords) {
-        let { longitude, latitude } = coords;
-
-        let regionName = await Location.reverseGeocodeAsync({
-          longitude,
-          latitude,
-        });
-        setAddress(regionName[0]);
-        console.log(regionName, "nothing");
-      }
-
-      // console.log();
-    })();
-  };
 
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
@@ -174,6 +134,7 @@ function Search({ navigation }) {
               longitudeDelta: 0.05,
             }}
             customMapStyle={mapStyle}
+
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >
             <Marker
