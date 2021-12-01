@@ -4,7 +4,7 @@ import CardDetails from "../screens/cardDetails";
 import React from "react";
 import Header from "../shared/header";
 import { withTheme } from "react-native-elements";
-import { StatusBar } from "react-native";
+
 //Screens in the Home tab
 
 const Stack = createStackNavigator();
@@ -28,7 +28,7 @@ export default function HomeStack() {
         },
         headerStyle: {
           backgroundColor: "#2C2C2C",
-          height: 80,
+          height: 100,
         },
       }}
     >
