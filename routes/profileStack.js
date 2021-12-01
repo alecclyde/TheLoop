@@ -31,6 +31,7 @@ export default function ProfileStack({navigation}){
         options={({ navigation }) => {
           return {
             headerLeft: ()=> (
+              
           <Button
         buttonStyle={{backgroundColor: 'transparent'}}
         icon={
@@ -42,13 +43,17 @@ export default function ProfileStack({navigation}){
         }
         onPress={() => navigation.navigate("Settings")}>
 
+
         </Button>
         ), 
         headerTitleAlign: 'center',
         headerBackTitle: null,
         headerTintColor: 'black',
+        headerTitleStyle: {
+          color: "white",
+        },
         headerStyle: {
-          backgroundColor: 'white',
+          backgroundColor: '#2C2C2C',
         }
           }
         }}
@@ -71,14 +76,10 @@ export default function ProfileStack({navigation}){
           }
         }}
       />
-        <Stack.Screen 
-        name='CardDetails'
+      <Stack.Screen
+        name="CardDetails"
         component={CardDetails}
-        options={({ navigation }) => {
-          return {
-            headerRight: () => <Header navigation={navigation} />
-          }
-        }}
+        options={{ headerShown: false}}
       />
 
     </Stack.Navigator>

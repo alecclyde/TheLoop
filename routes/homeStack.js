@@ -44,11 +44,7 @@ export default function HomeStack() {
       <Stack.Screen
         name="CardDetails"
         component={CardDetails}
-        options={({ navigation }) => {
-          return {
-            headerRight: () => <Header navigation={navigation} />,
-          };
-        }}
+        options={{ headerShown: false}}
       />
     </Stack.Navigator>
   );
