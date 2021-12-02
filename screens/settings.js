@@ -13,11 +13,14 @@ import { globalStyles } from "../styles/global";
 import { useIsFocused } from "@react-navigation/native";
 import { Switch } from 'react-native-elements';
 import { Button } from 'react-native-elements';
-import { CheckBox } from 'react-native-elements'
+import { CheckBox } from 'react-native-elements';
+
+import { connect } from "react-redux";
+import { signOut } from "../store/actions/userActions";
 import { Input } from 'react-native-elements';
 
 
-export default function UserProfileView ({navigation, SettingsInput}){
+function UserProfileView (props, {navigation, SettingsInput}){
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
@@ -142,6 +145,13 @@ export default function UserProfileView ({navigation, SettingsInput}){
                 />
             </View>
 
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <Button
+              title="Sign Out"
+              onPress={() => props.signOut(props.navigation)}
+            ></Button>
+          </View>
+
           </View>
       </View>
     );
@@ -220,3 +230,13 @@ const styles = StyleSheet.create({
     color: "#000000",
   }
 });
+
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  signOut: (navigation) => dispatch(signOut(navigation)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfileView);
