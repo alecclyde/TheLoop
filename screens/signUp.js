@@ -158,6 +158,7 @@ export default function SignUp({ navigation }) {
                   selectionColor='black'
                   underlineColorAndroid='black'
                 />
+
                 <Button
                   onPress={props.handleSubmit}
                   title="Sign Up"

@@ -15,7 +15,6 @@ import * as firebase from "firebase";
 import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
 
-
 export default function Home({ navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
@@ -37,8 +36,7 @@ export default function Home({ navigation, route }) {
         setEmail(user.email);
         setFirstName(user.firstName);
         setLastName(user.lastName);
-      }
-      );
+      });
     } else {
       setUserID();
       setEmail("");
@@ -57,21 +55,30 @@ export default function Home({ navigation, route }) {
   }, []);
 
   useEffect(() => {
-    setEvents([]);
-    firebase
-    .firestore()
-    .collection('events')
-    .where('attendees', 'array-contains', userID)
-    .orderBy('startDateTime')
-    .get()
+    if (userID != null) {
+      setEvents([]);
+      firebase
+        .firestore()
+        .collection("events")
+        .where("attendees", "array-contains", userID)
+        .orderBy("startDateTime")
+        .get()
 
-    .then((snap) => {
-      snap.forEach((doc) => {
-        setEvents((events) => [...events, {id: doc.id, name: doc.data().name, startDateTime: doc.data().startDateTime, creatorID: doc.data().creatorID}])
-      })
-    })
-    
-  }, [userID, isFocused])
+        .then((snap) => {
+          snap.forEach((doc) => {
+            setEvents((events) => [
+              ...events,
+              {
+                id: doc.id,
+                name: doc.data().name,
+                startDateTime: doc.data().startDateTime,
+                creatorID: doc.data().creatorID,
+              },
+            ]);
+          });
+        });
+    }
+  }, [userID, isFocused]);
 
   const list = [
     {
@@ -107,15 +114,15 @@ export default function Home({ navigation, route }) {
           <ScrollView style={styles.scrollView}>
             {events.map((event) => (
               <TouchableOpacity
-              key={event.id}
-              onPress={() => 
-                navigation.navigate("CardDetails", {
-                  id: event.id,
-                  name: event.name,
-                  creatorID: event.creatorID,
-                  startDateTime: event.startDateTime,
-                })
-              }
+                key={event.id}
+                onPress={() =>
+                  navigation.navigate("CardDetails", {
+                    id: event.id,
+                    name: event.name,
+                    creatorID: event.creatorID,
+                    startDateTime: event.startDateTime,
+                  })
+                }
               >
                 <ListItem
                   bottomDivide
@@ -138,13 +145,14 @@ export default function Home({ navigation, route }) {
                       {event.name}
                     </ListItem.Title>
                     <ListItem.Subtitle style={{ color: "white" }}>
-                      {moment.unix(event.startDateTime).format("MMMM Do, hh:mm A")}
+                      {moment
+                        .unix(event.startDateTime)
+                        .format("MMMM Do, hh:mm A")}
                     </ListItem.Subtitle>
                   </ListItem.Content>
                   <ListItem.Chevron color="white" />
                 </ListItem>
               </TouchableOpacity>
-
             ))}
           </ScrollView>
         </View>
