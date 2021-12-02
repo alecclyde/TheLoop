@@ -257,6 +257,67 @@ export async function deletePost(eventID, postID) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
   }
+}
 
-  // do stuff
+/**
+ * Creates a notification for a user
+ * @param userID - The userID receiving the notification
+ * @param notifType - The type of notification being added
+ * @param notifData - The data required for creating the notification
+ */
+ export async function createNotification(userID, notifType, notifData) {
+  try {
+    // do stuff
+    switch (notifType) {
+      case "announcement":
+        // create the message with notifData.eventName and notifData.creatorName
+        await firebase.firestore.collection("users").doc(userID).collection("notifications").add(
+          // do stuff
+        )
+
+        break;
+
+      case "reply":
+        // man oh man I hope I can get replies working eventually
+        break;
+
+      case "event-change":
+        // create the message for the event change with notifData.event
+        break;
+
+      case "event-kick":
+        // create the message for the event kick with notifData.event
+        break;
+
+      case "new-posts":
+        // showstopper
+        /**
+         * requires a special query
+         *
+         * first checks the "newPostsID" value (either 0 or a document ID)
+         * if 0, create a new documentID for the "new posts" notification
+         *   - set the "newPostsID" value in the event to this Document ID
+         *     (any future attendee notifs will be updated here)
+         *   - add the document to the event creator's notifications along
+         *     with an array of new attendees (probably just names)
+         * if it's a documentID, add the new attendee in the notification document
+         * 
+         * Possible case: someone leaves an event before the owner checks the notification
+         */
+        //
+        break;
+
+      case "new-joins":
+        // showstopper
+        // requires a special query that adds a userID as a new attendee
+        break;
+
+      case "user-report":
+        // tbh I don't know how to do this one yet
+        break;
+    }
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
 }

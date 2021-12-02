@@ -28,6 +28,7 @@ import {
   createPost,
   editPost,
   deletePost,
+  createNotification,
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
@@ -210,6 +211,25 @@ export default function CardDetails({ navigation, route }) {
       ]
     );
   };
+
+  /**
+   * Creates a notification for all users except the creator
+   * @param notifType - The type of notification
+   */
+  const handleNotifyAllUsers = (notifType) => {
+
+    var notifData = {
+      creatorName: eventCreator.name,
+      eventName: eventName
+    }
+
+    eventAttendees.forEach((attendee) => {
+
+      if (attendee.id != eventCreator.id) {
+        createNotification(attendee.id, notifType, notifData)
+      }
+    })
+  }
 
   // This may be a better method for reading users from the database, if I can get it to work
 
@@ -452,12 +472,28 @@ export default function CardDetails({ navigation, route }) {
               if (values.postText === "") {
                 Alert.alert("Error", "Cannot create a post with no text");
               } else {
-                var success = createPost(
+                createPost(
                   userID,
                   userName,
                   route.params?.id,
                   values.postText.trim()
                 );
+
+                if (isCreator) {
+                  Alert.alert(
+                    "Send notification?",
+                    "Do you want to notify your attendees about your post?",
+                    [
+                      {
+                        text: "No",
+                      },
+                      {
+                        text: "Yes",
+                        onPress: () => {handleNotifyAllUsers("announcement")}
+                      },
+                    ]
+                  );
+                }
                 actions.resetForm();
               }
             }}
