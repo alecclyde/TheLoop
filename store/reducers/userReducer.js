@@ -3,6 +3,7 @@ import { REMOVE_USER } from '../constants';
 
 const initialState = {
     user: {
+        
         firstName: null,
         lastName: null
     }

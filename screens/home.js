@@ -192,12 +192,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => ({
-  user: state.user,
+//Initialize the states you want to use on the page
+const mapStateToProps = state => ({
+  user: state.user
 });
 
+//Initialize what actions you are going to use on the page
 const mapDispatchToProps = (dispatch) => ({
   signOut: (navigation) => dispatch(signOut(navigation)),
 });
 
+//send the state and actions to props of the function
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
