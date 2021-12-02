@@ -39,38 +39,38 @@ function UserProfileView (props, {navigation, SettingsInput}){
   const [number, onChangeNumber] = React.useState(null);
 
   // Listener to update user data
-  function AuthStateChangedListener(user) {
-    if (user) {
-      setUserID(user.uid);
-      getUserData(user.uid).then((user) => {
-        setEmail(user.email);
-        setFirstName(user.firstName);
-        setLastName(user.lastName);
-      }
-      );
-    } else {
-      setUserID();
-      setEmail("");
-      setFirstName("");
-      setLastName("");
-    }
-  }
+  // function AuthStateChangedListener(user) {
+  //   if (user) {
+  //     setUserID(user.uid);
+  //     getUserData(user.uid).then((user) => {
+  //       setEmail(user.email);
+  //       setFirstName(user.firstName);
+  //       setLastName(user.lastName);
+  //     }
+  //     );
+  //   } else {
+  //     setUserID();
+  //     setEmail("");
+  //     setFirstName("");
+  //     setLastName("");
+  //   }
+  // }
 
-  useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-    return () => {
-      unsubscriber;
-    };
-  }, []);
+  // useEffect(() => {
+  //   const unsubscriber = firebase
+  //     .auth()
+  //     .onAuthStateChanged(AuthStateChangedListener);
+  //   return () => {
+  //     unsubscriber;
+  //   };
+  // }, []);
 
   useEffect(() => {
     setEvents([]);
     firebase
     .firestore()
     .collection('events')
-    .where('attendees', 'array-contains', userID)
+    .where('attendees', 'array-contains', props.user.uid)
     .orderBy('startDateTime')
     .get()
 
@@ -90,8 +90,8 @@ function UserProfileView (props, {navigation, SettingsInput}){
                 <Image style={styles.avatar}
                   source={{uri: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png'}}/>
 
-                <Text style={styles.name}>{firstName} {lastName} </Text>
-                <Text style={styles.userInfo}>{email} </Text>
+                <Text style={styles.name}>{props.user.firstName} {props.user.lastName} </Text>
+                <Text style={styles.userInfo}>{props.user.email} </Text>
             </View>
           </View>
 

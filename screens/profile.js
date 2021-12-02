@@ -25,7 +25,7 @@ import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
 import { color } from "react-native-elements/dist/helpers";
 
-function Home(props, { navigation, route }) {
+function Profile(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
@@ -39,38 +39,38 @@ function Home(props, { navigation, route }) {
   const isFocused = useIsFocused();
 
   // Listener to update user data
-  function AuthStateChangedListener(user) {
-    if (user) {
-      setUserID(user.uid);
-      getUserData(user.uid).then((user) => {
-        setEmail(user.email);
-        setFirstName(user.firstName);
-        setLastName(user.lastName);
-      });
-    } else {
-      setUserID();
-      setEmail("");
-      setFirstName("");
-      setLastName("");
-    }
-  }
+  // function AuthStateChangedListener(user) {
+  //   if (user) {
+  //     setUserID(user.uid);
+  //     getUserData(user.uid).then((user) => {
+  //       setEmail(user.email);
+  //       setFirstName(user.firstName);
+  //       setLastName(user.lastName);
+  //     });
+  //   } else {
+  //     setUserID();
+  //     setEmail("");
+  //     setFirstName("");
+  //     setLastName("");
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   const unsubscriber = firebase
+  //     .auth()
+  //     .onAuthStateChanged(AuthStateChangedListener);
+  //   return () => {
+  //     unsubscriber;
+  //   };
+  // }, []);
 
   useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-    return () => {
-      unsubscriber;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (userID != null) {
+    // if (userID != null) {
       setEvents([]);
       firebase
         .firestore()
         .collection("events")
-        .where("attendees", "array-contains", userID)
+        .where("attendees", "array-contains", props.user.uid)
         .orderBy("startDateTime")
         .get()
 
@@ -89,7 +89,7 @@ function Home(props, { navigation, route }) {
             ]);
           });
         });
-    }
+    //}
   }, [userID, isFocused]);
   console.log(props.user);
 
@@ -101,8 +101,8 @@ function Home(props, { navigation, route }) {
                 <Image style={styles.avatar}
                   source={{uri: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png'}}/>
 
-                <Text style={styles.name}>{firstName} {lastName} </Text>
-                <Text style={styles.userInfo}>{email} </Text>
+                <Text style={styles.name}>{props.user.firstName} {props.user.lastName} </Text>
+                <Text style={styles.userInfo}>{props.user.email} </Text>
             </View>
           </View>
 
@@ -242,4 +242,4 @@ const mapDispatchToProps = (dispatch) => ({
   signOut: (navigation) => dispatch(signOut(navigation)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
