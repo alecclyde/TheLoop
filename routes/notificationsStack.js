@@ -20,13 +20,17 @@ export default function NotificationStack(){
         headerTitleAlign: 'center',
         headerBackTitle: null,
         headerTintColor: 'black',
+        headerTitleStyle: {
+          color: "white",
+        },
+        
         headerStyle: {
-          backgroundColor: 'white',
+          backgroundColor: '#2C2C2C',
         }
       }}
     >
       <Stack.Screen 
-        name='NotificationPage'
+        name='Notifications'
         component={NotificationPage}
         options={({ navigation }) => {
           return {

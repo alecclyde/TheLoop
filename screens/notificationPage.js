@@ -31,7 +31,7 @@ export default class Notifications extends Component {
 
   render() {
     return (
-      <ScrollView>
+      
       <FlatList
         style={styles.root}
         data={this.state.data}
@@ -72,14 +72,14 @@ export default class Notifications extends Component {
             </View>
           );
         }}/>
-        </ScrollView>
+
     );
   }
 }
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#D3D3D3"
   },
   container: {
     padding: 16,
