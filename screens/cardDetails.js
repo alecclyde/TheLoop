@@ -59,6 +59,9 @@ export default function CardDetails({ navigation, route }) {
   const [editMode, setEditMode] = useState(false);
   const [postEditID, setPostEditID] = useState();
 
+  const [newPostsNotifID, setNewPostsNotifID] = useState();
+  const [newAttendeesNotifID, setNewAttendeesNotifID] = useState();
+
   var eventAtens = [];
 
   const AuthStateChangedListener = (user) => {
@@ -79,6 +82,9 @@ export default function CardDetails({ navigation, route }) {
     setEventLoop(eventData.loop);
     setEventDateTime(eventData.startDateTime.seconds);
     setEventAddress(eventData.address);
+    setNewPostsNotifID(eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0")
+    setNewAttendeesNotifID(eventData.newAttendeesNotifID != undefined ? eventData.newAttendeesNotifID : "0")
+
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
 
     updateAttendeeList(eventData.attendees);
@@ -443,9 +449,9 @@ export default function CardDetails({ navigation, route }) {
                   title={!isAttending ? "Register" : "Unregister"}
                   onPress={() => {
                     if (!isAttending) {
-                      registerEvent(route.params?.id, userID);
+                      registerEvent({eventID: route.params?.id, creatorID: eventCreator.id, eventName: eventName, newAttendeesNotifID: newAttendeesNotifID}, {userID, userName});
                     } else {
-                      unregisterEvent(route.params?.id, userID);
+                      unregisterEvent({eventID: route.params?.id, creatorID: eventCreator.id, newAttendeesNotifID: newAttendeesNotifID}, {userID, userName});
                     }
                   }}
                 />

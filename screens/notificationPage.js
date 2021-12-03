@@ -22,7 +22,7 @@ export default function Notifications({ navigation, route }) {
     uri: "https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png",
   };
 
-  const StylizedMessage = (notifType, notifData) => {
+  const stylizedMessage = (notifType, notifData) => {
     switch (notifType) {
       case "announcement":
         return (
@@ -38,7 +38,7 @@ export default function Notifications({ navigation, route }) {
         return null;
 
       case "event-change":
-        return(
+        return (
           <Text>
             <Text style={{ fontWeight: "bold" }}>{notifData.creatorName}</Text>
             <Text> has made changes in </Text>
@@ -54,7 +54,48 @@ export default function Notifications({ navigation, route }) {
         return;
 
       case "new-joins":
-        return;
+        if (notifData.newAttendees.length == 1) {
+          return (
+            <Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {notifData.newAttendees[0].userName}
+              </Text>
+              <Text> has registered for </Text>
+              <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+              <Text>.</Text>
+            </Text>
+          );
+        } else if (notifData.newAttendees.length == 2) {
+          return (
+            <Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {notifData.newAttendees[0].userName}
+              </Text>
+              <Text> and </Text>
+              <Text style={{ fontWeight: "bold" }}>1</Text>
+              <Text> other have registered for </Text>
+              <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+              <Text>.</Text>
+            </Text>
+          );
+        } else if (notifData.newAttendees.length > 2) {
+          return (
+            <Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {notifData.newAttendees[0].userName}
+              </Text>
+              <Text> and </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {notifData.newAttendees.length - 1}
+              </Text>
+              <Text> others have registered for </Text>
+              <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+              <Text>.</Text>
+            </Text>
+          );
+        } else {
+          return;
+        }
 
       case "user-report":
         return;
@@ -85,23 +126,6 @@ export default function Notifications({ navigation, route }) {
     };
   }, []);
 
-  const testData = [
-    {
-      id: 1,
-      image:
-        "https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png",
-      name: "User",
-      text: "The owner of the Volunteer event you follow has posted an announcement",
-    },
-    {
-      id: 2,
-      image:
-        "https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png",
-      name: "User",
-      text: "The Sports loop event will start tomorrow at 15:00",
-    },
-  ];
-
   return (
     <FlatList
       style={styles.root}
@@ -116,8 +140,8 @@ export default function Notifications({ navigation, route }) {
           <View style={styles.content}>
             <View style={styles.mainContent}>
               <View style={styles.text}>
-                <Text style={styles.name}>{item.creatorName}</Text>
-                <Text>{StylizedMessage(item.type, item)}</Text>
+                {/* <Text style={styles.name}>{item.creatorName}</Text> */}
+                <Text>{stylizedMessage(item.type, item)}</Text>
               </View>
               <Text style={styles.timeAgo}>
                 {makeTimeDifferenceString(item.creationTimestamp.seconds)} ago
