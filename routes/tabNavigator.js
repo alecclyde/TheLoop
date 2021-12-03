@@ -21,7 +21,7 @@ export default function RootStack() {
         headerShown: false,
         tabBarActiveBackgroundColor: "#ffa835",
         tabBarInactiveBackgroundColor: "#2C2C2C",
-        tabBarStyle: { height: 105},
+        tabBarStyle: { height: 110},
       }}
       options={{}}
       labeled={false}
