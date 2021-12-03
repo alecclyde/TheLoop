@@ -270,7 +270,7 @@ export async function deletePost(eventID, postID) {
     // do stuff
     switch (notifType) {
       case "announcement":
-        // create the message with notifData.eventName and notifData.creatorName
+        // create an announcement notification with notifData.eventName and notifData.creatorName
         await firebase.firestore().collection("users").doc(userID).collection("notifications").add({
           type: notifType,
           creationTimestamp: firebase.firestore.Timestamp.now(),
@@ -287,7 +287,15 @@ export async function deletePost(eventID, postID) {
         break;
 
       case "event-change":
-        // create the message for the event change with notifData.event
+        // create an event-change notification with notifData.eventName and notifData.creatorName
+        await firebase.firestore().collection("users").doc(userID).collection("notifications").add({
+          type: notifType,
+          creationTimestamp: firebase.firestore.Timestamp.now(),
+          eventName: notifData.eventName,
+          creatorName: notifData.creatorName,
+          seen: false,
+
+        })
         break;
 
       case "event-kick":

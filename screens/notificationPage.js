@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { grabNotifications } from "../shared/firebaseMethods";
 import firebase from "firebase";
+import { makeTimeDifferenceString } from "../shared/commonMethods";
 
 export default function Notifications({ navigation, route }) {
   // TO ROBBIE OR CADEN I could only make this code work by putting it into a class/ Component
@@ -34,10 +35,17 @@ export default function Notifications({ navigation, route }) {
         );
 
       case "reply":
-        return;
+        return null;
 
       case "event-change":
-        return;
+        return(
+          <Text>
+            <Text style={{ fontWeight: "bold" }}>{notifData.creatorName}</Text>
+            <Text> has made changes in </Text>
+            <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+            <Text>.</Text>
+          </Text>
+        );
 
       case "event-kick":
         return;
@@ -112,7 +120,7 @@ export default function Notifications({ navigation, route }) {
                 <Text>{StylizedMessage(item.type, item)}</Text>
               </View>
               <Text style={styles.timeAgo}>
-                {item.creationTimestamp.seconds}
+                {makeTimeDifferenceString(item.creationTimestamp.seconds)} ago
               </Text>
               {/* The time can be imported from the database */}
             </View>
