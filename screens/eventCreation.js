@@ -104,8 +104,6 @@ function EventCreation(props) {
   return (
     <View
       style={{
-        borderColor: "orange",
-        borderWidth: 7,
         flex: 1,
         backgroundColor: "#F8F8F8",
       }}
@@ -242,7 +240,7 @@ function EventCreation(props) {
                     </TouchableOpacity>
                   </View>
 
-                  <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
+                  <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5, }}>
                     <TouchableOpacity
                       style={[
                         loop == "Music"
@@ -399,12 +397,11 @@ function EventCreation(props) {
                 <View>
                   <Button
                     title="Create Event"
-                    titleStyle={{ fontSize: 30, color: "black" }}
+                    titleStyle={{ fontSize: 30, color: "white" }}
                     buttonStyle={{
                       borderWidth: 1,
                       borderColor: "black",
-                      titleColor: "black",
-                      backgroundColor: "#ff7b00",
+                      backgroundColor: "#2C2C2C",
                     }}
                     style={{ padding: 45 }}
                     onPress={props.handleSubmit}
@@ -423,7 +420,7 @@ function EventCreation(props) {
 const styles = StyleSheet.create({
   selectedLoop: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#000000",
     padding: 10,
     fontSize: 18,
     marginBottom: 10,
