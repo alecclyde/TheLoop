@@ -90,13 +90,12 @@ function Home(props, { navigation, route }) {
         });
     }
   }, [userID, isFocused]);
-  console.log(props.user);
+  //console.log(props.user);
 
   return (
       <SafeAreaView style={globalStyles.container}>
-        <View style={{backgroundColor:"#D3D3D3", flex: 1 }}>
-          <View style={{ borderBottomColor: "black", borderBottomWidth: 3 }}>
-          </View>
+        <View style={{backgroundColor:"#D3D3D3"}}>
+
 
           <View style={{ backgroundColor: "black" }}>
             <Text h3 style={{ textAlign: "center", color: "#ffa835" }}>
@@ -104,11 +103,9 @@ function Home(props, { navigation, route }) {
             </Text>
           </View>
 
-          <View>
+
             <ScrollView
-              height={390}
               persistentScrollbar={true}
-              style={styles.scrollView}
             >
               {events.map((event) => (
                 <TouchableOpacity
@@ -167,17 +164,6 @@ function Home(props, { navigation, route }) {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
-
-          <View style={{ flex: 1 }} />
-
-          <View style={{ flexDirection: "row", justifyContent: "center" }}>
-            <Button
-              title="Sign Out"
-              onPress={() => props.signOut(props.navigation)}
-            ></Button>
-          </View>
-          <View style={{ flex: 0.3 }}></View>
         </View>
       </SafeAreaView>
   );

@@ -26,7 +26,7 @@ export function registration(
                 creationTimestamp: firebase.firestore.Timestamp.now(),
             }
             await firebase.firestore().collection("users").doc(currentUser.uid).set(user);
-            dispatch({ type: SET_USER, payload: user});
+            dispatch({ type: SET_USER, payload: {...user.data(), uid: currentUser.uid}});
             navigation.navigate("RootStack");
         } catch (err) {
             Alert.alert("There is something wrong!", err.message);
@@ -47,8 +47,8 @@ export function signIn(email, password, navigation){
             .get();
 
             //console.log(user.data());
-            dispatch({ type: SET_USER, payload: user.data()})
-              navigation.navigate("RootStack");
+            dispatch({ type: SET_USER, payload: {...user.data(), uid: currentUser.uid}})
+            navigation.navigate("RootStack");
         } catch (err) {
             console.log(err);
             Alert.alert("There is something wrong!", "Email or Password are incorrect");
@@ -58,9 +58,14 @@ export function signIn(email, password, navigation){
 
 export function signOut(navigation){
     return async function signOutThunk(dispatch, getState){
-        await firebase.auth().signOut();
-        navigation.navigate("LogIn");
-        dispatch({ type: REMOVE_USER, payload: null})
+        try{
+            await firebase.auth().signOut();
+            navigation.navigate("LogIn");
+            dispatch({ type: REMOVE_USER })
+        } catch(err) {
+            console.log(err);
+            Alert.alert("SignOut error!", err.message);
+        }
     }
 }
 
@@ -76,7 +81,7 @@ export function setUserLoops(joinedLoops, navigation) {
               .then(() => {
                 navigation.navigate("RootStack");
               });
-            console.log(user);
+            //console.log(user);
             dispatch({ type: UPDATE_USER, })
             // probably should navigate to event page after this
     }

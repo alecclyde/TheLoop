@@ -14,7 +14,7 @@ const Stack = createStackNavigator();
 export default function ProfileStack() {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="LogIn"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="LogIn" component={LogIn} />
