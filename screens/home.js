@@ -90,7 +90,7 @@ function Home(props, { navigation, route }) {
         });
     }
   }, [userID, isFocused]);
-  console.log(props.user);
+  //console.log(props.user);
 
   return (
       <SafeAreaView style={globalStyles.container}>

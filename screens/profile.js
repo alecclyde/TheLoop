@@ -34,6 +34,15 @@ function Profile(props, { navigation, route }) {
   const [lastName, setLastName] = useState("");
   const [userID, setUserID] = useState("");
 
+    // work around an error when logging out 
+  useEffect(() => {
+    if(props.user != null){
+      setEmail(props.user.email);
+      setFirstName(props.user.firstName);
+      setLastName(props.user.LastName);
+    }
+  })
+
   const [events, setEvents] = useState([]);
 
   const isFocused = useIsFocused();
@@ -91,7 +100,7 @@ function Profile(props, { navigation, route }) {
         });
     //}
   }, [userID, isFocused]);
-  console.log(props.user);
+  //console.log(props.user);
 
   return (
       <SafeAreaView style={globalStyles.container}>
@@ -101,8 +110,8 @@ function Profile(props, { navigation, route }) {
                 <Image style={styles.avatar}
                   source={{uri: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png'}}/>
 
-                <Text style={styles.name}>{props.user.firstName} {props.user.lastName} </Text>
-                <Text style={styles.userInfo}>{props.user.email} </Text>
+                <Text style={styles.name}>{firstName} {lastName} </Text>
+                <Text style={styles.userInfo}>{email} </Text>
             </View>
           </View>
 

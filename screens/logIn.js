@@ -49,7 +49,7 @@ function Login(props, { navigation }) {
   //   };
   // });
   useEffect(() => {
-    console.log(props.user);
+    //console.log(props.user);
     if(props.user != null){
       props.navigation.navigate("RootStack");
     }

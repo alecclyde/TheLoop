@@ -1,14 +1,8 @@
 import { SET_USER } from '../constants';
 import { REMOVE_USER } from '../constants';
 
-const initialState = {
-    user: {
-        
-        firstName: null,
-        lastName: null
-    }
-}
-const userReducer = (state = initialState, action) => {
+
+const userReducer = (state = null, action) => {
     switch(action.type) {
         case SET_USER:
             return action.payload;

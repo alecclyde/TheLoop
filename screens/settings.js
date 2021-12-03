@@ -20,24 +20,32 @@ import { signOut } from "../store/actions/userActions";
 import { Input } from 'react-native-elements';
 
 
-function UserProfileView (props, {navigation, SettingsInput}){
+function UserProfileView(props){
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [userID, setUserID] = useState("");
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  // const [userID, setUserID] = useState("");
 
-  const [events, setEvents] = useState([]);
+  // const [events, setEvents] = useState([]);
 
-  const isFocused = useIsFocused();
+  // const isFocused = useIsFocused();
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   
   const [text, onChangeText] = React.useState("Useless Text");
   const [number, onChangeNumber] = React.useState(null);
 
+  //work around an error when logging out
+  useEffect(() => {
+    if(props.user != null){
+      setEmail(props.user.email);
+      setFirstName(props.user.firstName);
+      setLastName(props.user.LastName);
+    }
+  })
   // Listener to update user data
   // function AuthStateChangedListener(user) {
   //   if (user) {
@@ -65,24 +73,23 @@ function UserProfileView (props, {navigation, SettingsInput}){
   //   };
   // }, []);
 
-  useEffect(() => {
-    setEvents([]);
-    firebase
-    .firestore()
-    .collection('events')
-    .where('attendees', 'array-contains', props.user.uid)
-    .orderBy('startDateTime')
-    .get()
+  // useEffect(() => {
+  //   setEvents([]);
+  //   firebase
+  //   .firestore()
+  //   .collection('events')
+  //   .where('attendees', 'array-contains', props.user.uid)
+  //   .orderBy('startDateTime')
+  //   .get()
 
-    .then((snap) => {
-      snap.forEach((doc) => {
-        setEvents((events) => [...events, {id: doc.id, name: doc.data().name, startDateTime: doc.data().startDateTime, creatorID: doc.data().creatorID}])
-      })
-    })
+  //   .then((snap) => {
+  //     snap.forEach((doc) => {
+  //       setEvents((events) => [...events, {id: doc.id, name: doc.data().name, startDateTime: doc.data().startDateTime, creatorID: doc.data().creatorID}])
+  //     })
+  //   })
     
-  }, [userID, isFocused])
-
-
+  // }, [userID, isFocused])
+  // props.navigation.navigate("LogIn");
     return (
       <View style={styles.container}>
           <View style={styles.header}>
@@ -90,8 +97,8 @@ function UserProfileView (props, {navigation, SettingsInput}){
                 <Image style={styles.avatar}
                   source={{uri: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png'}}/>
 
-                <Text style={styles.name}>{props.user.firstName} {props.user.lastName} </Text>
-                <Text style={styles.userInfo}>{props.user.email} </Text>
+                <Text style={styles.name}>{firstName} {lastName} </Text>
+                <Text style={styles.userInfo}>{email} </Text>
             </View>
           </View>
 
@@ -155,7 +162,7 @@ function UserProfileView (props, {navigation, SettingsInput}){
           </View>
       </View>
     );
-    }
+  }
 
 const styles = StyleSheet.create({
   header:{
@@ -232,7 +239,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  user: state.user,
+  user: state.user
 });
 
 const mapDispatchToProps = (dispatch) => ({
