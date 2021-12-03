@@ -271,9 +271,14 @@ export async function deletePost(eventID, postID) {
     switch (notifType) {
       case "announcement":
         // create the message with notifData.eventName and notifData.creatorName
-        await firebase.firestore.collection("users").doc(userID).collection("notifications").add(
-          // do stuff
-        )
+        await firebase.firestore().collection("users").doc(userID).collection("notifications").add({
+          type: notifType,
+          creationTimestamp: firebase.firestore.Timestamp.now(),
+          eventName: notifData.eventName,
+          creatorName: notifData.creatorName,
+          seen: false,
+
+        })
 
         break;
 
@@ -316,6 +321,32 @@ export async function deletePost(eventID, postID) {
         // tbh I don't know how to do this one yet
         break;
     }
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+/**
+ * Grabs the users notifications
+ * @param userID - the userID to get notifications for
+ */
+export async function grabNotifications(userID) {
+  try {
+    const notifs = []
+
+    await firebase.firestore().collection("users").doc(userID).collection("notifications")
+    .orderBy('creationTimestamp', 'desc').limit(10).get()
+    .then((snap => {
+      snap.forEach((doc) => {
+        notifs.push({id: doc.id, ...doc.data()})
+      })
+    }))
+
+    // console.log(notifs)
+    return notifs;
+
+    // do stuff
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
