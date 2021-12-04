@@ -22,7 +22,9 @@ import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
 import moment from "moment";
-import { createEvent } from "../shared/firebaseMethods";
+import { addEvent } from "../store/actions/eventActions";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 // Test to make sure that a selected date and time hasn't happened yet
 function isFutureDate(ref, msg) {
@@ -60,7 +62,7 @@ const CreateEventSchema = yup.object({
   eventAddress: yup.string().required("Please enter an address for your event"),
 });
 
-export default function EventCreation({ navigation }) {
+function EventCreation(props) {
   const date = new Date();
   const [show, setShow] = useState(false);
   const [dateText, setDateText] = useState();
@@ -126,8 +128,9 @@ export default function EventCreation({ navigation }) {
               eventAddress: "",
             }}
             validationSchema={CreateEventSchema}
-            onSubmit={(values, actions) => {
-              var success = createEvent(
+            onSubmit={(values) => {
+
+              var success = props.addEvent(
                 {
                   name: values.eventName,
                   loop: values.eventLoop,
@@ -137,11 +140,14 @@ export default function EventCreation({ navigation }) {
               );
               if (success) {
                 Alert.alert("Success!", "Event successfully created!");
-                actions.resetForm();
+                //console.log(props.events);
+                //actions.resetForm();
               }
             }}
           >
             {(props) => (
+              // What is this magic diamond and why can't it be removed?
+              // The world may never know.
               <>
                 {/* <Text style={globalStyles.titleText}></Text> */}
 
@@ -244,7 +250,7 @@ export default function EventCreation({ navigation }) {
                     </TouchableOpacity>
                   </View>
 
-                  <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
+                  <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5, }}>
                     <TouchableOpacity
                       style={[
                         loop == "Music"
@@ -402,6 +408,7 @@ export default function EventCreation({ navigation }) {
                 <View>
                   <Button
                     title="Create Event"
+
                     titleStyle={{ fontSize: 25, color: "white" }}
                     buttonStyle={{
                       borderWidth: 1,
@@ -409,6 +416,7 @@ export default function EventCreation({ navigation }) {
                       titleColor: "black",
                       backgroundColor: "#fb8c00",
                       borderRadius: 10,
+
                     }}
                     style={{ padding: 45 }}
                     onPress={props.handleSubmit}
@@ -426,7 +434,9 @@ export default function EventCreation({ navigation }) {
 const styles = StyleSheet.create({
   selectedLoop: {
     borderWidth: 1,
+
     borderColor: "white",
+
     padding: 10,
     fontSize: 18,
     marginBottom: 10,
@@ -434,3 +444,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#f57c00",
   },
 });
+
+const mapStateToProps = state => ({
+  events: state.events
+});
+
+// const ActionCreators = Object.assign(
+//   {},
+//   addEvent()
+// );
+
+// const mapDispatchToProps = dispatch => ({
+//   actions: bindActionCreators(ActionCreators, dispatch),
+// });
+
+const mapDispatchToProps = (dispatch) => ({
+  addEvent: (event) => dispatch(addEvent(event))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(EventCreation);

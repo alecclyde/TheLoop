@@ -3,57 +3,57 @@ import * as firestore from "firebase/firestore";
 import { Alert } from "react-native";
 import { StackActions } from "@react-navigation/native";
 
-export async function registration(
-  email,
-  password,
-  lastName,
-  firstName,
-  navigation
-) {
-  try {
-    await firebase.auth().createUserWithEmailAndPassword(email, password);
-    const currentUser = firebase.auth().currentUser;
+// export async function registration(
+//   email,
+//   password,
+//   lastName,
+//   firstName,
+//   navigation
+// ) {
+//   try {
+//     await firebase.auth().createUserWithEmailAndPassword(email, password);
+//     const currentUser = firebase.auth().currentUser;
 
-    const db = firebase.firestore();
-    db.collection("users").doc(currentUser.uid).set({
-      email: currentUser.email,
-      lastName: lastName,
-      firstName: firstName,
-      joinedLoops: [],
-      distanceTolerance: 15,
-      myEvents: [],
-      creationTimestamp: firebase.firestore.Timestamp.now(),
-    });
-    //   navigation.dispatch(StackActions.pop(1));
-    //   if(firebase.auth().currentUser !== null){
-    navigation.navigate("userEventPreferences");
-    //   }
-  } catch (err) {
-    Alert.alert("There is something wrong!", err.message);
-  }
-}
+//     const db = firebase.firestore();
+//     db.collection("users").doc(currentUser.uid).set({
+//       email: currentUser.email,
+//       lastName: lastName,
+//       firstName: firstName,
+//       joinedLoops: [],
+//       distanceTolerance: 15,
+//       myEvents: [],
+//       creationTimestamp: firebase.firestore.Timestamp.now(),
+//     });
+//     //   navigation.dispatch(StackActions.pop(1));
+//     //   if(firebase.auth().currentUser !== null){
+//     navigation.navigate("RootStack");
+//     //   }
+//   } catch (err) {
+//     Alert.alert("There is something wrong!", err.message);
+//   }
+// }
 
-export async function signIn(email, password, navigation) {
-  try {
-    await firebase.auth().signInWithEmailAndPassword(email, password);
-    if (firebase.auth().currentUser !== null) {
-      navigation.navigate("RootStack");
-    }
-  } catch (err) {
-    console.log(err);
-    Alert.alert("There is something wrong!", "Email or Password are incorrect");
-    console.log(err);
-  }
-}
+// export async function signIn(email, password, navigation) {
+//   try {
+//     await firebase.auth().signInWithEmailAndPassword(email, password);
+//     if (firebase.auth().currentUser !== null) {
+//       navigation.navigate("RootStack");
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     Alert.alert("There is something wrong!", "Email or Password are incorrect");
+//     console.log(err);
+//   }
+// }
 
-export async function loggingOut(navigation) {
-  try {
-    await firebase.auth().signOut();
-    navigation.navigate("LogIn");
-  } catch (err) {
-    Alert.alert("There is something wrong!", err.message);
-  }
-}
+// export async function loggingOut(navigation) {
+//   try {
+//     await firebase.auth().signOut();
+//     navigation.navigate("LogIn");
+//   } catch (err) {
+//     Alert.alert("There is something wrong!", err.message);
+//   }
+// }
 
 export async function setUserLoops(joinedLoops, navigation) {
   try {
@@ -94,42 +94,38 @@ export async function getUserData(userID) {
 
 // Creates a new event and adds the data to Firebase
 // Returns true if event is successfully created, returns false otherwise
-export async function createEvent(data) {
-  try {
-    const currentUser = firebase.auth().currentUser;
-    const db = firebase.firestore();
+// export async function createEvent(
+//   data
+// ) {
+//   try {
+//     const currentUser = firebase.auth().currentUser;
+//     const db = firebase.firestore();
 
-    db.collection("events")
-      .add({
-        name: data.name,
-        loop: data.loop,
-        // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
-        creatorID: currentUser.uid,
-        address: data.address,
-        recurAutomatically: false,
-        recurFrequency: 1,
-        // datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
-        startDateTime: firebase.firestore.Timestamp.fromMillis(
-          data.startDateTime
-        ),
-        endDateTime: firebase.firestore.Timestamp.fromMillis(
-          data.startDateTime
-        ), // Will want to query for actual end dateTime later
-        creationTimestamp: firebase.firestore.Timestamp.now(),
-        attendees: [currentUser.uid],
-        location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
-      })
-      .then(() => {
-        return true;
-      });
+//     db.collection("events").add({
+//       name: data.name,
+//       loop: data.loop,
+//       // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
+//       creatorID: currentUser.uid,
+//       address: data.address,
+//       recurAutomatically: false,
+//       recurFrequency: 1,
+//       // datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
+//       startDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime),
+//       endDateTime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // Will want to query for actual end dateTime later
+//       creationTimestamp: firebase.firestore.Timestamp.now(),
+//       attendees: [currentUser.uid],
+//       location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
+//     }).then(() => {
+//       return true;
+//     });
 
-    // probably should navigate to event page after this
-  } catch (err) {
-    console.log(err);
-    Alert.alert("Something went wrong!", err.message);
-    return false;
-  }
-}
+//     // probably should navigate to event page after this
+//   } catch (err) {
+//     console.log(err);
+//     Alert.alert("Something went wrong!", err.message);
+//     return false;
+//   }
+// }
 
 // Grabs a single event's data
 export async function getEventData(eventID) {

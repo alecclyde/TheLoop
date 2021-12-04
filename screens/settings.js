@@ -13,73 +13,83 @@ import { globalStyles } from "../styles/global";
 import { useIsFocused } from "@react-navigation/native";
 import { Switch } from 'react-native-elements';
 import { Button } from 'react-native-elements';
-import { CheckBox } from 'react-native-elements'
+import { CheckBox } from 'react-native-elements';
+
+import { connect } from "react-redux";
+import { signOut } from "../store/actions/userActions";
 import { Input } from 'react-native-elements';
 
 
-export default function UserProfileView ({navigation, SettingsInput}){
+function UserProfileView(props){
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [userID, setUserID] = useState("");
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  // const [userID, setUserID] = useState("");
 
-  const [events, setEvents] = useState([]);
+  // const [events, setEvents] = useState([]);
 
-  const isFocused = useIsFocused();
+  // const isFocused = useIsFocused();
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   
   const [text, onChangeText] = React.useState("Useless Text");
   const [number, onChangeNumber] = React.useState(null);
 
-  // Listener to update user data
-  function AuthStateChangedListener(user) {
-    if (user) {
-      setUserID(user.uid);
-      getUserData(user.uid).then((user) => {
-        setEmail(user.email);
-        setFirstName(user.firstName);
-        setLastName(user.lastName);
-      }
-      );
-    } else {
-      setUserID();
-      setEmail("");
-      setFirstName("");
-      setLastName("");
+  //work around an error when logging out
+  useEffect(() => {
+    if(props.user != null){
+      setEmail(props.user.email);
+      setFirstName(props.user.firstName);
+      setLastName(props.user.LastName);
     }
-  }
+  })
+  // Listener to update user data
+  // function AuthStateChangedListener(user) {
+  //   if (user) {
+  //     setUserID(user.uid);
+  //     getUserData(user.uid).then((user) => {
+  //       setEmail(user.email);
+  //       setFirstName(user.firstName);
+  //       setLastName(user.lastName);
+  //     }
+  //     );
+  //   } else {
+  //     setUserID();
+  //     setEmail("");
+  //     setFirstName("");
+  //     setLastName("");
+  //   }
+  // }
 
-  useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-    return () => {
-      unsubscriber;
-    };
-  }, []);
+  // useEffect(() => {
+  //   const unsubscriber = firebase
+  //     .auth()
+  //     .onAuthStateChanged(AuthStateChangedListener);
+  //   return () => {
+  //     unsubscriber;
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    setEvents([]);
-    firebase
-    .firestore()
-    .collection('events')
-    .where('attendees', 'array-contains', userID)
-    .orderBy('startDateTime')
-    .get()
+  // useEffect(() => {
+  //   setEvents([]);
+  //   firebase
+  //   .firestore()
+  //   .collection('events')
+  //   .where('attendees', 'array-contains', props.user.uid)
+  //   .orderBy('startDateTime')
+  //   .get()
 
-    .then((snap) => {
-      snap.forEach((doc) => {
-        setEvents((events) => [...events, {id: doc.id, name: doc.data().name, startDateTime: doc.data().startDateTime, creatorID: doc.data().creatorID}])
-      })
-    })
+  //   .then((snap) => {
+  //     snap.forEach((doc) => {
+  //       setEvents((events) => [...events, {id: doc.id, name: doc.data().name, startDateTime: doc.data().startDateTime, creatorID: doc.data().creatorID}])
+  //     })
+  //   })
     
-  }, [userID, isFocused])
-
-
+  // }, [userID, isFocused])
+  // props.navigation.navigate("LogIn");
     return (
       <View style={styles.container}>
           <View style={styles.header}>
@@ -142,10 +152,17 @@ export default function UserProfileView ({navigation, SettingsInput}){
                 />
             </View>
 
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <Button
+              title="Sign Out"
+              onPress={() => props.signOut(props.navigation)}
+            ></Button>
+          </View>
+
           </View>
       </View>
     );
-    }
+  }
 
 const styles = StyleSheet.create({
   header:{
@@ -220,3 +237,13 @@ const styles = StyleSheet.create({
     color: "#000000",
   }
 });
+
+const mapStateToProps = (state) => ({
+  user: state.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  signOut: (navigation) => dispatch(signOut(navigation)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfileView);

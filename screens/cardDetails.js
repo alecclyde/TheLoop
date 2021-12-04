@@ -3,11 +3,13 @@ import {
   View,
   Text,
   Alert,
+  SafeAreaView,
   Keyboard,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   Modal,
+  StyleSheet,
 } from "react-native";
 import { globalStyles } from "../styles/global";
 // import Card from '../shared/card';
@@ -22,7 +24,6 @@ import {
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import {
-  registerEvent,
   unregisterEvent,
   getUserData,
   createPost,
@@ -32,21 +33,26 @@ import {
 import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
 import { useIsFocused } from "@react-navigation/core";
+import { connect } from "react-redux";
+import { registerEvent } from "../store/actions/eventActions";
+import { bindActionCreators } from "redux";
+
 
 // yuh yuh
 
 //Called by favorite and personal when you click on a card to display the content
-export default function CardDetails({ navigation, route }) {
+function CardDetails(props, { navigation, route }) {
+
   const [eventAttendees, setEventAttendees] = useState([]);
   const [eventCreator, setEventCreator] = useState({
-    id: route.params?.creatorID,
+    id: props.route.params?.creatorID,
     name: "",
   });
 
-  const [eventName, setEventName] = useState(route.params?.name);
-  const [eventLoop, setEventLoop] = useState(route.params?.loop || "");
+  const [eventName, setEventName] = useState(props.route.params?.name);
+  const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
   const [eventDateTime, setEventDateTime] = useState(
-    route.params?.startDateTime || ""
+    props.route.params?.startDateTime || ""
   );
   const [eventAddress, setEventAddress] = useState("");
 
@@ -67,7 +73,7 @@ export default function CardDetails({ navigation, route }) {
       });
 
       setUserID(user.uid);
-      if (user.uid == route.params?.creatorID) setIsCreator(true);
+      if (user.uid == props.route.params?.creatorID) setIsCreator(true);
     }
   };
 
@@ -205,7 +211,7 @@ export default function CardDetails({ navigation, route }) {
         },
         {
           text: "Delete",
-          onPress: () => deletePost(route.params?.id, post.id),
+          onPress: () => deletePost(props.route.params?.id, post.id),
         },
       ]
     );
@@ -229,7 +235,7 @@ export default function CardDetails({ navigation, route }) {
     const subscriber = firebase
       .firestore()
       .collection("events")
-      .doc(route.params?.id)
+      .doc(props.route.params?.id)
       .onSnapshot(onResult, onError);
 
     return subscriber;
@@ -240,7 +246,7 @@ export default function CardDetails({ navigation, route }) {
     const subscriber = firebase
       .firestore()
       .collection("posts")
-      .doc(route.params?.id)
+      .doc(props.route.params?.id)
       .collection("posts")
       .orderBy("creationTimestamp")
       .onSnapshot(onPostResult, onPostError);
@@ -260,20 +266,30 @@ export default function CardDetails({ navigation, route }) {
   }, [eventAttendees, userID]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={globalStyles.container}>
+    <View style={{backgroundColor: "#D3D3D3", flex: 1 }}>
+    
+    
+    
+      {/* // Title Area */}
       {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
       <View
         style={{
           paddingHorizontal: 20,
           paddingTop: 20,
-          backgroundColor: "white",
+          backgroundColor: "#D3D3D3",
+          borderBottomColor: 'black',
+          borderBottomWidth: 5,
+          marginBottom: 15,
         }}
       >
         <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
-          <View style={globalStyles.rowContainer}>
-            <Text style={globalStyles.titleText}>{eventName}</Text>
+          <View>
+            <Text style={styles.Title}>{eventName} </Text>
+            <Text style={styles.subt}> By: {eventCreator.name} </Text>
+            <Text style={{ position: "absolute", right: 0.1 }}> ICON {eventLoop}</Text>
             <Icon
-              onPress={() => navigation.dispatch(StackActions.pop(1))}
+              onPress={() => props.navigation.dispatch(StackActions.pop(1))}
               name="arrow-left"
               size={25}
               style={{ position: "absolute", left: 1 }}
@@ -283,6 +299,10 @@ export default function CardDetails({ navigation, route }) {
         </ScrollView>
       </View>
 
+      
+
+
+      
       {/* Post area */}
       <FlatList
         data={state}
@@ -301,8 +321,10 @@ export default function CardDetails({ navigation, route }) {
                   .unix(item.creationTimestamp.seconds)
                   .format("MMM Do, hh:mm A")}
               </Text>
-            </View>
 
+
+            </View>
+              
             {postEditID != item.id && (
               <View>
                 {/* post message */}
@@ -331,7 +353,7 @@ export default function CardDetails({ navigation, route }) {
                       Alert.alert("Error", "Cannot create a post with no text");
                     } else {
                       editPost(
-                        route.params?.id,
+                        props.route.params?.id,
                         item.id,
                         values.postText.trim()
                       );
@@ -372,6 +394,8 @@ export default function CardDetails({ navigation, route }) {
               </View>
             )}
 
+
+
             {/* pencil and trashcan icons */}
             {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
             {!editMode && (
@@ -398,34 +422,47 @@ export default function CardDetails({ navigation, route }) {
             )}
           </Card>
         )}
+
+
+
         ListHeaderComponent={
           <ScrollView
             // style={{ flex: 1 }}
             keyboardShouldPersistTaps="handled"
           >
+
+
             <View style={{ paddingHorizontal: 20 }}>
-              <Text>Address: {eventAddress}</Text>
-              <Text>Creator: {eventCreator.name}</Text>
-              <Text>
-                Date: {moment.unix(eventDateTime).format("MMMM Do, YYYY")}
-              </Text>
-              <Text>Time: {moment.unix(eventDateTime).format("hh:mm A")}</Text>
-              <Text>Loop: {eventLoop}</Text>
+              <Text style={styles.titlesub}> Where? </Text>
+              <Text style={styles.sub}> {eventAddress} </Text>
+              <Text style={styles.titlesub}> When? </Text>
+              <Text style={styles.sub}>{moment.unix(eventDateTime).format("MMMM Do, YYYY")} at {moment.unix(eventDateTime).format("h:mm A")}</Text>
+              
+              
+              <Text style={styles.titlesub}>Attendees</Text>
+              {eventAttendees.map((attendee) => (
+                <Text key={attendee.id} style={styles.subp}>{attendee.name}</Text>
+              ))}
 
               <Divider orientation="horizontal" />
 
-              <Text style={globalStyles.titleText}>Attendees</Text>
-              {eventAttendees.map((attendee) => (
-                <Text key={attendee.id}>{attendee.name}</Text>
-              ))}
+
+
               {!isCreator && (
                 <Button
+                  titleStyle={{ color: "black" }}
+                  buttonStyle={{
+                    borderWidth: 1,
+                    borderColor: "black",
+                    titleColor: "black",
+                    backgroundColor: "orange",
+                    }}
                   title={!isAttending ? "Register" : "Unregister"}
                   onPress={() => {
                     if (!isAttending) {
-                      registerEvent(route.params?.id, userID);
+                      props.registerEvent(props.route.params?.id, userID);
                     } else {
-                      unregisterEvent(route.params?.id, userID);
+                      unregisterEvent(props.route.params?.id, userID);
                     }
                   }}
                 />
@@ -435,6 +472,9 @@ export default function CardDetails({ navigation, route }) {
           </ScrollView>
         }
       />
+      
+
+
 
       {!(Platform.OS == "android" && editMode) && (<KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "position" : "height"}
@@ -455,7 +495,7 @@ export default function CardDetails({ navigation, route }) {
                 var success = createPost(
                   userID,
                   userName,
-                  route.params?.id,
+                  props.route.params?.id,
                   values.postText.trim()
                 );
                 actions.resetForm();
@@ -476,6 +516,13 @@ export default function CardDetails({ navigation, route }) {
                   style={{ maxHeight: 100 }}
                 />
                 <Button
+                  titleStyle={{ color: "white" }}
+                  buttonStyle={{
+                    borderWidth: 1,
+                    borderColor: "black",
+                    titleColor: "black",
+                    backgroundColor: "#517fa4",
+                    }}
                   title="Post"
                   disabled={!isAttending || editMode}
                   onPress={props.handleSubmit}
@@ -488,5 +535,49 @@ export default function CardDetails({ navigation, route }) {
 
       {/* </ScrollView> */}
     </View>
+    </SafeAreaView>
   );
 }
+
+const mapStateToProps = state => ({
+  events: state.events
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  registerEvent: (event, user) => dispatch(registerEvent(event, user))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(CardDetails);
+
+const styles = StyleSheet.create({
+  
+  Title:{
+    marginBottom:5,
+    fontSize:35,
+    color:"#FF5F15",
+    fontWeight:'bold',
+    textAlign: 'center',
+  },
+  titlesub:{
+    fontSize: 25,
+    paddingBottom: 2,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  sub:{
+    fontSize:20,
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  subt:{
+    fontSize:18,
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  subp:{
+    fontSize:12,
+    textAlign: 'center',
+    paddingBottom: 5,
+  },
+
+});    
