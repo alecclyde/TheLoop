@@ -16,6 +16,7 @@ import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 import { Text } from "react-native-elements";
+import LinearGradient from 'expo-linear-gradient';
 
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
@@ -105,9 +106,17 @@ function EventCreation(props) {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#F8F8F8",
       }}
     >
+
+    <ImageBackground
+        source={{
+          uri: "data:image/jpeg;base64,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",
+        }}
+        resizeMode="cover"
+        style={{ width: "100%", height: "100%", position: "absolute"}}
+        />
+
       <SafeAreaView style={globalStyles.container}>
         <View style={{ alignItems: "center" }}>
           <Formik
@@ -148,6 +157,7 @@ function EventCreation(props) {
                   value={props.values.eventName}
                   onChangeText={props.handleChange("eventName")}
                   onBlur={props.handleBlur("eventName")}
+                  placeholderTextColor='white'
                 />
                 <Text style={globalStyles.errorText}>
                   {props.touched.eventName && props.errors.eventName}
@@ -155,10 +165,10 @@ function EventCreation(props) {
 
                 {/* Touching the date button opens the date picker */}
                 <Button
-                  titleStyle={{ color: "black" }}
+                  titleStyle={{ color: "white", width: 250 }}
                   buttonStyle={{
                     borderWidth: 1,
-                    borderColor: "black",
+                    borderColor: "white",
                     titleColor: "black",
                     backgroundColor: "transparent",
                   }}
@@ -173,11 +183,11 @@ function EventCreation(props) {
                 {/* and touching the time button opens the time picker */}
 
                 <Button
-                  titleStyle={{ color: "black" }}
+                  titleStyle={{ color: "white", width: 250 }}
                   buttonStyle={{
                     padding: 10,
                     borderWidth: 1,
-                    borderColor: "black",
+                    borderColor: "white",
                     titleColor: "black",
                     backgroundColor: "transparent",
                   }}
@@ -236,7 +246,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Sports");
                       }}
                     >
-                      <Text>Sports</Text>
+                      <Text style={{color: "white"}}>Sports</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -253,7 +263,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Music");
                       }}
                     >
-                      <Text>Music</Text>
+                      <Text style={{color: "white"}}>Music</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -270,7 +280,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Volunteer");
                       }}
                     >
-                      <Text>Volunteer</Text>
+                      <Text style={{color: "white"}}>Volunteer</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -289,7 +299,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Game");
                       }}
                     >
-                      <Text>Game</Text>
+                      <Text style={{color: "white"}}>Game</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -306,7 +316,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Social");
                       }}
                     >
-                      <Text>Social</Text>
+                      <Text style={{color: "white"}}>Social</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -323,7 +333,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Arts");
                       }}
                     >
-                      <Text>Arts</Text>
+                      <Text style={{color: "white"}}>Arts</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -341,7 +351,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Outdoors");
                       }}
                     >
-                      <Text>Outdoors</Text>
+                      <Text style={{color: "white"}}>Outdoors</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -358,7 +368,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Academic");
                       }}
                     >
-                      <Text>Academic</Text>
+                      <Text style={{color: "white"}}>Academic</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -375,7 +385,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Media");
                       }}
                     >
-                      <Text>Media</Text>
+                      <Text style={{color: "white"}}>Media</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -389,6 +399,7 @@ function EventCreation(props) {
                   value={props.values.eventAddress}
                   onChangeText={props.handleChange("eventAddress")}
                   onBlur={props.handleBlur("eventAddress")}
+                  placeholderTextColor='white'
                 />
                 <Text style={globalStyles.errorText}>
                   {props.touched.eventAddress && props.errors.eventAddress}
@@ -397,11 +408,15 @@ function EventCreation(props) {
                 <View>
                   <Button
                     title="Create Event"
-                    titleStyle={{ fontSize: 30, color: "white" }}
+
+                    titleStyle={{ fontSize: 25, color: "white" }}
                     buttonStyle={{
                       borderWidth: 1,
-                      borderColor: "black",
-                      backgroundColor: "#2C2C2C",
+                      borderColor: "white",
+                      titleColor: "black",
+                      backgroundColor: "#fb8c00",
+                      borderRadius: 10,
+
                     }}
                     style={{ padding: 45 }}
                     onPress={props.handleSubmit}
@@ -412,7 +427,6 @@ function EventCreation(props) {
           </Formik>
         </View>
       </SafeAreaView>
-      {/* </ImageBackground> */}
     </View>
   );
 }
@@ -420,12 +434,14 @@ function EventCreation(props) {
 const styles = StyleSheet.create({
   selectedLoop: {
     borderWidth: 1,
-    borderColor: "#000000",
+
+    borderColor: "white",
+
     padding: 10,
     fontSize: 18,
     marginBottom: 10,
     borderRadius: 6,
-    backgroundColor: "#ffab8a",
+    backgroundColor: "#f57c00",
   },
 });
 
