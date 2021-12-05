@@ -18,6 +18,7 @@ import { CheckBox } from 'react-native-elements';
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
 import { Input } from 'react-native-elements';
+import { toggleDarkmode } from '../store/actions/settingsActions';
 
 
 function UserProfileView(props){
@@ -32,8 +33,8 @@ function UserProfileView(props){
   // const [events, setEvents] = useState([]);
 
   // const isFocused = useIsFocused();
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  // const [isEnabled, setIsEnabled] = useState(false);
+  // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   
   const [text, onChangeText] = React.useState("Useless Text");
   const [number, onChangeNumber] = React.useState(null);
@@ -44,6 +45,7 @@ function UserProfileView(props){
       setEmail(props.user.email);
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
+      console.log(props.settings.darkMode)
     }
   })
   // Listener to update user data
@@ -105,14 +107,14 @@ function UserProfileView(props){
           <View style={styles.body}>
             <View style={styles.item}>
               <View style={styles.infoContent}>
-                <Text style={styles.info}>Setting option 1 </Text>
+                <Text style={styles.info}>Dark Mode</Text>
               </View>
               <View style={styles.switch}>
                 <Switch
                     trackColor={{ false: "#767577", true: "#FFA500" }}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
+                    onValueChange={ () => props.toggleDarkmode()}
+                    value={props.settings.darkMode}
                 />
                 </View>
             </View>
@@ -239,11 +241,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  user: state.user
+  user: state.user,
+  settings: state.settings
 });
 
 const mapDispatchToProps = (dispatch) => ({
   signOut: (navigation) => dispatch(signOut(navigation)),
+  toggleDarkmode: () => dispatch(toggleDarkmode())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfileView);
