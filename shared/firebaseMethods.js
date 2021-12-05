@@ -184,6 +184,7 @@ export async function registerEvent(eventData, userData) {
       // make a new notification
       await createNotification(eventData.creatorID, "new-joins", {
         eventName: eventData.eventName,
+        eventID: eventData.eventID,
         userData: userData,
       }).then((doc) => {
         firebase
@@ -191,13 +192,19 @@ export async function registerEvent(eventData, userData) {
           .collection("events")
           .doc(eventData.eventID)
           .update({
-            attendees: firebase.firestore.FieldValue.arrayUnion(userData.userID),
+            attendees: firebase.firestore.FieldValue.arrayUnion(
+              userData.userID
+            ),
             newAttendeesNotifID: doc.id,
           });
       });
     } else {
       // otherwise, update the notification object
-      updateAddAttendeeNotification(eventData.newAttendeesNotifID, eventData.creatorID, userData)
+      updateAddAttendeeNotification(
+        eventData.newAttendeesNotifID,
+        eventData.creatorID,
+        userData
+      );
 
       await firebase
         .firestore()
@@ -218,7 +225,7 @@ export async function registerEvent(eventData, userData) {
       });
   } catch (err) {
     console.log(err);
-    Alert.alert("something went wrong!", err.message);
+    Alert.alert("registerEvent: something went wrong!", err.message);
   }
 }
 
@@ -229,8 +236,11 @@ export async function registerEvent(eventData, userData) {
  */
 export async function unregisterEvent(eventData, userData) {
   try {
-
-    await updateRemoveAttendeeNotification(eventData.newAttendeesNotifID, eventData.creatorID, userData)
+    await updateRemoveAttendeeNotification(
+      eventData.newAttendeesNotifID,
+      eventData.creatorID,
+      userData
+    );
 
     await firebase
       .firestore()
@@ -248,7 +258,6 @@ export async function unregisterEvent(eventData, userData) {
       .update({
         myEvents: firebase.firestore.FieldValue.arrayRemove(eventData.eventID),
       });
-
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
@@ -332,6 +341,7 @@ export async function createNotification(userID, notifType, notifData) {
         await doc.set({
           type: notifType,
           creationTimestamp: firebase.firestore.Timestamp.now(),
+          updatedTimestamp: firebase.firestore.Timestamp.now(),
           eventName: notifData.eventName,
           creatorName: notifData.creatorName,
           seen: false,
@@ -347,6 +357,7 @@ export async function createNotification(userID, notifType, notifData) {
         await doc.set({
           type: notifType,
           creationTimestamp: firebase.firestore.Timestamp.now(),
+          updatedTimestamp: firebase.firestore.Timestamp.now(),
           eventName: notifData.eventName,
           creatorName: notifData.creatorName,
           seen: false,
@@ -378,11 +389,14 @@ export async function createNotification(userID, notifType, notifData) {
       case "new-joins":
         // showstopper
         // requires a special query that adds a userID as a new attendee
+
         await doc.set({
           type: notifType,
           creationTimestamp: firebase.firestore.Timestamp.now(),
+          updatedTimestamp: firebase.firestore.Timestamp.now(),
           eventName: notifData.eventName,
-          newAttendees: [notifData.newUserID],
+          eventID: notifData.eventID,
+          newAttendees: [notifData.userData], // this is messy, might want to change
           seen: false,
         });
 
@@ -394,7 +408,7 @@ export async function createNotification(userID, notifType, notifData) {
     }
   } catch (err) {
     console.log(err);
-    Alert.alert("something went wrong!", err.message);
+    Alert.alert("createNotification: something went wrong!", err.message);
   }
 }
 
@@ -418,6 +432,7 @@ export async function updateAddAttendeeNotification(
       .doc(notificationID)
       .update({
         newAttendees: firebase.firestore.FieldValue.arrayUnion(newAttendeeData),
+        updatedTimestamp: firebase.firestore.Timestamp.now(),
       });
   } catch (err) {
     console.log(err);
@@ -431,7 +446,7 @@ export async function updateAddAttendeeNotification(
  * @param creatorID - the userID whom the notification belongs to
  * @param newAttendeeData - the new user unregistering from the event
  */
- export async function updateRemoveAttendeeNotification(
+export async function updateRemoveAttendeeNotification(
   notificationID,
   creatorID,
   newAttendeeData
@@ -444,7 +459,9 @@ export async function updateAddAttendeeNotification(
       .collection("notifications")
       .doc(notificationID)
       .update({
-        newAttendees: firebase.firestore.FieldValue.arrayRemove(newAttendeeData),
+        newAttendees:
+          firebase.firestore.FieldValue.arrayRemove(newAttendeeData),
+        updatedTimestamp: firebase.firestore.Timestamp.now(),
       });
   } catch (err) {
     console.log(err);
@@ -470,6 +487,7 @@ export async function grabNotifications(userID) {
       .get()
       .then((snap) => {
         snap.forEach((doc) => {
+          setNotifSeen(userID, doc.id, {notifType: doc.data().type, eventID: doc.data().eventID})
           notifs.push({ id: doc.id, ...doc.data() });
         });
       });
@@ -485,13 +503,64 @@ export async function grabNotifications(userID) {
 }
 
 /**
+ * Sets a notification as "seen" and modifies event details if necessary
+ * @param userID - the userID whose notification is being marked as seen
+ * @param notifID - the notifID of the notification being marked as seen
+ * @param notifData - the other data required when making a notification seen
+ */
+export async function setNotifSeen(userID, notifID, notifData) {
+  try {
+    switch (notifData.notifType) {
+      case "new-posts":
+      case "new-joins":
+        await firebase
+          .firestore()
+          .collection("users")
+          .doc(userID)
+          .collection("notifications")
+          .doc(notifID)
+          .update({
+            seen: true,
+          })
+          .then((doc) => {
+            firebase
+              .firestore()
+              .collection("events")
+              .doc(notifData.eventID)
+              .update({
+                newAttendeesNotifID: "0",
+              });
+          });
+        break;
+
+      case "announcement":
+      case "event-change":
+      case "event-kick":
+      case "report":
+        await firebase
+          .firestore()
+          .collection("users")
+          .doc(userID)
+          .collection("notifications")
+          .doc(notifID)
+          .update({
+            seen: true,
+          });
+        break;
+    }
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+/**
  * Copy this template for making new firebase functions
  * @param args - arguments
  */
 export async function template(args) {
   try {
     // do stuff
-     
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);

@@ -11,6 +11,8 @@ import {
 import { grabNotifications } from "../shared/firebaseMethods";
 import firebase from "firebase";
 import { makeTimeDifferenceString } from "../shared/commonMethods";
+import { Button } from "react-native-elements";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function Notifications({ navigation, route }) {
   // TO ROBBIE OR CADEN I could only make this code work by putting it into a class/ Component
@@ -21,6 +23,10 @@ export default function Notifications({ navigation, route }) {
   const placeholderImage = {
     uri: "https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png",
   };
+
+  const isFocused = useIsFocused();
+
+  const [user, setUser] = useState();
 
   const stylizedMessage = (notifType, notifData) => {
     switch (notifType) {
@@ -51,7 +57,48 @@ export default function Notifications({ navigation, route }) {
         return;
 
       case "new-posts":
-        return;
+        if (notifData.newPosts.length == 1) {
+          return (
+            <Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {notifData.newPosts[0].userName}
+              </Text>
+              <Text> has made a new post in </Text>
+              <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+              <Text>.</Text>
+            </Text>
+          );
+        } else if (notifData.newAttendees.length == 2) {
+          return (
+            <Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {notifData.newPosts[0].userName}
+              </Text>
+              <Text> and </Text>
+              <Text style={{ fontWeight: "bold" }}>1</Text>
+              <Text> other have made new posts in </Text>
+              <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+              <Text>.</Text>
+            </Text>
+          );
+        } else if (notifData.newAttendees.length > 2) {
+          return (
+            <Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {notifData.newPosts[0].userName}
+              </Text>
+              <Text> and </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {notifData.newAttendees.length - 1}
+              </Text>
+              <Text> others have made new posts in </Text>
+              <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+              <Text>.</Text>
+            </Text>
+          );
+        } else {
+          return;
+        }
 
       case "new-joins":
         if (notifData.newAttendees.length == 1) {
@@ -110,9 +157,7 @@ export default function Notifications({ navigation, route }) {
 
   const AuthStateChangedListener = (user) => {
     if (user) {
-      grabNotifications(user.uid).then((data) => {
-        setNotifications(data);
-      });
+      setUser(user);
     }
   };
 
@@ -126,33 +171,66 @@ export default function Notifications({ navigation, route }) {
     };
   }, []);
 
+  // grab the posts when user is authenticated or screen is refocused
+  useEffect(() => {
+    if (user) {
+
+      grabNotifications(user.uid).then((data) => {
+        setNotifications(data);
+      });
+    }
+  }, [user, isFocused]);
+
   return (
-    <FlatList
-      style={styles.root}
-      data={notifications}
-      ItemSeparatorComponent={() => {
-        return <View style={styles.separator} />;
-      }}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <View style={styles.container}>
-          <Image source={placeholderImage} style={styles.avatar} />
-          <View style={styles.content}>
-            <View style={styles.mainContent}>
-              <View style={styles.text}>
-                {/* <Text style={styles.name}>{item.creatorName}</Text> */}
-                <Text>{stylizedMessage(item.type, item)}</Text>
+    <View>
+      <FlatList
+        style={styles.root}
+        data={notifications}
+        ItemSeparatorComponent={() => {
+          return <View style={styles.separator} />;
+        }}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.container}>
+            <Image source={placeholderImage} style={styles.avatar} />
+            <View style={styles.content}>
+              <View style={styles.mainContent}>
+                <View style={styles.text}>
+                  {/* <Text style={styles.name}>{item.creatorName}</Text> */}
+                  <Text>{stylizedMessage(item.type, item)}</Text>
+                </View>
+                <Text style={styles.timeAgo}>
+                  {makeTimeDifferenceString(item.creationTimestamp.seconds)} ago
+                </Text>
+                {/* The time can be imported from the database */}
               </View>
-              <Text style={styles.timeAgo}>
-                {makeTimeDifferenceString(item.creationTimestamp.seconds)} ago
-              </Text>
-              {/* The time can be imported from the database */}
+              <View />
             </View>
-            <View />
           </View>
-        </View>
-      )}
-    />
+        )}
+      />
+
+      {/* <Button
+        title="Update Data"
+        onPress={() => {
+          firebase
+            .firestore()
+            .collection("events")
+            .get()
+            .then((snap) => {
+              snap.forEach((doc) => {
+                firebase.firestore().collection("events").doc(doc.id).set(
+                  {
+                    newAttendeesNotifID: "0",
+                    newPostsNotifID: "0",
+                  },
+                  { merge: true }
+                );
+              });
+            });
+        }}
+      /> */}
+    </View>
   );
 }
 
