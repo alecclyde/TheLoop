@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,23 +6,25 @@ import {
   Image,
   Platform,
   TextInput,
-  TouchableOpacity
-} from 'react-native';
+  TouchableOpacity,
+} from "react-native";
 import { loggingOut, getUserData } from "../shared/firebaseMethods";
 import * as firebase from "firebase";
 import { globalStyles } from "../styles/global";
 import { useIsFocused } from "@react-navigation/native";
-import { Switch } from 'react-native-elements';
-import { Button } from 'react-native-elements';
-import { CheckBox } from 'react-native-elements';
+import { Switch } from "react-native-elements";
+import { Button } from "react-native-elements";
+import { CheckBox } from "react-native-elements";
 
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
-import { Input } from 'react-native-elements';
-import { toggleDarkmode, toggleNotifications } from '../store/actions/settingsActions';
+import { Input } from "react-native-elements";
+import {
+  toggleDarkmode,
+  toggleNotifications,
+} from "../store/actions/settingsActions";
 
-
-function UserProfileView(props){
+function UserProfileView(props) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
@@ -36,19 +38,19 @@ function UserProfileView(props){
   // const isFocused = useIsFocused();
   // const [isEnabled, setIsEnabled] = useState(false);
   // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  
+
   const [text, onChangeText] = React.useState("Useless Text");
   const [number, onChangeNumber] = React.useState(null);
 
   //work around an error when logging out
   useEffect(() => {
-    if(props.user != null){
+    if (props.user != null) {
       setEmail(props.user.email);
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
-      console.log(props.settings.darkMode)
+      console.log(props.settings.darkMode);
     }
-  })
+  });
   // Listener to update user data
   // function AuthStateChangedListener(user) {
   //   if (user) {
@@ -90,52 +92,58 @@ function UserProfileView(props){
   //       setEvents((events) => [...events, {id: doc.id, name: doc.data().name, startDateTime: doc.data().startDateTime, creatorID: doc.data().creatorID}])
   //     })
   //   })
-    
+
   // }, [userID, isFocused])
   // props.navigation.navigate("LogIn");
-    return (
-      <View style={styles.container}>
-          <View style={styles.header}>
-            <View style={styles.headerContent}>
-              {/* Add this -> https://blog.waldo.io/add-an-image-picker-react-native-app/ */}
-              <TouchableOpacity onPress={ () => console.log('bogo')}>
-                <Image style={styles.avatar}
-                  source={{uri: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png'}}/>
-              </TouchableOpacity>
-                <Text style={styles.name}>{firstName} {lastName} </Text>
-                <Text style={styles.userInfo}>{email} </Text>
-            </View>
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          {/* Add this -> https://blog.waldo.io/add-an-image-picker-react-native-app/ */}
+          <TouchableOpacity onPress={() => console.log("bogo")}>
+            <Image
+              style={styles.avatar}
+              source={{
+                uri: "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png",
+              }}
+            />
+          </TouchableOpacity>
+          <Text style={styles.name}>
+            {firstName} {lastName}{" "}
+          </Text>
+          <Text style={styles.userInfo}>{email} </Text>
+        </View>
+      </View>
+
+      <View style={styles.body}>
+        <View style={styles.item}>
+          <View style={styles.infoContent}>
+            <Text style={styles.info}>Dark Mode</Text>
           </View>
+          <View style={styles.switch}>
+            <Switch
+              trackColor={{ false: "#767577", true: "#FFA500" }}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => props.toggleDarkmode()}
+              value={props.settings.darkMode}
+            />
+          </View>
+        </View>
 
-          <View style={styles.body}>
-            <View style={styles.item}>
-              <View style={styles.infoContent}>
-                <Text style={styles.info}>Dark Mode</Text>
-              </View>
-              <View style={styles.switch}>
-                <Switch
-                    trackColor={{ false: "#767577", true: "#FFA500" }}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={ () => props.toggleDarkmode()}
-                    value={props.settings.darkMode}
-                />
-                </View>
-            </View>
-
-            <View style={styles.item}>
-              <View style={styles.infoContent}>
-                <Text style={styles.info}>Push Notifications</Text>
-              </View>
-              <View style={styles.switch}>
-                <Switch
-                    trackColor={{ false: "#767577", true: "#FFA500" }}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={ () => props.toggleNotifications()}
-                    value={props.settings.pushNotifications}
-                />
-                </View>
-            </View>
-{/* 
+        <View style={styles.item}>
+          <View style={styles.infoContent}>
+            <Text style={styles.info}>Push Notifications</Text>
+          </View>
+          <View style={styles.switch}>
+            <Switch
+              trackColor={{ false: "#767577", true: "#FFA500" }}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => props.toggleNotifications()}
+              value={props.settings.pushNotifications}
+            />
+          </View>
+        </View>
+        {/* 
             <View style={styles.item}>
               <View style={styles.infoContent}>
                 <Text style={styles.info}>Setting Option 2</Text>
@@ -156,7 +164,7 @@ function UserProfileView(props){
                 />
             </View> */}
 
-            {/* <View style={styles.item}>
+        {/* <View style={styles.item}>
               <View style={styles.infoContent}>
                 <Text style={styles.info}>Maybe Button to go to preferences or other like security</Text>
               </View>
@@ -171,32 +179,31 @@ function UserProfileView(props){
                 />
             </View> */}
 
-            <View style={{ flexDirection: "row", justifyContent: "center" }}>
-            <Button
-              title="Sign Out"
-              onPress={() => props.signOut(props.navigation)}
-            ></Button>
-          </View>
-
-          </View>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Button
+            title="Sign Out"
+            onPress={() => props.signOut(props.navigation)}
+          ></Button>
+        </View>
       </View>
-    );
-  }
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-  header:{
+  header: {
     ...Platform.select({
       ios: {
-        backgroundColor: '#FFA500'
+        backgroundColor: "#FFA500",
       },
       android: {
-        backgroundColor: '#DCDCDC'
+        backgroundColor: "#DCDCDC",
       },
-    })
+    }),
   },
-  headerContent:{
-    padding:30,
-    alignItems: 'center',
+  headerContent: {
+    padding: 30,
+    alignItems: "center",
   },
   avatar: {
     width: 130,
@@ -204,46 +211,46 @@ const styles = StyleSheet.create({
     borderRadius: 63,
     borderWidth: 4,
     borderColor: "white",
-    marginBottom:10,
+    marginBottom: 10,
   },
-  name:{
-    fontSize:22,
-    color:"#000000",
-    fontWeight:'600',
+  name: {
+    fontSize: 22,
+    color: "#000000",
+    fontWeight: "600",
   },
-  userInfo:{
-    fontSize:16,
-    color:"#000000",
-    fontWeight:'600',
+  userInfo: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "600",
   },
-  body:{
+  body: {
     backgroundColor: "#DCDCDC",
-    height:500,
+    height: 500,
   },
-  item:{
-    flexDirection : 'row',
-    paddingBottom: 10
+  item: {
+    flexDirection: "row",
+    paddingBottom: 10,
   },
-  infoContent:{
-    flex:1,
-    alignItems:'center',
-    flexDirection : 'row',
-    paddingLeft:5
+  infoContent: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "row",
+    paddingLeft: 5,
   },
-  iconContent:{
-    flex:1,
-    alignItems:'flex-end',
-    paddingRight:5,
+  iconContent: {
+    flex: 1,
+    alignItems: "flex-end",
+    paddingRight: 5,
   },
-  icon:{
-    width:30,
-    height:30,
-    marginTop:20,
+  icon: {
+    width: 30,
+    height: 30,
+    marginTop: 20,
   },
-  switch:{
-    paddingRight:15,
-    alignItems:'flex-end',
-    flexDirection : 'row',
+  switch: {
+    paddingRight: 15,
+    alignItems: "flex-end",
+    flexDirection: "row",
   },
   input: {
     height: 40,
@@ -251,22 +258,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
-  info:{
-    fontSize:18,
-    marginTop:15,
+  info: {
+    fontSize: 18,
+    marginTop: 15,
     color: "#000000",
-  }
+  },
 });
 
 const mapStateToProps = (state) => ({
   user: state.user,
-  settings: state.settings
+  settings: state.settings,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   signOut: (navigation) => dispatch(signOut(navigation)),
   toggleDarkmode: () => dispatch(toggleDarkmode()),
-  toggleNotifications: () => dispatch(toggleNotifications())
+  toggleNotifications: () => dispatch(toggleNotifications()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfileView);

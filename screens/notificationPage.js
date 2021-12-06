@@ -21,7 +21,7 @@ export default function Notifications({ navigation, route }) {
   // Robbie: It's taken care of B)
 
   const placeholderImage = {
-    uri: "https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png",
+    uri: "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png",
   };
 
   const isFocused = useIsFocused();
