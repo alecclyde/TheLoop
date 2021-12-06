@@ -5,7 +5,8 @@ import {
   View,
   Image,
   Platform,
-  TextInput
+  TextInput,
+  TouchableOpacity
 } from 'react-native';
 import { loggingOut, getUserData } from "../shared/firebaseMethods";
 import * as firebase from "firebase";
@@ -18,7 +19,7 @@ import { CheckBox } from 'react-native-elements';
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
 import { Input } from 'react-native-elements';
-import { toggleDarkmode } from '../store/actions/settingsActions';
+import { toggleDarkmode, toggleNotifications } from '../store/actions/settingsActions';
 
 
 function UserProfileView(props){
@@ -96,9 +97,11 @@ function UserProfileView(props){
       <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.headerContent}>
+              {/* Add this -> https://blog.waldo.io/add-an-image-picker-react-native-app/ */}
+              <TouchableOpacity onPress={ () => console.log('bogo')}>
                 <Image style={styles.avatar}
                   source={{uri: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png'}}/>
-
+              </TouchableOpacity>
                 <Text style={styles.name}>{firstName} {lastName} </Text>
                 <Text style={styles.userInfo}>{email} </Text>
             </View>
@@ -121,6 +124,20 @@ function UserProfileView(props){
 
             <View style={styles.item}>
               <View style={styles.infoContent}>
+                <Text style={styles.info}>Push Notifications</Text>
+              </View>
+              <View style={styles.switch}>
+                <Switch
+                    trackColor={{ false: "#767577", true: "#FFA500" }}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={ () => props.toggleNotifications()}
+                    value={props.settings.pushNotifications}
+                />
+                </View>
+            </View>
+{/* 
+            <View style={styles.item}>
+              <View style={styles.infoContent}>
                 <Text style={styles.info}>Setting Option 2</Text>
               </View>
               <CheckBox
@@ -137,9 +154,9 @@ function UserProfileView(props){
                 value={number}
                 placeholder="useless placeholder"
                 />
-            </View>
+            </View> */}
 
-            <View style={styles.item}>
+            {/* <View style={styles.item}>
               <View style={styles.infoContent}>
                 <Text style={styles.info}>Maybe Button to go to preferences or other like security</Text>
               </View>
@@ -152,7 +169,7 @@ function UserProfileView(props){
                       backgroundColor: "#FFA500",
                     }}
                 />
-            </View>
+            </View> */}
 
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
             <Button
@@ -205,6 +222,7 @@ const styles = StyleSheet.create({
   },
   item:{
     flexDirection : 'row',
+    paddingBottom: 10
   },
   infoContent:{
     flex:1,
@@ -247,7 +265,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   signOut: (navigation) => dispatch(signOut(navigation)),
-  toggleDarkmode: () => dispatch(toggleDarkmode())
+  toggleDarkmode: () => dispatch(toggleDarkmode()),
+  toggleNotifications: () => dispatch(toggleNotifications())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfileView);
