@@ -57,7 +57,6 @@ export default function Notifications({ navigation, route }) {
         return;
 
       case "new-posts":
-
         let multipleUsers = false;
 
         notifData.newPosts.forEach((post) => {
@@ -65,7 +64,7 @@ export default function Notifications({ navigation, route }) {
             multipleUsers = true;
             // break;
           }
-        })
+        });
 
         if (multipleUsers) {
           return (
@@ -83,7 +82,6 @@ export default function Notifications({ navigation, route }) {
             </Text>
           );
         } else {
-
           if (notifData.newPosts.length == 1) {
             return (
               <Text>
@@ -91,11 +89,12 @@ export default function Notifications({ navigation, route }) {
                   {notifData.newPosts[0].userName}
                 </Text>
                 <Text> has made a new post in </Text>
-                <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {notifData.eventName}
+                </Text>
                 <Text>.</Text>
               </Text>
             );
-
           } else {
             return (
               <Text>
@@ -107,7 +106,9 @@ export default function Notifications({ navigation, route }) {
                   {notifData.newPosts.length}
                 </Text>
                 <Text> new posts in </Text>
-                <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {notifData.eventName}
+                </Text>
                 <Text>.</Text>
               </Text>
             );
@@ -188,7 +189,6 @@ export default function Notifications({ navigation, route }) {
   // grab the posts when user is authenticated or screen is refocused
   useEffect(() => {
     if (user) {
-
       grabNotifications(user.uid).then((data) => {
         setNotifications(data);
       });
@@ -223,14 +223,13 @@ export default function Notifications({ navigation, route }) {
           </View>
         )}
       />
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#D3D3D3",
   },
   container: {
     padding: 16,

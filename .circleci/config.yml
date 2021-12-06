@@ -27,10 +27,10 @@ publish: &publish
           NODE_OPTIONS: --max_old_space_size=3999
 
 jobs:
-  #   publish_to_expo_dev:
-  #     environment:
-  #       EXPO_RELEASE_CHANNEL: production_branch
-  #     <<: *publish
+  publish_to_expo_dev:
+    environment:
+      EXPO_RELEASE_CHANNEL: production_branch
+    <<: *publish
 
   publish_to_expo_prod:
     environment:
@@ -44,10 +44,10 @@ workflows:
   version: 2
   my_app:
     jobs:
-      # - publish_to_expo_dev:
-      #     filters:
-      #       branches:
-      #         only: test
+      - publish_to_expo_dev:
+          filters:
+            branches:
+              only: production_branch
       - publish_to_expo_prod:
           filters:
             branches:
