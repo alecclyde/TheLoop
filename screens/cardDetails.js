@@ -25,24 +25,24 @@ import {
 } from "react-native-gesture-handler";
 import {
   unregisterEvent,
+  registerEvent,
   getUserData,
   createPost,
   editPost,
   deletePost,
+  createNotification,
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
 import { useIsFocused } from "@react-navigation/core";
 import { connect } from "react-redux";
-import { registerEvent } from "../store/actions/eventActions";
+// import { registerEvent } from "../store/actions/eventActions";
 import { bindActionCreators } from "redux";
-
 
 // yuh yuh
 
 //Called by favorite and personal when you click on a card to display the content
 function CardDetails(props, { navigation, route }) {
-
   const [eventAttendees, setEventAttendees] = useState([]);
   const [eventCreator, setEventCreator] = useState({
     id: props.route.params?.creatorID,
@@ -64,6 +64,9 @@ function CardDetails(props, { navigation, route }) {
   const [editMode, setEditMode] = useState(false);
   const [postEditID, setPostEditID] = useState();
 
+  const [newPostsNotifID, setNewPostsNotifID] = useState();
+  const [newAttendeesNotifID, setNewAttendeesNotifID] = useState();
+
   var eventAtens = [];
 
   const AuthStateChangedListener = (user) => {
@@ -84,6 +87,15 @@ function CardDetails(props, { navigation, route }) {
     setEventLoop(eventData.loop);
     setEventDateTime(eventData.startDateTime.seconds);
     setEventAddress(eventData.address);
+    setNewPostsNotifID(
+      eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
+    );
+    setNewAttendeesNotifID(
+      eventData.newAttendeesNotifID != undefined
+        ? eventData.newAttendeesNotifID
+        : "0"
+    );
+
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
 
     updateAttendeeList(eventData.attendees);
@@ -211,10 +223,39 @@ function CardDetails(props, { navigation, route }) {
         },
         {
           text: "Delete",
-          onPress: () => deletePost(props.route.params?.id, post.id),
+          onPress: () =>
+            deletePost(
+              {
+                eventID: props.route.params?.id,
+                creatorID: props.route.params?.creatorID,
+                newPostsNotifID: newPostsNotifID,
+              },
+              {
+                postID: post.id,
+                posterID: post.posterID,
+                posterName: post.posterName,
+              }
+            ),
         },
       ]
     );
+  };
+
+  /**
+   * Creates a notification for all users except the creator
+   * @param notifType - The type of notification
+   */
+  const handleNotifyAllUsers = (notifType) => {
+    var notifData = {
+      creatorName: eventCreator.name,
+      eventName: eventName,
+    };
+
+    eventAttendees.forEach((attendee) => {
+      if (attendee.id != eventCreator.id) {
+        createNotification(attendee.id, notifType, notifData);
+      }
+    });
   };
 
   // This may be a better method for reading users from the database, if I can get it to work
@@ -267,317 +308,342 @@ function CardDetails(props, { navigation, route }) {
 
   return (
     <SafeAreaView style={globalStyles.container}>
-    <View style={{backgroundColor: "#D3D3D3", flex: 1 }}>
-    
-    
-    
-      {/* // Title Area */}
-      {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
-      <View
-        style={{
-          paddingHorizontal: 20,
-          paddingTop: 20,
-          backgroundColor: "#D3D3D3",
-          borderBottomColor: 'black',
-          borderBottomWidth: 5,
-          marginBottom: 15,
-        }}
-      >
-        <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
-          <View>
-            <Text style={styles.Title}>{eventName} </Text>
-            <Text style={styles.subt}> By: {eventCreator.name} </Text>
-            <Text style={{ position: "absolute", right: 0.1 }}> ICON {eventLoop}</Text>
-            <Icon
-              onPress={() => props.navigation.dispatch(StackActions.pop(1))}
-              name="arrow-left"
-              size={25}
-              style={{ position: "absolute", left: 1 }}
-            />
-          </View>
-          <Divider orientation="horizontal" />
-        </ScrollView>
-      </View>
-
-      
-
-
-      
-      {/* Post area */}
-      <FlatList
-        data={state}
-        keyExtractor={(item) => item.id}
-        removeClippedSubviews={false}
-        style={{ flex: 1 }}
-        // the actual posts
-        renderItem={({ item }) => (
-          <Card>
-            {/* poster name and post creation time */}
-            <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontWeight: "bold" }}>{item.posterName}</Text>
-              <View style={{ flex: 1 }} />
-              <Text style={{ color: "gray" }}>
-                {moment
-                  .unix(item.creationTimestamp.seconds)
-                  .format("MMM Do, hh:mm A")}
+      <View style={{ backgroundColor: "#D3D3D3", flex: 1 }}>
+        {/* // Title Area */}
+        {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
+        <View
+          style={{
+            paddingHorizontal: 20,
+            paddingTop: 20,
+            backgroundColor: "#D3D3D3",
+            borderBottomColor: "black",
+            borderBottomWidth: 5,
+            marginBottom: 15,
+          }}
+        >
+          <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
+            <View>
+              <Text style={styles.Title}>{eventName} </Text>
+              <Text style={styles.subt}> By: {eventCreator.name} </Text>
+              <Text style={{ position: "absolute", right: 0.1 }}>
+                {" "}
+                ICON {eventLoop}
               </Text>
-
-
+              <Icon
+                onPress={() => props.navigation.dispatch(StackActions.pop(1))}
+                name="arrow-left"
+                size={25}
+                style={{ position: "absolute", left: 1 }}
+              />
             </View>
-              
-            {postEditID != item.id && (
-              <View>
-                {/* post message */}
-                <Text>{item.message}</Text>
+            <Divider orientation="horizontal" />
+          </ScrollView>
+        </View>
 
-                {/* 'edited' tag */}
-                {/* literally the only reason I put this <Text> in a view was because it */}
-                {/* broke my code coloration in VSCode and it drove me crazy. -Robbie */}
-
-                {item.edited && (
-                  <View>
-                    <Text style={{ color: "gray" }}>(edited)</Text>
-                  </View>
-                )}
-              </View>
-            )}
-
-            {postEditID == item.id && (
-              <View>
-                <Formik
-                  initialValues={{
-                    postText: item.message,
-                  }}
-                  onSubmit={(values, actions) => {
-                    if (values.postText === "") {
-                      Alert.alert("Error", "Cannot create a post with no text");
-                    } else {
-                      editPost(
-                        props.route.params?.id,
-                        item.id,
-                        values.postText.trim()
-                      );
-                      exitEditMode();
-                    }
-                  }}
-                >
-                  {(props) => (
-                    <>
-                      <Input
-                        placeholder={"Post in " + eventName}
-                        disabled={!isAttending}
-                        multiline={true}
-                        value={props.values.postText}
-                        onChangeText={props.handleChange("postText")}
-                        onBlur={() => {
-                          props.handleBlur("postText");
-                        }}
-                        style={{ maxHeight: 250 }}
-                      />
-                      <View style={{ flexDirection: "row" }}>
-                        <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                          <Button
-                            title="Cancel"
-                            onPress={() => exitEditMode()}
-                          />
-                        </View>
-                        <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                          <Button
-                            title="Edit"
-                            onPress={props.handleSubmit}
-                          />
-                        </View>
-                      </View>
-                    </>
-                  )}
-                </Formik>
-              </View>
-            )}
-
-
-
-            {/* pencil and trashcan icons */}
-            {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
-            {!editMode && (
+        {/* Post area */}
+        <FlatList
+          data={state}
+          keyExtractor={(item) => item.id}
+          removeClippedSubviews={false}
+          style={{ flex: 1 }}
+          // the actual posts
+          renderItem={({ item }) => (
+            <Card>
+              {/* poster name and post creation time */}
               <View style={{ flexDirection: "row" }}>
-                {item.posterID == userID && (
-                  <Icon
-                    name="pencil"
-                    color="#517fa4"
-                    size={20}
-                    onPress={() => enterEditMode(item)}
-                  />
-                )}
-
+                <Text style={{ fontWeight: "bold" }}>{item.posterName}</Text>
                 <View style={{ flex: 1 }} />
-                {(item.posterID == userID || isCreator) && (
-                  <Icon
-                    name="trash"
-                    color="#517fa4"
-                    size={20}
-                    onPress={() => handleDeletePost(item)}
+                <Text style={{ color: "gray" }}>
+                  {moment
+                    .unix(item.creationTimestamp.seconds)
+                    .format("MMM Do, hh:mm A")}
+                </Text>
+              </View>
+
+              {postEditID != item.id && (
+                <View>
+                  {/* post message */}
+                  <Text>{item.message}</Text>
+
+                  {/* 'edited' tag */}
+                  {/* literally the only reason I put this <Text> in a view was because it */}
+                  {/* broke my code coloration in VSCode and it drove me crazy. -Robbie */}
+
+                  {item.edited && (
+                    <View>
+                      <Text style={{ color: "gray" }}>(edited)</Text>
+                    </View>
+                  )}
+                </View>
+              )}
+
+              {postEditID == item.id && (
+                <View>
+                  <Formik
+                    initialValues={{
+                      postText: item.message,
+                    }}
+                    onSubmit={(values, actions) => {
+                      if (values.postText === "") {
+                        Alert.alert(
+                          "Error",
+                          "Cannot create a post with no text"
+                        );
+                      } else {
+                        editPost(
+                          props.route.params?.id,
+                          item.id,
+                          values.postText.trim()
+                        );
+                        exitEditMode();
+                      }
+                    }}
+                  >
+                    {(props) => (
+                      <>
+                        <Input
+                          placeholder={"Post in " + eventName}
+                          disabled={!isAttending}
+                          multiline={true}
+                          value={props.values.postText}
+                          onChangeText={props.handleChange("postText")}
+                          onBlur={() => {
+                            props.handleBlur("postText");
+                          }}
+                          style={{ maxHeight: 250 }}
+                        />
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                            <Button
+                              title="Cancel"
+                              onPress={() => exitEditMode()}
+                            />
+                          </View>
+                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                            <Button title="Edit" onPress={props.handleSubmit} />
+                          </View>
+                        </View>
+                      </>
+                    )}
+                  </Formik>
+                </View>
+              )}
+
+              {/* pencil and trashcan icons */}
+              {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
+              {!editMode && (
+                <View style={{ flexDirection: "row" }}>
+                  {item.posterID == userID && (
+                    <Icon
+                      name="pencil"
+                      color="#517fa4"
+                      size={20}
+                      onPress={() => enterEditMode(item)}
+                    />
+                  )}
+
+                  <View style={{ flex: 1 }} />
+                  {(item.posterID == userID || isCreator) && (
+                    <Icon
+                      name="trash"
+                      color="#517fa4"
+                      size={20}
+                      onPress={() => handleDeletePost(item)}
+                    />
+                  )}
+                </View>
+              )}
+            </Card>
+          )}
+          ListHeaderComponent={
+            <ScrollView
+              // style={{ flex: 1 }}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={{ paddingHorizontal: 20 }}>
+                <Text style={styles.titlesub}> Where? </Text>
+                <Text style={styles.sub}> {eventAddress} </Text>
+                <Text style={styles.titlesub}> When? </Text>
+                <Text style={styles.sub}>
+                  {moment.unix(eventDateTime).format("MMMM Do, YYYY")} at{" "}
+                  {moment.unix(eventDateTime).format("h:mm A")}
+                </Text>
+
+                <Text style={styles.titlesub}>Attendees</Text>
+                {eventAttendees.map((attendee) => (
+                  <Text key={attendee.id} style={styles.subp}>
+                    {attendee.name}
+                  </Text>
+                ))}
+
+                <Divider orientation="horizontal" />
+
+                {!isCreator && (
+                  <Button
+                    titleStyle={{ color: "black" }}
+                    buttonStyle={{
+                      borderWidth: 1,
+                      borderColor: "black",
+                      titleColor: "black",
+                      backgroundColor: "orange",
+                    }}
+                    title={!isAttending ? "Register" : "Unregister"}
+                    onPress={() => {
+                      if (!isAttending) {
+                        registerEvent(
+                          {
+                            eventID: props.route.params?.id,
+                            creatorID: eventCreator.id,
+                            eventName: eventName,
+                            newAttendeesNotifID: newAttendeesNotifID,
+                          },
+                          { userID, userName }
+                        );
+                      } else {
+                        unregisterEvent(
+                          {
+                            eventID: props.route.params?.id,
+                            creatorID: eventCreator.id,
+                            newAttendeesNotifID: newAttendeesNotifID,
+                          },
+                          { userID, userName }
+                        );
+                      }
+                    }}
                   />
                 )}
+                <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
               </View>
-            )}
-          </Card>
+            </ScrollView>
+          }
+        />
+
+        {!(Platform.OS == "android" && editMode) && (
+          <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "position" : "height"}
+            keyboardVerticalOffset={100}
+            enabled={!editMode}
+          >
+            {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
+            <Card>
+              <Formik
+                initialValues={{
+                  postText: "",
+                }}
+                onSubmit={(values, actions) => {
+                  if (values.postText === "") {
+                    Alert.alert("Error", "Cannot create a post with no text");
+                  } else {
+                    createPost(
+                      {
+                        eventID: props.route.params?.id,
+                        creatorID: props.route.params?.creatorID,
+                        eventName: eventName,
+                        newPostsNotifID: newPostsNotifID,
+                      },
+                      {
+                        userID: userID,
+                        userName: userName,
+                      },
+                      values.postText.trim()
+                    );
+
+                    if (isCreator) {
+                      Alert.alert(
+                        "Send notification?",
+                        "Do you want to notify your attendees about your post?",
+                        [
+                          {
+                            text: "No",
+                          },
+                          {
+                            text: "Yes",
+                            onPress: () => {
+                              handleNotifyAllUsers("announcement");
+                            },
+                          },
+                        ]
+                      );
+                    }
+                    actions.resetForm();
+                  }
+                }}
+              >
+                {(props) => (
+                  <>
+                    <Input
+                      placeholder={"Post in " + eventName}
+                      disabled={!isAttending || editMode}
+                      multiline={true}
+                      value={props.values.postText}
+                      onChangeText={props.handleChange("postText")}
+                      onBlur={() => {
+                        props.handleBlur("postText");
+                      }}
+                      style={{ maxHeight: 100 }}
+                    />
+                    <Button
+                      titleStyle={{ color: "white" }}
+                      buttonStyle={{
+                        borderWidth: 1,
+                        borderColor: "black",
+                        titleColor: "black",
+                        backgroundColor: "#517fa4",
+                      }}
+                      title="Post"
+                      disabled={!isAttending || editMode}
+                      onPress={props.handleSubmit}
+                    />
+                  </>
+                )}
+              </Formik>
+            </Card>
+          </KeyboardAvoidingView>
         )}
 
-
-
-        ListHeaderComponent={
-          <ScrollView
-            // style={{ flex: 1 }}
-            keyboardShouldPersistTaps="handled"
-          >
-
-
-            <View style={{ paddingHorizontal: 20 }}>
-              <Text style={styles.titlesub}> Where? </Text>
-              <Text style={styles.sub}> {eventAddress} </Text>
-              <Text style={styles.titlesub}> When? </Text>
-              <Text style={styles.sub}>{moment.unix(eventDateTime).format("MMMM Do, YYYY")} at {moment.unix(eventDateTime).format("h:mm A")}</Text>
-              
-              
-              <Text style={styles.titlesub}>Attendees</Text>
-              {eventAttendees.map((attendee) => (
-                <Text key={attendee.id} style={styles.subp}>{attendee.name}</Text>
-              ))}
-
-              <Divider orientation="horizontal" />
-
-
-
-              {!isCreator && (
-                <Button
-                  titleStyle={{ color: "black" }}
-                  buttonStyle={{
-                    borderWidth: 1,
-                    borderColor: "black",
-                    titleColor: "black",
-                    backgroundColor: "orange",
-                    }}
-                  title={!isAttending ? "Register" : "Unregister"}
-                  onPress={() => {
-                    if (!isAttending) {
-                      props.registerEvent(props.route.params?.id, userID);
-                    } else {
-                      unregisterEvent(props.route.params?.id, userID);
-                    }
-                  }}
-                />
-              )}
-              <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
-            </View>
-          </ScrollView>
-        }
-      />
-      
-
-
-
-      {!(Platform.OS == "android" && editMode) && (<KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "position" : "height"}
-        keyboardVerticalOffset={100}
-        enabled={!editMode}
-        
-      >
-        {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
-        <Card>
-          <Formik
-            initialValues={{
-              postText: "",
-            }}
-            onSubmit={(values, actions) => {
-              if (values.postText === "") {
-                Alert.alert("Error", "Cannot create a post with no text");
-              } else {
-                var success = createPost(
-                  userID,
-                  userName,
-                  props.route.params?.id,
-                  values.postText.trim()
-                );
-                actions.resetForm();
-              }
-            }}
-          >
-            {(props) => (
-              <>
-                <Input
-                  placeholder={"Post in " + eventName}
-                  disabled={!isAttending || editMode}
-                  multiline={true}
-                  value={props.values.postText}
-                  onChangeText={props.handleChange("postText")}
-                  onBlur={() => {
-                    props.handleBlur("postText");
-                  }}
-                  style={{ maxHeight: 100 }}
-                />
-                <Button
-                  titleStyle={{ color: "white" }}
-                  buttonStyle={{
-                    borderWidth: 1,
-                    borderColor: "black",
-                    titleColor: "black",
-                    backgroundColor: "#517fa4",
-                    }}
-                  title="Post"
-                  disabled={!isAttending || editMode}
-                  onPress={props.handleSubmit}
-                />
-              </>
-            )}
-          </Formik>
-        </Card>
-      </KeyboardAvoidingView>)}
-
-      {/* </ScrollView> */}
-    </View>
+        {/* </ScrollView> */}
+      </View>
     </SafeAreaView>
   );
 }
 
-const mapStateToProps = state => ({
-  events: state.events
+const mapStateToProps = (state) => ({
+  events: state.events,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  registerEvent: (event, user) => dispatch(registerEvent(event, user))
-})
+  //registerEvent: (event, user) => dispatch(registerEvent(event, user)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardDetails);
 
 const styles = StyleSheet.create({
-  
-  Title:{
-    marginBottom:5,
-    fontSize:35,
-    color:"#FF5F15",
-    fontWeight:'bold',
-    textAlign: 'center',
+  Title: {
+    marginBottom: 5,
+    fontSize: 35,
+    color: "#FF5F15",
+    fontWeight: "bold",
+    textAlign: "center",
   },
-  titlesub:{
+  titlesub: {
     fontSize: 25,
     paddingBottom: 2,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
-  sub:{
-    fontSize:20,
-    textAlign: 'center',
+  sub: {
+    fontSize: 20,
+    textAlign: "center",
     paddingBottom: 10,
   },
-  subt:{
-    fontSize:18,
-    textAlign: 'center',
+  subt: {
+    fontSize: 18,
+    textAlign: "center",
     paddingBottom: 10,
   },
-  subp:{
-    fontSize:12,
-    textAlign: 'center',
+  subp: {
+    fontSize: 12,
+    textAlign: "center",
     paddingBottom: 5,
   },
-
-});    
+});
