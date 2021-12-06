@@ -57,47 +57,61 @@ export default function Notifications({ navigation, route }) {
         return;
 
       case "new-posts":
-        if (notifData.newPosts.length == 1) {
+
+        let multipleUsers = false;
+
+        notifData.newPosts.forEach((post) => {
+          if (notifData.newPosts[0].userID != post.userID) {
+            multipleUsers = true;
+            // break;
+          }
+        })
+
+        if (multipleUsers) {
           return (
             <Text>
               <Text style={{ fontWeight: "bold" }}>
                 {notifData.newPosts[0].userName}
               </Text>
-              <Text> has made a new post in </Text>
-              <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
-              <Text>.</Text>
-            </Text>
-          );
-        } else if (notifData.newAttendees.length == 2) {
-          return (
-            <Text>
+              <Text> and others have made </Text>
               <Text style={{ fontWeight: "bold" }}>
-                {notifData.newPosts[0].userName}
+                {notifData.newPosts.length}
               </Text>
-              <Text> and </Text>
-              <Text style={{ fontWeight: "bold" }}>1</Text>
-              <Text> other have made new posts in </Text>
-              <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
-              <Text>.</Text>
-            </Text>
-          );
-        } else if (notifData.newAttendees.length > 2) {
-          return (
-            <Text>
-              <Text style={{ fontWeight: "bold" }}>
-                {notifData.newPosts[0].userName}
-              </Text>
-              <Text> and </Text>
-              <Text style={{ fontWeight: "bold" }}>
-                {notifData.newAttendees.length - 1}
-              </Text>
-              <Text> others have made new posts in </Text>
+              <Text> new posts in </Text>
               <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
               <Text>.</Text>
             </Text>
           );
         } else {
-          return;
+
+          if (notifData.newPosts.length == 1) {
+            return (
+              <Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {notifData.newPosts[0].userName}
+                </Text>
+                <Text> has made a new post in </Text>
+                <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+                <Text>.</Text>
+              </Text>
+            );
+
+          } else {
+            return (
+              <Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {notifData.newPosts[0].userName}
+                </Text>
+                <Text> has made </Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {notifData.newPosts.length}
+                </Text>
+                <Text> new posts in </Text>
+                <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+                <Text>.</Text>
+              </Text>
+            );
+          }
         }
 
       case "new-joins":
@@ -200,7 +214,7 @@ export default function Notifications({ navigation, route }) {
                   <Text>{stylizedMessage(item.type, item)}</Text>
                 </View>
                 <Text style={styles.timeAgo}>
-                  {makeTimeDifferenceString(item.creationTimestamp.seconds)} ago
+                  {makeTimeDifferenceString(item.updatedTimestamp.seconds)} ago
                 </Text>
                 {/* The time can be imported from the database */}
               </View>
@@ -210,26 +224,6 @@ export default function Notifications({ navigation, route }) {
         )}
       />
 
-      {/* <Button
-        title="Update Data"
-        onPress={() => {
-          firebase
-            .firestore()
-            .collection("events")
-            .get()
-            .then((snap) => {
-              snap.forEach((doc) => {
-                firebase.firestore().collection("events").doc(doc.id).set(
-                  {
-                    newAttendeesNotifID: "0",
-                    newPostsNotifID: "0",
-                  },
-                  { merge: true }
-                );
-              });
-            });
-        }}
-      /> */}
     </View>
   );
 }

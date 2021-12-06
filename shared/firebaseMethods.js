@@ -143,18 +143,6 @@ export async function getEventData(eventID) {
   }
 }
 
-// export async function generateUniqueFirestoreId() {
-//   // Alphanumeric characters
-//   const chars =
-//     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-//   let autoId = "";
-//   for (let i = 0; i < 20; i++) {
-//     autoId += chars.charAt(Math.floor(Math.random() * chars.length));
-//   }
-
-//   return autoId;
-// }
-
 export async function sendPasswordResetEmail(email, navigation) {
   try {
     await firebase.auth().sendPasswordResetEmail(email);
@@ -179,7 +167,7 @@ export async function sendPasswordResetEmail(email, navigation) {
  */
 export async function registerEvent(eventData, userData) {
   try {
-    // if newAttendeesNotifID is 0, then there isn't a notification waiting
+    // if newAttendeesNotifID is "0", then there isn't a notification waiting
     if (eventData.newAttendeesNotifID == "0") {
       // make a new notification
       await createNotification(eventData.creatorID, "new-joins", {
@@ -187,6 +175,7 @@ export async function registerEvent(eventData, userData) {
         eventID: eventData.eventID,
         userData: userData,
       }).then((doc) => {
+        // set the newAttendeesNotifID to the notification ID in the event document
         firebase
           .firestore()
           .collection("events")
@@ -199,13 +188,14 @@ export async function registerEvent(eventData, userData) {
           });
       });
     } else {
-      // otherwise, update the notification object
+      // otherwise, update the notification document
       updateAddAttendeeNotification(
         eventData.newAttendeesNotifID,
         eventData.creatorID,
         userData
       );
 
+      // finally, update the actual event attendees
       await firebase
         .firestore()
         .collection("events")
@@ -236,11 +226,14 @@ export async function registerEvent(eventData, userData) {
  */
 export async function unregisterEvent(eventData, userData) {
   try {
-    await updateRemoveAttendeeNotification(
-      eventData.newAttendeesNotifID,
-      eventData.creatorID,
-      userData
-    );
+    // only update the notification if there's a notification to update
+    if (eventData.newAttendeesNotifID != "0") {
+      await updateRemoveAttendeeNotification(
+        eventData.newAttendeesNotifID,
+        eventData.creatorID,
+        userData
+      );
+    }
 
     await firebase
       .firestore()
@@ -264,24 +257,71 @@ export async function unregisterEvent(eventData, userData) {
   }
 }
 
-export async function createPost(userID, userName, eventID, postText) {
+/**
+ * Creates a post in an event
+ * @param eventData - the data for the event (needs eventID, creatorID, eventName, newPostsNotifID)
+ * @param userData - the user data of the poster (needs userID and userName)
+ * @param postText - the text of the post
+ */
+export async function createPost(eventData, userData, postText) {
   try {
-    await firebase
+    // premake the document for later use
+    const postDoc = firebase
       .firestore()
       .collection("posts")
-      .doc(eventID)
+      .doc(eventData.eventID)
       .collection("posts")
-      .add({
-        message: postText,
-        posterID: userID,
-        posterName: userName,
-        creationTimestamp: firebase.firestore.Timestamp.now(),
-        updatedTimestamp: firebase.firestore.Timestamp.now(),
-        edited: false,
-      });
+      .doc();
+
+    // if the event creator is the poster, we don't want to update the notification
+    if (eventData.creatorID != userData.userID) {
+      // ifnewPostsNotifID is "0", then there isn't a new posts notification yet
+      if (eventData.newPostsNotifID == "0") {
+        //make a new notification
+        await createNotification(eventData.creatorID, "new-posts", {
+          eventName: eventData.eventName,
+          eventID: eventData.eventID,
+          userData: {
+            userID: userData.userID,
+            userName: userData.userName,
+            postID: postDoc.id,
+          },
+        }).then((doc) => {
+          // set the newPostsNotifID to the notification ID in the event document
+          firebase
+            .firestore()
+            .collection("events")
+            .doc(eventData.eventID)
+            .update({
+              newPostsNotifID: doc.id,
+            });
+        });
+      } else {
+        //otherwise, update the notification document
+        updateAddPostNotification(
+          eventData.newPostsNotifID,
+          eventData.creatorID,
+          {
+            userID: userData.userID,
+            userName: userData.userName,
+            postID: postDoc.id,
+          }
+        );
+      }
+    }
+
+    // finally, add the actual post to the posts collection
+    await postDoc.set({
+      message: postText,
+      posterID: userData.userID,
+      posterName: userData.userName,
+      creationTimestamp: firebase.firestore.Timestamp.now(),
+      updatedTimestamp: firebase.firestore.Timestamp.now(),
+      edited: false,
+    });
   } catch (err) {
     console.log(err);
-    Alert.alert("something went wrong!", err.message);
+    Alert.alert("createPost: something went wrong!", err.message);
   }
 }
 
@@ -304,15 +344,33 @@ export async function editPost(eventID, postID, newMessage) {
   }
 }
 
-export async function deletePost(eventID, postID) {
+/**
+ * Deletes a post in an event
+ * @param eventData - the data for the event (needs eventID, creatorID, newPostsNotifID)
+ * @param postData - the data for the post (needs postID, posterID, and posterName)
+ */
+export async function deletePost(eventData, postData) {
   try {
     await firebase
       .firestore()
       .collection("posts")
-      .doc(eventID)
+      .doc(eventData.eventID)
       .collection("posts")
-      .doc(postID)
+      .doc(postData.postID)
       .delete();
+
+    // removes the attendee from the "new posts" notification if it exists
+    if (eventData.newPostsNotifID != "0") {
+      await updateRemovePostNotification(
+        eventData.newPostsNotifID,
+        eventData.creatorID,
+        {
+          userID: postData.posterID,
+          userName: postData.posterName,
+          postID: postData.postID,
+        }
+      );
+    }
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
@@ -384,7 +442,18 @@ export async function createNotification(userID, notifType, notifData) {
          * Possible case: someone leaves an event before the owner checks the notification
          */
         //
-        break;
+
+        await doc.set({
+          type: notifType,
+          creationTimestamp: firebase.firestore.Timestamp.now(),
+          updatedTimestamp: firebase.firestore.Timestamp.now(),
+          eventName: notifData.eventName,
+          eventID: notifData.eventID,
+          newPosts: [notifData.userData], // this is messy, might want to change
+          seen: false,
+        });
+
+        return doc;
 
       case "new-joins":
         // showstopper
@@ -469,6 +538,64 @@ export async function updateRemoveAttendeeNotification(
   }
 }
 
+// might be able to reuse code for new-posts and new-joins
+
+/**
+ * Adds an attendee to the "new posts" notification for the creator
+ * @param notificationID - the documentID of the notification to be updated
+ * @param creatorID - the userID whom the notification belongs to
+ * @param userData - the user data of the poster (userID and userName)
+ */
+export async function updateAddPostNotification(
+  notificationID,
+  creatorID,
+  userData
+) {
+  try {
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(creatorID)
+      .collection("notifications")
+      .doc(notificationID)
+      .update({
+        newPosts: firebase.firestore.FieldValue.arrayUnion(userData),
+        updatedTimestamp: firebase.firestore.Timestamp.now(),
+      });
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+/**
+ * Removes an attendee to the "new posts" notification for the creator
+ * @param notificationID - the documentID of the notification to be updated
+ * @param creatorID - the userID whom the notification belongs to
+ * @param userData - the user data of the poster (userID and userName)
+ */
+export async function updateRemovePostNotification(
+  notificationID,
+  creatorID,
+  userData
+) {
+  try {
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(creatorID)
+      .collection("notifications")
+      .doc(notificationID)
+      .update({
+        newPosts: firebase.firestore.FieldValue.arrayRemove(userData),
+        updatedTimestamp: firebase.firestore.Timestamp.now(),
+      });
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
 /**
  * Grabs the users notifications
  * @param userID - the userID to get notifications for
@@ -487,7 +614,10 @@ export async function grabNotifications(userID) {
       .get()
       .then((snap) => {
         snap.forEach((doc) => {
-          setNotifSeen(userID, doc.id, {notifType: doc.data().type, eventID: doc.data().eventID})
+          setNotifSeen(userID, doc.id, {
+            notifType: doc.data().type,
+            eventID: doc.data().eventID,
+          });
           notifs.push({ id: doc.id, ...doc.data() });
         });
       });
@@ -511,7 +641,6 @@ export async function grabNotifications(userID) {
 export async function setNotifSeen(userID, notifID, notifData) {
   try {
     switch (notifData.notifType) {
-      case "new-posts":
       case "new-joins":
         await firebase
           .firestore()
@@ -529,6 +658,27 @@ export async function setNotifSeen(userID, notifID, notifData) {
               .doc(notifData.eventID)
               .update({
                 newAttendeesNotifID: "0",
+              });
+          });
+        break;
+
+      case "new-posts":
+        await firebase
+          .firestore()
+          .collection("users")
+          .doc(userID)
+          .collection("notifications")
+          .doc(notifID)
+          .update({
+            seen: true,
+          })
+          .then((doc) => {
+            firebase
+              .firestore()
+              .collection("events")
+              .doc(notifData.eventID)
+              .update({
+                newPostsNotifID: "0",
               });
           });
         break;

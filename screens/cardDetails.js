@@ -82,8 +82,14 @@ export default function CardDetails({ navigation, route }) {
     setEventLoop(eventData.loop);
     setEventDateTime(eventData.startDateTime.seconds);
     setEventAddress(eventData.address);
-    setNewPostsNotifID(eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0")
-    setNewAttendeesNotifID(eventData.newAttendeesNotifID != undefined ? eventData.newAttendeesNotifID : "0")
+    setNewPostsNotifID(
+      eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
+    );
+    setNewAttendeesNotifID(
+      eventData.newAttendeesNotifID != undefined
+        ? eventData.newAttendeesNotifID
+        : "0"
+    );
 
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
 
@@ -212,7 +218,19 @@ export default function CardDetails({ navigation, route }) {
         },
         {
           text: "Delete",
-          onPress: () => deletePost(route.params?.id, post.id),
+          onPress: () =>
+            deletePost(
+              {
+                eventID: route.params?.id,
+                creatorID: route.params?.creatorID,
+                newPostsNotifID: newPostsNotifID,
+              },
+              {
+                postID: post.id,
+                posterID: post.posterID,
+                posterName: post.posterName,
+              }
+            ),
         },
       ]
     );
@@ -223,19 +241,17 @@ export default function CardDetails({ navigation, route }) {
    * @param notifType - The type of notification
    */
   const handleNotifyAllUsers = (notifType) => {
-
     var notifData = {
       creatorName: eventCreator.name,
-      eventName: eventName
-    }
+      eventName: eventName,
+    };
 
     eventAttendees.forEach((attendee) => {
-
       if (attendee.id != eventCreator.id) {
-        createNotification(attendee.id, notifType, notifData)
+        createNotification(attendee.id, notifType, notifData);
       }
-    })
-  }
+    });
+  };
 
   // This may be a better method for reading users from the database, if I can get it to work
 
@@ -386,10 +402,7 @@ export default function CardDetails({ navigation, route }) {
                           />
                         </View>
                         <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                          <Button
-                            title="Edit"
-                            onPress={props.handleSubmit}
-                          />
+                          <Button title="Edit" onPress={props.handleSubmit} />
                         </View>
                       </View>
                     </>
@@ -449,9 +462,24 @@ export default function CardDetails({ navigation, route }) {
                   title={!isAttending ? "Register" : "Unregister"}
                   onPress={() => {
                     if (!isAttending) {
-                      registerEvent({eventID: route.params?.id, creatorID: eventCreator.id, eventName: eventName, newAttendeesNotifID: newAttendeesNotifID}, {userID, userName});
+                      registerEvent(
+                        {
+                          eventID: route.params?.id,
+                          creatorID: eventCreator.id,
+                          eventName: eventName,
+                          newAttendeesNotifID: newAttendeesNotifID,
+                        },
+                        { userID, userName }
+                      );
                     } else {
-                      unregisterEvent({eventID: route.params?.id, creatorID: eventCreator.id, newAttendeesNotifID: newAttendeesNotifID}, {userID, userName});
+                      unregisterEvent(
+                        {
+                          eventID: route.params?.id,
+                          creatorID: eventCreator.id,
+                          newAttendeesNotifID: newAttendeesNotifID,
+                        },
+                        { userID, userName }
+                      );
                     }
                   }}
                 />
@@ -462,71 +490,81 @@ export default function CardDetails({ navigation, route }) {
         }
       />
 
-      {!(Platform.OS == "android" && editMode) && (<KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "position" : "height"}
-        keyboardVerticalOffset={100}
-        enabled={!editMode}
-        
-      >
-        {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
-        <Card>
-          <Formik
-            initialValues={{
-              postText: "",
-            }}
-            onSubmit={(values, actions) => {
-              if (values.postText === "") {
-                Alert.alert("Error", "Cannot create a post with no text");
-              } else {
-                createPost(
-                  userID,
-                  userName,
-                  route.params?.id,
-                  values.postText.trim()
-                );
-
-                if (isCreator) {
-                  Alert.alert(
-                    "Send notification?",
-                    "Do you want to notify your attendees about your post?",
-                    [
-                      {
-                        text: "No",
-                      },
-                      {
-                        text: "Yes",
-                        onPress: () => {handleNotifyAllUsers("announcement")}
-                      },
-                    ]
+      {!(Platform.OS == "android" && editMode) && (
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "position" : "height"}
+          keyboardVerticalOffset={100}
+          enabled={!editMode}
+        >
+          {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
+          <Card>
+            <Formik
+              initialValues={{
+                postText: "",
+              }}
+              onSubmit={(values, actions) => {
+                if (values.postText === "") {
+                  Alert.alert("Error", "Cannot create a post with no text");
+                } else {
+                  createPost(
+                    {
+                      eventID: route.params?.id,
+                      creatorID: route.params?.creatorID,
+                      eventName: eventName,
+                      newPostsNotifID: newPostsNotifID,
+                    },
+                    {
+                      userID: userID,
+                      userName: userName,
+                    },
+                    values.postText.trim()
                   );
+
+                  if (isCreator) {
+                    Alert.alert(
+                      "Send notification?",
+                      "Do you want to notify your attendees about your post?",
+                      [
+                        {
+                          text: "No",
+                        },
+                        {
+                          text: "Yes",
+                          onPress: () => {
+                            handleNotifyAllUsers("announcement");
+                          },
+                        },
+                      ]
+                    );
+                  }
+                  actions.resetForm();
                 }
-                actions.resetForm();
-              }
-            }}
-          >
-            {(props) => (
-              <>
-                <Input
-                  placeholder={"Post in " + eventName}
-                  disabled={!isAttending || editMode}
-                  multiline={true}
-                  value={props.values.postText}
-                  onChangeText={props.handleChange("postText")}
-                  onBlur={() => {
-                    props.handleBlur("postText");
-                  }}
-                  style={{ maxHeight: 100 }}
-                />
-                <Button
-                  title="Post"
-                  disabled={!isAttending || editMode}
-                  onPress={props.handleSubmit}
-                />
-              </>
-            )}
-          </Formik>
-        </Card>
-      </KeyboardAvoidingView>)}
+              }}
+            >
+              {(props) => (
+                <>
+                  <Input
+                    placeholder={"Post in " + eventName}
+                    disabled={!isAttending || editMode}
+                    multiline={true}
+                    value={props.values.postText}
+                    onChangeText={props.handleChange("postText")}
+                    onBlur={() => {
+                      props.handleBlur("postText");
+                    }}
+                    style={{ maxHeight: 100 }}
+                  />
+                  <Button
+                    title="Post"
+                    disabled={!isAttending || editMode}
+                    onPress={props.handleSubmit}
+                  />
+                </>
+              )}
+            </Formik>
+          </Card>
+        </KeyboardAvoidingView>
+      )}
 
       {/* </ScrollView> */}
     </View>
