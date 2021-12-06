@@ -69,7 +69,7 @@ export default function RootStack() {
         }}
       />
       <Tab.Screen
-        name="Notifications"
+        name="Notification"
         component={NotificationsStack}
         options={{
           title: "",
