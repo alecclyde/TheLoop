@@ -25,6 +25,7 @@ import {
 } from "react-native-gesture-handler";
 import {
   unregisterEvent,
+  registerEvent,
   getUserData,
   createPost,
   editPost,
@@ -35,7 +36,7 @@ import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
 import { useIsFocused } from "@react-navigation/core";
 import { connect } from "react-redux";
-import { registerEvent } from "../store/actions/eventActions";
+// import { registerEvent } from "../store/actions/eventActions";
 import { bindActionCreators } from "redux";
 
 // yuh yuh
@@ -225,8 +226,8 @@ function CardDetails(props, { navigation, route }) {
           onPress: () =>
             deletePost(
               {
-                eventID: route.params?.id,
-                creatorID: route.params?.creatorID,
+                eventID: props.route.params?.id,
+                creatorID: props.route.params?.creatorID,
                 newPostsNotifID: newPostsNotifID,
               },
               {
@@ -491,7 +492,7 @@ function CardDetails(props, { navigation, route }) {
                       if (!isAttending) {
                         registerEvent(
                           {
-                            eventID: route.params?.id,
+                            eventID: props.route.params?.id,
                             creatorID: eventCreator.id,
                             eventName: eventName,
                             newAttendeesNotifID: newAttendeesNotifID,
@@ -501,7 +502,7 @@ function CardDetails(props, { navigation, route }) {
                       } else {
                         unregisterEvent(
                           {
-                            eventID: route.params?.id,
+                            eventID: props.route.params?.id,
                             creatorID: eventCreator.id,
                             newAttendeesNotifID: newAttendeesNotifID,
                           },
@@ -535,8 +536,8 @@ function CardDetails(props, { navigation, route }) {
                   } else {
                     createPost(
                       {
-                        eventID: route.params?.id,
-                        creatorID: route.params?.creatorID,
+                        eventID: props.route.params?.id,
+                        creatorID: props.route.params?.creatorID,
                         eventName: eventName,
                         newPostsNotifID: newPostsNotifID,
                       },
@@ -564,56 +565,6 @@ function CardDetails(props, { navigation, route }) {
                         ]
                       );
                     }
-                    actions.resetForm();
-                  }
-                }}
-              >
-                {(props) => (
-                  <>
-                    <Input
-                      placeholder={"Post in " + eventName}
-                      disabled={!isAttending || editMode}
-                      multiline={true}
-                      value={props.values.postText}
-                      onChangeText={props.handleChange("postText")}
-                      onBlur={() => {
-                        props.handleBlur("postText");
-                      }}
-                      style={{ maxHeight: 100 }}
-                    />
-                    <Button
-                      title="Post"
-                      disabled={!isAttending || editMode}
-                      onPress={props.handleSubmit}
-                    />
-                  </>
-                )}
-              </Formik>
-            </Card>
-          </KeyboardAvoidingView>
-        )}
-        {!(Platform.OS == "android" && editMode) && (
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "position" : "height"}
-            keyboardVerticalOffset={100}
-            enabled={!editMode}
-          >
-            {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
-            <Card>
-              <Formik
-                initialValues={{
-                  postText: "",
-                }}
-                onSubmit={(values, actions) => {
-                  if (values.postText === "") {
-                    Alert.alert("Error", "Cannot create a post with no text");
-                  } else {
-                    var success = createPost(
-                      userID,
-                      userName,
-                      props.route.params?.id,
-                      values.postText.trim()
-                    );
                     actions.resetForm();
                   }
                 }}

@@ -127,7 +127,10 @@ export async function getUserData(userID) {
 //   }
 // }
 
-// Grabs a single event's data
+/**
+ * Gets the data for one event
+ * @param eventID - the ID of the event to get data for
+ */
 export async function getEventData(eventID) {
   try {
     // Get some event data
