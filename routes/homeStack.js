@@ -28,7 +28,7 @@ export default function HomeStack() {
         },
         headerStyle: {
           backgroundColor: "#2C2C2C",
-          height: 100,
+          // height: 100,
         },
       }}
     >
