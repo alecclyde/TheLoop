@@ -19,11 +19,12 @@ export default function RootStack() {
       screenOptions={{
         
         headerShown: false,
-        tabBarActiveBackgroundColor: "#ffa835",
-        tabBarInactiveBackgroundColor: "#2C2C2C",
-        tabBarStyle: { flex: .14},
+        tabBarActiveBackgroundColor: "#2B7D9C",
+        tabBarInactiveBackgroundColor: "#3B4046",
+        tabBarStyle: { flex: .10, borderTopWidth: 0},
+        tyle: {borderTopWidth: 0}
       }}
-      options={{}}
+      
       labeled={false}
       showLabel={false}
     >
@@ -36,6 +37,7 @@ export default function RootStack() {
           tabBarIcon: ({ color, size }) => (
             <Icon raised size={30} color="white" name="home" />
           ),
+          tabBarIconStyle: {marginTop: 10}
         }}
       />
       <Tab.Screen
@@ -46,6 +48,8 @@ export default function RootStack() {
           tabBarIcon: ({ color, size }) => (
             <Icon raised size={30} color="white" name="user" />
           ),
+          tabBarIconStyle: {marginTop: 10}
+
         }}
       />
       <Tab.Screen
@@ -56,6 +60,7 @@ export default function RootStack() {
           tabBarIcon: ({ color, size }) => (
             <Icon raised size={30} color="white" name="plus" />
           ),
+          tabBarIconStyle: {marginTop: 13}
         }}
       />
       <Tab.Screen
@@ -66,6 +71,7 @@ export default function RootStack() {
           tabBarIcon: ({ color, size }) => (
             <Icon raised size={30} color="white" name="search" />
           ),
+          tabBarIconStyle: {marginTop: 10}
         }}
       />
       <Tab.Screen
@@ -76,6 +82,7 @@ export default function RootStack() {
           tabBarIcon: ({ color, size }) => (
             <Icon raised size={30} color="white" name="bell-o" />
           ),
+          tabBarIconStyle: {marginTop: 10}
         }}
       />
       
