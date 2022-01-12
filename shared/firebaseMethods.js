@@ -65,7 +65,7 @@ export async function setUserLoops(joinedLoops, navigation) {
       .update({ joinedLoops: joinedLoops })
 
       .then(() => {
-        navigation.navigate("RootStack");
+        navigation.navigate("locationPreferencesPage");
         return true;
       });
 
