@@ -12,14 +12,11 @@ import {
   import { globalStyles } from "../styles/global";
   import * as yup from "yup";
   import { Formik } from "formik";
-  import { setUserLoops } from "../shared/firebaseMethods";
+  import { connect } from "react-redux";
+  import { signOut } from "../store/actions/userActions";
   import { TouchableOpacity } from "react-native-gesture-handler";
   
-  // const setUserLoopsSchema = yup.object({
-  //   joinedLoops: yup.array.required("Please select at least 1 interest."),
-  // });
-  
-  export default function LocationPreferencesPage({ navigation }) {
+function LocationPreferencesPage(props, { navigation }) {
     const [checkSports, setCheckSports] = useState(false);
   
     return (
@@ -83,6 +80,8 @@ import {
     );
   }
   
+  
+
   const styles = StyleSheet.create({
     selectedLoop: {
       borderWidth: 1,
@@ -113,4 +112,17 @@ import {
       alignSelf: "center",
     },
   });
+  
+  //Initialize the states you want to use on the page
+const mapStateToProps = state => ({
+    user: state.user
+  });
+  
+  //Initialize what actions you are going to use on the page
+  const mapDispatchToProps = (dispatch) => ({
+    signOut: (navigation) => dispatch(signOut(navigation)),
+  });
+  
+  //send the state and actions to props of the function
+  export default connect(mapStateToProps, mapDispatchToProps)(LocationPreferencesPage);
   
