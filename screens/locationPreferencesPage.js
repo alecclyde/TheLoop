@@ -249,3 +249,5 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(LocationPreferencesPage);
+
+//Credit Code Palace @ https://www.youtube.com/watch?v=MwSudWtT7ps&ab_channel=ProgrammingwithMosh
