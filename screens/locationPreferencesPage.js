@@ -23,17 +23,22 @@ import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import Slider from "@react-native-community/slider";
+import { Dimensions } from "react-native";
+import { StatusBar } from "expo-status-bar";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHight = Dimensions.get("window").height;
 
 function LocationPreferencesPage(props, { navigation }) {
-  const [events, setEvents] = useState([]);
-  const [search, setSearch] = useState({ text: "" });
+  const [range, setRange] = useState("50%");
+  const [sliding, setSliding] = useState("Inactive");
+
   const isFocused = useIsFocused();
   const latitude = 41.241489;
   const longitude = -77.041924;
   const position = 0;
-
-  //Gets all the events from the database and sets them to the events
-  useEffect(() => {}, [isFocused]);
+  //const left = (this.state.value * (windowWidth - 60)) / 100 - 15;
 
   return (
     <ImageBackground
@@ -44,14 +49,14 @@ function LocationPreferencesPage(props, { navigation }) {
       style={{ width: "100%", height: "100%" }}
     >
       <View style={[styles.holder, { flexDirection: "column" }]}>
-        <View style={[styles.container, { flex: 1 }]}>
+        <View style={[styles.container, { flex: 3 }]}>
           <MapView
             style={styles.mapStyle}
             initialRegion={{
               latitude: latitude,
               longitude: longitude,
               latitudeDelta: 0.04,
-              longitudeDelta: 0.05,
+              longitudeDelta: 0.04,
             }}
             customMapStyle={mapStyle}
             loadingEnabled={true}
@@ -69,12 +74,30 @@ function LocationPreferencesPage(props, { navigation }) {
               description={"position"}
             />
             <MapView.Circle
-              center={{ latitude: 41.241489, longitude: -77.041924 }}
+              center={{ latitude: latitude, longitude: longitude }}
               radius={500}
               strokeColor="transparent"
               fillColor={"red"}
             />
           </MapView>
+        </View>
+
+        <View style={[styles.container, { flex: 1 }]}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{range}</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{sliding}</Text>
+          <Slider
+            style={{ width: 250, height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="tomato"
+            maximumTrackTintColor="#000"
+            value={0.5}
+            onValueChange={(value) => setRange(parseInt(value * 100) + "%")}
+            onSlidingStart={() => setSliding("Sliding")}
+            onSlidingComplete={() => setSliding("Inactive")}
+            minimumTrackTintColor="#2B7D9C"
+            maximumTrackTintColor="#2B7D9C"
+          />
         </View>
       </View>
     </ImageBackground>
@@ -166,10 +189,15 @@ const styles = StyleSheet.create({
   container: {
     color: "white",
     margin: 0,
+    justifyContent: "center",
   },
   holder: {
     flex: 1,
     //padding: 0,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
   },
   expander: {
     width: 65,
@@ -204,6 +232,10 @@ const styles = StyleSheet.create({
   },
   descriptionItem: {
     color: "white",
+  },
+  slider: {
+    width: windowWidth,
+    height: 40,
   },
 });
 
