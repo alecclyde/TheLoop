@@ -26,6 +26,8 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 import Slider from "@react-native-community/slider";
 import { Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { globalStyles } from "../styles/global";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
@@ -48,63 +50,88 @@ function LocationPreferencesPage(props, { navigation }) {
       resizeMode="cover"
       style={{ width: "100%", height: "100%" }}
     >
-      <View style={[styles.holder, { flexDirection: "column" }]}>
-        <View style={[styles.container, { flex: 3 }]}>
-          <MapView
-            style={styles.mapStyle}
-            initialRegion={{
-              latitude: latitude,
-              longitude: longitude,
-              latitudeDelta: 0.4,
-              longitudeDelta: 0.04,
-            }}
-            region={{
-              latitude: latitude,
-              longitude: longitude,
-              latitudeDelta: parseInt(range) * 0.05,
-              longitudeDelta: 0.04,
-            }}
-            customMapStyle={mapStyle}
-            loadingEnabled={true}
-
-            //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
-          >
-            <Marker
-              draggable
-              coordinate={{
+      <SafeAreaView style={globalStyles.container}>
+        <View style={[styles.holder, { flexDirection: "column" }]}>
+          <View style={[styles.container, { flex: 6 }]}>
+            <MapView
+              style={styles.mapStyle}
+              initialRegion={{
                 latitude: latitude,
                 longitude: longitude,
+                latitudeDelta: 0.4,
+                longitudeDelta: 0.04,
               }}
-              onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
-              title={"Messiah University"}
-              description={"position"}
-            />
-            <MapView.Circle
-              center={{ latitude: latitude, longitude: longitude }}
-              radius={parseInt(range) * 1609.34}
-              strokeColor="rgba(43, 125, 156,.85)"
-              fillColor="rgba(170, 218, 255, .3)"
-            />
-          </MapView>
-        </View>
+              region={{
+                latitude: latitude,
+                longitude: longitude,
+                latitudeDelta: parseInt(range) * 0.05,
+                longitudeDelta: 0.04,
+              }}
+              customMapStyle={mapStyle}
+              loadingEnabled={true}
 
-        <View style={[styles.container, { flex: 1 }]}>
-          <Text style={styles.mileText}>{range}</Text>
-          {/* <Text style={{ fontSize: 20, fontWeight: "bold" }}>{sliding}</Text> */}
-          <Slider
-            style={styles.slider}
-            minimumValue={1}
-            maximumValue={50}
-            step={1}
-            value={1}
-            onValueChange={(value) => setRange(parseInt(value) + " miles")}
-            //onSlidingStart={() => setSliding("Sliding")}
-            //onSlidingComplete={() => setSliding("Inactive")}
-            minimumTrackTintColor="#2B7D9C"
-            maximumTrackTintColor="#2B7D9C"
-          />
+              //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
+            >
+              <Marker
+                draggable
+                coordinate={{
+                  latitude: latitude,
+                  longitude: longitude,
+                }}
+                onDragEnd={(e) =>
+                  alert(JSON.stringify(e.nativeEvent.coordinate))
+                }
+                title={"Messiah University"}
+                description={"position"}
+              />
+              <MapView.Circle
+                center={{ latitude: latitude, longitude: longitude }}
+                radius={parseInt(range) * 1609.34}
+                strokeColor="rgba(43, 125, 156,.85)"
+                fillColor="rgba(170, 218, 255, .3)"
+              />
+            </MapView>
+          </View>
+
+          <View style={[styles.container, { flex: 2 }]}>
+            <Text style={styles.mileText}>{range}</Text>
+            {/* <Text style={{ fontSize: 20, fontWeight: "bold" }}>{sliding}</Text> */}
+            <Slider
+              style={styles.slider}
+              minimumValue={1}
+              maximumValue={50}
+              step={1}
+              value={1}
+              onValueChange={(value) => setRange(parseInt(value) + " miles")}
+              //onSlidingStart={() => setSliding("Sliding")}
+              //onSlidingComplete={() => setSliding("Inactive")}
+              minimumTrackTintColor="#2B7D9C"
+              maximumTrackTintColor="#2B7D9C"
+            />
+          </View>
+          <View style={[styles.container, { flex: 1 }]}>
+            <Button
+              title="Submit"
+              titleStyle={{ fontSize: 26, color: "#FFFFFF" }}
+              buttonStyle={{
+                borderWidth: 10,
+                borderWidth: 1,
+                width: windowWidth * 0.5,
+                height: windowHight * 0.09,
+                borderColor: "black",
+                titleColor: "black",
+                backgroundColor: "#2B7D9C",
+                borderRadius: 50,
+              }}
+              style={{ padding: 45 }}
+              onPress={props.handleSubmit}
+              onPress={() => {
+                console.log(props.values);
+              }}
+            />
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     </ImageBackground>
   );
 }
@@ -194,7 +221,7 @@ const styles = StyleSheet.create({
   container: {
     color: "white",
     margin: 0,
-    //justifyContent: "center",
+    alignItems: "center",
   },
   holder: {
     flex: 1,
@@ -211,7 +238,6 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     borderRadius: 75,
     backgroundColor: "#696969",
-    left: 315,
   },
   mapStyle: {
     position: "absolute",
@@ -226,8 +252,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-
-    //marginTop: -50,
   },
   listingItem: {
     color: "white",
@@ -242,7 +266,6 @@ const styles = StyleSheet.create({
     height: 40,
   },
   mileText: {
-    left: windowWidth * 0.3,
     margin: windowHight * 0.03,
     fontSize: 24,
     fontWeight: "bold",
@@ -260,4 +283,4 @@ export default connect(
   mapDispatchToProps
 )(LocationPreferencesPage);
 
-//Credit Code Palace @ https://www.youtube.com/watch?v=MwSudWtT7ps&ab_channel=ProgrammingwithMosh
+//Credit Code Palace: https://www.youtube.com/watch?v=MwSudWtT7ps&ab_channel=ProgrammingwithMosh
