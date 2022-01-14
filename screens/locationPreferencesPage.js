@@ -31,8 +31,8 @@ const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
 
 function LocationPreferencesPage(props, { navigation }) {
-  const [range, setRange] = useState("50%");
-  const [sliding, setSliding] = useState("Inactive");
+  const [range, setRange] = useState("1 mile");
+  //const [sliding, setSliding] = useState("Inactive");
 
   const isFocused = useIsFocused();
   const latitude = 41.241489;
@@ -55,7 +55,13 @@ function LocationPreferencesPage(props, { navigation }) {
             initialRegion={{
               latitude: latitude,
               longitude: longitude,
-              latitudeDelta: 0.04,
+              latitudeDelta: 0.4,
+              longitudeDelta: 0.04,
+            }}
+            region={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: parseInt(range) * 0.05,
               longitudeDelta: 0.04,
             }}
             customMapStyle={mapStyle}
@@ -75,26 +81,25 @@ function LocationPreferencesPage(props, { navigation }) {
             />
             <MapView.Circle
               center={{ latitude: latitude, longitude: longitude }}
-              radius={500}
-              strokeColor="transparent"
-              fillColor={"red"}
+              radius={parseInt(range) * 1609.34}
+              strokeColor="rgba(43, 125, 156,.85)"
+              fillColor="rgba(170, 218, 255, .3)"
             />
           </MapView>
         </View>
 
         <View style={[styles.container, { flex: 1 }]}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{range}</Text>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{sliding}</Text>
+          <Text style={styles.mileText}>{range}</Text>
+          {/* <Text style={{ fontSize: 20, fontWeight: "bold" }}>{sliding}</Text> */}
           <Slider
-            style={{ width: 250, height: 40 }}
-            minimumValue={0}
-            maximumValue={1}
-            minimumTrackTintColor="tomato"
-            maximumTrackTintColor="#000"
-            value={0.5}
-            onValueChange={(value) => setRange(parseInt(value * 100) + "%")}
-            onSlidingStart={() => setSliding("Sliding")}
-            onSlidingComplete={() => setSliding("Inactive")}
+            style={styles.slider}
+            minimumValue={1}
+            maximumValue={50}
+            step={1}
+            value={1}
+            onValueChange={(value) => setRange(parseInt(value) + " miles")}
+            //onSlidingStart={() => setSliding("Sliding")}
+            //onSlidingComplete={() => setSliding("Inactive")}
             minimumTrackTintColor="#2B7D9C"
             maximumTrackTintColor="#2B7D9C"
           />
@@ -189,11 +194,10 @@ const styles = StyleSheet.create({
   container: {
     color: "white",
     margin: 0,
-    justifyContent: "center",
+    //justifyContent: "center",
   },
   holder: {
     flex: 1,
-    //padding: 0,
   },
   title: {
     fontSize: 24,
@@ -236,6 +240,12 @@ const styles = StyleSheet.create({
   slider: {
     width: windowWidth,
     height: 40,
+  },
+  mileText: {
+    left: windowWidth * 0.3,
+    margin: windowHight * 0.03,
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
 
