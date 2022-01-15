@@ -28,6 +28,8 @@ import { Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { globalStyles } from "../styles/global";
+import { addDistance } from "../store/actions/eventActions";
+import { Formik } from "formik";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
@@ -52,6 +54,8 @@ function LocationPreferencesPage(props, { navigation }) {
     >
       <SafeAreaView style={globalStyles.container}>
         <View style={[styles.holder, { flexDirection: "column" }]}>
+          {/* {(props) => (
+            <> */}
           <View style={[styles.container, { flex: 6 }]}>
             <MapView
               style={styles.mapStyle}
@@ -107,6 +111,7 @@ function LocationPreferencesPage(props, { navigation }) {
               //onSlidingComplete={() => setSliding("Inactive")}
               minimumTrackTintColor="#2B7D9C"
               maximumTrackTintColor="#2B7D9C"
+              thumbTintColor="#2B7D9C"
             />
           </View>
           <View style={[styles.container, { flex: 1 }]}>
@@ -124,12 +129,14 @@ function LocationPreferencesPage(props, { navigation }) {
                 borderRadius: 50,
               }}
               style={{ padding: 45 }}
-              onPress={props.handleSubmit}
-              onPress={() => {
-                console.log(props.values);
-              }}
+              onPress={props.addDistance(range)}
+              // onPress={() => {
+              //   console.log(parseInt(range) + " miles");
+              // }}
             />
           </View>
+          {/* </>
+          )} */}
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -271,12 +278,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
 const mapStateToProps = (state) => ({
   events: state.events,
 });
 
-const mapDispatchToProps = (dispatch) => ({});
+const mapDispatchToProps = (dispatch) => ({
+  addDistance: (event) => dispatch(addDistance(event)),
+});
 
 export default connect(
   mapStateToProps,
