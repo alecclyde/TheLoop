@@ -375,6 +375,41 @@ export async function deletePost(eventData, postData) {
 }
 
 /**
+ * Replies to a post in an event
+ * @param postData - the data for the post (needs postID, posterID, eventID)
+ * @param userData - the user data of the replier (needs userID and userName)
+ * @param replyText - the text of the reply
+ */
+export async function createReply(postData, userData, replyText) {
+  // If the person is not replying to themselves, create a notification
+  if (userData.userID != postData.posterID) {
+    // create a notification
+  }
+  // generate an ID for the document
+  let replyID = firebase.firestore().collection("posts").doc(postData.eventID).collection("posts").doc()
+
+  // premake the field name for the reply
+  let fieldName = "replies." + replyID.id
+
+  firebase
+    .firestore()
+    .collection("posts")
+    .doc(postData.eventID)
+    .collection("posts")
+    .doc(postData.postID).update({
+      [fieldName]: {
+        creationTimestamp: firebase.firestore.Timestamp.now(),
+        updatedTimestamp: firebase.firestore.Timestamp.now(),
+        edited: false,
+        message: replyText,
+        replierID: userData.userID,
+        replierName: userData.userName
+      },
+      updatedTimestamp: firebase.firestore.Timestamp.now()
+    });
+}
+
+/**
  * Creates a notification for a user
  * @param userID - The userID receiving the notification
  * @param notifType - The type of notification being added

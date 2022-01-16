@@ -31,6 +31,7 @@ import {
   editPost,
   deletePost,
   createNotification,
+  createReply,
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
 import { makeName } from "../shared/commonMethods";
@@ -63,6 +64,7 @@ function CardDetails(props, { navigation, route }) {
 
   const [editMode, setEditMode] = useState(false);
   const [postEditID, setPostEditID] = useState();
+  const [postReplyID, setPostReplyID] = useState();
 
   const [newPostsNotifID, setNewPostsNotifID] = useState();
   const [newAttendeesNotifID, setNewAttendeesNotifID] = useState();
@@ -206,6 +208,16 @@ function CardDetails(props, { navigation, route }) {
   const exitEditMode = () => {
     setEditMode(false);
     setPostEditID();
+  };
+
+  const enterReplyMode = (post) => {
+    setEditMode(true);
+    setPostReplyID(post.id);
+  };
+
+  const exitReplyMode = () => {
+    setEditMode(false);
+    setPostReplyID();
   };
 
   // const handleEditPost = (post) => {
@@ -357,7 +369,6 @@ function CardDetails(props, { navigation, route }) {
                   {moment
                     .unix(item.creationTimestamp.seconds)
                     .format("MMM Do, hh:mm A")}
-
                 </Text>
               </View>
 
@@ -434,14 +445,14 @@ function CardDetails(props, { navigation, route }) {
               {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
               {!editMode && (
                 <View style={{ flexDirection: "row" }}>
-                  {item.posterID == userID && (
+                  {
                     <Icon
                       name="comment"
                       color="#517fa4"
                       size={22}
-                      onPress={() => enterEditMode(item)}
+                      onPress={() => enterReplyMode(item)}
                     />
-                  )}
+                  }
 
                   <View style={{ flex: 1 }} />
                   {item.posterID == userID && (
@@ -449,7 +460,7 @@ function CardDetails(props, { navigation, route }) {
                       name="pencil"
                       color="#517fa4"
                       size={22}
-                      style={{paddingHorizontal: 5}}
+                      style={{ paddingHorizontal: 5 }}
                       onPress={() => enterEditMode(item)}
                     />
                   )}
@@ -461,6 +472,69 @@ function CardDetails(props, { navigation, route }) {
                       onPress={() => handleDeletePost(item)}
                     />
                   )}
+                </View>
+              )}
+              
+              {/* form that appears when replying to a post */}
+              {postReplyID == item.id && (
+                <View>
+                  <Formik
+                    initialValues={{
+                      replyText: "",
+                    }}
+                    onSubmit={(values, actions) => {
+                      if (values.postText === "") {
+                        Alert.alert(
+                          "Error",
+                          "Cannot create a reply with no text"
+                        );
+                      } else {
+                        createReply(
+                          {
+                            postID: item.id,
+                            posterID: item.posterID,
+                            eventID: props.route.params?.id,
+                          },
+                          {
+                            userID: userID,
+                            userName: userName,
+                          },
+                          values.replyText.trim()
+                        );
+
+                        actions.resetForm();
+                        exitReplyMode();
+
+                      }
+                    }}
+                  >
+                    {(props) => (
+                      <>
+                        <Input
+                          placeholder={"Reply to " + item.posterName}
+                          // disabled={!isAttending || editMode}
+                          multiline={true}
+                          value={props.values.replyText}
+                          onChangeText={props.handleChange("replyText")}
+                          onBlur={() => {
+                            props.handleBlur("replyText");
+                          }}
+                          style={{ maxHeight: 100 }}
+                        />
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                            <Button
+                              title="Cancel"
+                              onPress={() => exitReplyMode()}
+                            />
+                          </View>
+                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                            <Button title="Reply" onPress={props.handleSubmit} />
+                          </View>
+                        </View>
+                      </>
+                    )}
+                  </Formik>
                 </View>
               )}
             </Card>
