@@ -192,7 +192,6 @@ export default function Notifications({ navigation, route }) {
       if (isFocused == true) {
         grabNotifications(user.uid).then((data) => {
           setNotifications(data);
-          console.log("grabbing notifs")
         });
 
       }

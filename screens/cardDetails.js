@@ -357,6 +357,7 @@ function CardDetails(props, { navigation, route }) {
                   {moment
                     .unix(item.creationTimestamp.seconds)
                     .format("MMM Do, hh:mm A")}
+
                 </Text>
               </View>
 
@@ -435,19 +436,28 @@ function CardDetails(props, { navigation, route }) {
                 <View style={{ flexDirection: "row" }}>
                   {item.posterID == userID && (
                     <Icon
-                      name="pencil"
+                      name="comment"
                       color="#517fa4"
-                      size={20}
+                      size={22}
                       onPress={() => enterEditMode(item)}
                     />
                   )}
 
                   <View style={{ flex: 1 }} />
+                  {item.posterID == userID && (
+                    <Icon
+                      name="pencil"
+                      color="#517fa4"
+                      size={22}
+                      style={{paddingHorizontal: 5}}
+                      onPress={() => enterEditMode(item)}
+                    />
+                  )}
                   {(item.posterID == userID || isCreator) && (
                     <Icon
                       name="trash"
                       color="#517fa4"
-                      size={20}
+                      size={22}
                       onPress={() => handleDeletePost(item)}
                     />
                   )}
