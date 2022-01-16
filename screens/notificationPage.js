@@ -189,9 +189,14 @@ export default function Notifications({ navigation, route }) {
   // grab the posts when user is authenticated or screen is refocused
   useEffect(() => {
     if (user) {
-      grabNotifications(user.uid).then((data) => {
-        setNotifications(data);
-      });
+      if (isFocused == true) {
+        grabNotifications(user.uid).then((data) => {
+          setNotifications(data);
+          console.log("grabbing notifs")
+        });
+
+      }
+      
     }
   }, [user, isFocused]);
 
@@ -205,7 +210,7 @@ export default function Notifications({ navigation, route }) {
         }}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.container}>
+          <View style={[styles.container, !item.seen && {backgroundColor: "#EBEBEB"}]}>
             <Image source={placeholderImage} style={styles.avatar} />
             <View style={styles.content}>
               <View style={styles.mainContent}>
