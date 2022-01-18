@@ -37,7 +37,7 @@ const windowHight = Dimensions.get("window").height;
 function LocationPreferencesPage(props, { navigation }) {
   const [range, setRange] = useState("1 mile");
   //const [sliding, setSliding] = useState("Inactive");
-
+  const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
   const latitude = 41.241489;
   const longitude = -77.041924;
@@ -53,6 +53,15 @@ function LocationPreferencesPage(props, { navigation }) {
       style={{ width: "100%", height: "100%" }}
     >
       <SafeAreaView style={globalStyles.container}>
+        <View style={[{ flexDirection: "column" }]}>
+          <SearchBar
+            placeholder="Type Here..."
+            onChangeText={(text) => {
+              setSearch({ text });
+            }}
+            value={search.text}
+          />
+        </View>
         <View style={[styles.holder, { flexDirection: "column" }]}>
           {/* {(props) => (
             <> */}
@@ -99,7 +108,7 @@ function LocationPreferencesPage(props, { navigation }) {
 
           <View style={[styles.container, { flex: 2 }]}>
             <Text style={styles.mileText}>{range}</Text>
-            {/* <Text style={{ fontSize: 20, fontWeight: "bold" }}>{sliding}</Text> */}
+
             <Slider
               style={styles.slider}
               minimumValue={1}
@@ -273,7 +282,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   mileText: {
-    margin: windowHight * 0.03,
+    margin: windowHight * 0.02,
     fontSize: 24,
     fontWeight: "bold",
   },
