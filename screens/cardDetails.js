@@ -71,6 +71,17 @@ function CardDetails(props, { navigation, route }) {
 
   var eventAtens = [];
 
+  const sampleUsers = [
+    {
+      id: 1,
+      name: "Alec"
+    },
+    {
+      id: 2,
+      name: "Robbie"
+    }
+  ]
+
   const AuthStateChangedListener = (user) => {
     if (user) {
       getUserData(user.uid).then((userData) => {
@@ -183,6 +194,7 @@ function CardDetails(props, { navigation, route }) {
         posterName: data.posterName,
         creationTimestamp: data.creationTimestamp,
         edited: data.edited,
+        replies: data.replies,
       };
       if (change.type === "added") {
         dispatch({ type: "add", payload: payload });
@@ -213,6 +225,7 @@ function CardDetails(props, { navigation, route }) {
   const enterReplyMode = (post) => {
     setEditMode(true);
     setPostReplyID(post.id);
+    console.log(post);
   };
 
   const exitReplyMode = () => {
@@ -317,6 +330,14 @@ function CardDetails(props, { navigation, route }) {
       setIsAttending(false);
     }
   }, [eventAttendees, userID]);
+
+  const Replies = (props) => {
+    return (
+      <View>
+        <FlatList />
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={globalStyles.container}>
@@ -474,7 +495,7 @@ function CardDetails(props, { navigation, route }) {
                   )}
                 </View>
               )}
-              
+
               {/* form that appears when replying to a post */}
               {postReplyID == item.id && (
                 <View>
@@ -504,7 +525,6 @@ function CardDetails(props, { navigation, route }) {
 
                         actions.resetForm();
                         exitReplyMode();
-
                       }
                     }}
                   >
@@ -529,7 +549,10 @@ function CardDetails(props, { navigation, route }) {
                             />
                           </View>
                           <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                            <Button title="Reply" onPress={props.handleSubmit} />
+                            <Button
+                              title="Reply"
+                              onPress={props.handleSubmit}
+                            />
                           </View>
                         </View>
                       </>
@@ -537,6 +560,27 @@ function CardDetails(props, { navigation, route }) {
                   </Formik>
                 </View>
               )}
+
+              {/* replies start here */}
+              {/* <View style={{ paddingRight: 20, flex: 1 }}> */}
+
+                <FlatList
+                  data={item.replies}
+                  keyExtractor={(item) => item.id}
+                  contentContainerStyle = {{ flexGrow: 1}}
+                  removeClippedSubviews= {false}
+                  extraData={state}
+                  style={{flex: 1}}
+                  renderItem={({ item }) => (
+                    <View>
+                      <Text>{item.message}</Text>
+                    </View>
+                  )}
+                />
+                
+                {/* Reinsert flatlist here (maybe) */}
+              {/* </View> */}
+              <Text>end of replies</Text>
             </Card>
           )}
           ListHeaderComponent={
@@ -554,7 +598,12 @@ function CardDetails(props, { navigation, route }) {
                 </Text>
 
                 <Text style={styles.titlesub}>Attendees</Text>
-                {eventAttendees.map((attendee) => (
+                {/* {eventAttendees.map((attendee) => (
+                  <Text key={attendee.id} style={styles.subp}>
+                    {attendee.name}
+                  </Text>
+                ))} */}
+                {sampleUsers.map((attendee) => (
                   <Text key={attendee.id} style={styles.subp}>
                     {attendee.name}
                   </Text>
@@ -685,7 +734,6 @@ function CardDetails(props, { navigation, route }) {
           </KeyboardAvoidingView>
         )}
 
-        {/* </ScrollView> */}
       </View>
     </SafeAreaView>
   );

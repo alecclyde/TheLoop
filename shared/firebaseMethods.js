@@ -389,7 +389,7 @@ export async function createReply(postData, userData, replyText) {
   let replyID = firebase.firestore().collection("posts").doc(postData.eventID).collection("posts").doc()
 
   // premake the field name for the reply
-  let fieldName = "replies." + replyID.id
+  // let fieldName = "replies." + replyID.id
 
   firebase
     .firestore()
@@ -397,14 +397,23 @@ export async function createReply(postData, userData, replyText) {
     .doc(postData.eventID)
     .collection("posts")
     .doc(postData.postID).update({
-      [fieldName]: {
+      // [fieldName]: {
+      //   creationTimestamp: firebase.firestore.Timestamp.now(),
+      //   updatedTimestamp: firebase.firestore.Timestamp.now(),
+      //   edited: false,
+      //   message: replyText,
+      //   replierID: userData.userID,
+      //   replierName: userData.userName
+      // },
+      replies: firebase.firestore.FieldValue.arrayUnion({
         creationTimestamp: firebase.firestore.Timestamp.now(),
         updatedTimestamp: firebase.firestore.Timestamp.now(),
         edited: false,
         message: replyText,
         replierID: userData.userID,
-        replierName: userData.userName
-      },
+        replierName: userData.userName,
+        id: replyID.id
+      }),
       updatedTimestamp: firebase.firestore.Timestamp.now()
     });
 }
