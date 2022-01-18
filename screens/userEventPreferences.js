@@ -79,7 +79,11 @@ export default function UserEventPreferences({ navigation }) {
                       <View style={styles.boxContainer}>
                         <CheckBox
                           size={40}
-                          title="Sports"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Sports{"\n"}
+                            </Text>
+                          }
                           // title={<Text style={{}}>Sports</Text>}
                           //textStyle={(size = 30)}
                           checkedIcon="futbol-o"
@@ -100,7 +104,11 @@ export default function UserEventPreferences({ navigation }) {
                           checkedIcon="music"
                           uncheckedIcon="music"
                           checkedColor="#2B7D9C"
-                          title="Music"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Music{"\n"}
+                            </Text>
+                          }
                           checked={checkMusic}
                           onPress={() => {
                             setCheckMusic(!checkMusic);
@@ -113,7 +121,11 @@ export default function UserEventPreferences({ navigation }) {
                       <View style={styles.boxContainer}>
                         <CheckBox
                           size={40}
-                          title="Volunteer"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Volunteer{"\n"}
+                            </Text>
+                          }
                           checkedColor="#2B7D9C"
                           checkedIcon="plus"
                           uncheckedIcon="plus"
@@ -129,7 +141,11 @@ export default function UserEventPreferences({ navigation }) {
                       <View style={styles.boxContainer}>
                         <CheckBox
                           size={40}
-                          title="Game"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Game{"\n"}
+                            </Text>
+                          }
                           checkedIcon="gamepad"
                           uncheckedIcon="gamepad"
                           checkedColor="#2B7D9C"
@@ -145,7 +161,11 @@ export default function UserEventPreferences({ navigation }) {
                       <View style={styles.boxContainer}>
                         <CheckBox
                           size={40}
-                          title="Social"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Social{"\n"}
+                            </Text>
+                          }
                           checkedIcon="users"
                           uncheckedIcon="users"
                           checkedColor="#2B7D9C"
@@ -161,7 +181,11 @@ export default function UserEventPreferences({ navigation }) {
                       <View style={styles.boxContainer}>
                         <CheckBox
                           size={40}
-                          title="Arts"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Arts{"\n"}
+                            </Text>
+                          }
                           checkedIcon="paint-brush"
                           uncheckedIcon="paint-brush"
                           checkedColor="#2B7D9C"
@@ -177,7 +201,11 @@ export default function UserEventPreferences({ navigation }) {
                       <View style={styles.boxContainer}>
                         <CheckBox
                           size={40}
-                          title="Outdoors"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Outdoors{"\n"}
+                            </Text>
+                          }
                           checkedIcon="pagelines"
                           uncheckedIcon="pagelines"
                           checkedColor="#2B7D9C"
@@ -193,7 +221,11 @@ export default function UserEventPreferences({ navigation }) {
                       <View style={styles.boxContainer}>
                         <CheckBox
                           size={40}
-                          title="Academic"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Academic{"\n"}
+                            </Text>
+                          }
                           checkedIcon="book"
                           uncheckedIcon="book"
                           checkedColor="#2B7D9C"
@@ -209,8 +241,11 @@ export default function UserEventPreferences({ navigation }) {
                       <View style={styles.boxContainer}>
                         <CheckBox
                           size={40}
-                          fontSize="80"
-                          title="Media"
+                          title={
+                            <Text style={styles.titleStyle}>
+                              {"\n"}Media{"\n"}
+                            </Text>
+                          }
                           checkedIcon="camera"
                           uncheckedIcon="camera"
                           checkedColor="#2B7D9C"
@@ -290,6 +325,11 @@ const styles = StyleSheet.create({
   boxContainer: {
     width: "50%",
     height: "20%",
+  },
+  titleStyle: {
+    marginLeft: 5,
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
