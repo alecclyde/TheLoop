@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { grabNotifications } from "../shared/firebaseMethods";
+import { globalStyles } from "../styles/global";
 import firebase from "firebase";
 import { makeTimeDifferenceString } from "../shared/commonMethods";
 import { Button } from "react-native-elements";
@@ -206,7 +207,7 @@ export default function Notifications({ navigation, route }) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.container}>
-            <Image source={placeholderImage} style={styles.avatar} />
+            <Image source={placeholderImage} style={globalStyles.notifavatar} />
             <View style={styles.content}>
               <View style={styles.mainContent}>
                 <View style={styles.text}>
@@ -237,11 +238,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#FFFFFF",
     alignItems: "flex-start",
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
   },
   text: {
     marginBottom: 5,

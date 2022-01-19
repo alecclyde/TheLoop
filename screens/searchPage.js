@@ -18,6 +18,7 @@ import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
+import { globalStyles } from "../styles/global";
 
 
 
@@ -91,10 +92,10 @@ export default function Search({ navigation }) {
                 ViewComponent={LinearGradient}
               >
                 <ListItem.Content>
-                  <ListItem.Title style={styles.listingItem}>
+                  <ListItem.Title style={globalStyles.listingItem}>
                     {item.name}
                   </ListItem.Title>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
+                  <ListItem.Subtitle style={globalStyles.descriptionItem}>
                     {item.loop}
                   </ListItem.Subtitle>
                 </ListItem.Content>
@@ -108,16 +109,6 @@ export default function Search({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  listingItem: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  descriptionItem: {
-    color: "white",
-  },
-});
 
 
 

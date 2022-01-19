@@ -28,7 +28,7 @@ export const globalStyles = StyleSheet.create({
     margin: 20,
     borderRadius: 50,
     padding: 20,
-   },
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -74,5 +74,51 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 2,
     textAlign: 'center',
-  }
+  },
+  notifavatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  avatar: {
+    width: 130,
+    height: 130,
+    borderRadius: 63,
+    borderWidth: 4,
+    borderColor: "white",
+    marginBottom: 10,
+  },
+  listingItem: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  descriptionItem: {
+    color: "white",
+  },
+  headerContent: {
+    padding: 30,
+    alignItems: "center",
+  },
+  name: {
+    fontSize: 22,
+    color: "#000000",
+    fontWeight: "600",
+  },
+  userInfo: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "600",
+  },
+  header: {
+    ...Platform.select({
+      ios: {
+        backgroundColor: "#FFA500",
+      },
+      android: {
+        backgroundColor: "#DCDCDC",
+      },
+    }),
+  },
+
 });

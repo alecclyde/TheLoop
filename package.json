@@ -13,6 +13,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/datetimepicker": "3.5.2",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-navigation/bottom-tabs": "^6.0.5",
@@ -46,8 +47,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.0",
-    "yup": "^0.32.9",
-    "@react-native-async-storage/async-storage": "~1.15.0"
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "babel-preset-expo": "8.5.1",
