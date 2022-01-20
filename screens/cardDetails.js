@@ -111,7 +111,8 @@ function CardDetails(props, { navigation, route }) {
 
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
 
-    updateAttendeeList(eventData.attendees);
+    // updateAttendeeList(eventData.attendees);
+    setEventAttendees(eventData.eventAttendees)
   };
 
   const updateAttendeeList = (attendees) => {
@@ -598,16 +599,16 @@ function CardDetails(props, { navigation, route }) {
                 </Text>
 
                 <Text style={styles.titlesub}>Attendees</Text>
-                {/* {eventAttendees.map((attendee) => (
-                  <Text key={attendee.id} style={styles.subp}>
-                    {attendee.name}
-                  </Text>
-                ))} */}
-                {sampleUsers.map((attendee) => (
+                {eventAttendees.map((attendee) => (
                   <Text key={attendee.id} style={styles.subp}>
                     {attendee.name}
                   </Text>
                 ))}
+                {/* {sampleUsers.map((attendee) => (
+                  <Text key={attendee.id} style={styles.subp}>
+                    {attendee.name}
+                  </Text>
+                ))} */}
 
                 <Divider orientation="horizontal" />
 
