@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   },
   clickable: {
     justifyContent: "center",
-    backgroundColor: "#2C2C2C",
+    backgroundColor: "red",
     alignSelf: "center",
     borderWidth: 0,
     width: 365,

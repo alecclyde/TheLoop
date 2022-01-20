@@ -26,7 +26,7 @@ export function registration(
                 creationTimestamp: firebase.firestore.Timestamp.now(),
             }
             await firebase.firestore().collection("users").doc(currentUser.uid).set(user);
-            dispatch({ type: SET_USER, payload: {...user.data(), uid: currentUser.uid}});
+            dispatch({ type: SET_USER, payload: {...user, uid: currentUser.uid}});
             navigation.navigate("RootStack");
         } catch (err) {
             Alert.alert("There is something wrong!", err.message);
