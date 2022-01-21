@@ -169,15 +169,6 @@ function Login(props, { navigation }) {
               title="Reset Password"
               onPress={() => props.navigation.navigate("ResetPassword")}
             ></Button>
-            <Button
-              containerStyle={{
-                borderRadius: 10, // adds the rounded corners
-              }}
-              title="Reset Password"
-              onPress={() =>
-                props.navigation.navigate("locationPreferencesPage")
-              }
-            ></Button>
           </View>
         </ImageBackground>
       </View>
