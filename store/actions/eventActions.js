@@ -4,33 +4,56 @@ import { REGISTER_EVENT } from "../constants";
 import { UNREGISTER_EVENT } from "../constants";
 
 import * as firebase from "firebase";
+import { makeName } from "../../shared/commonMethods";
 
 export function addEvent(newEvent) {
   // console.log("calling addEvent");
   return async function addEventThunk(dispatch, getState) {
-    const currentUser = firebase.auth().currentUser;
-    // console.log('returning the addEvent action');
-    const event = {
-      name: newEvent.name,
-      loop: newEvent.loop,
-      // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
-      creatorID: currentUser.uid,
-      address: newEvent.address,
-      recurAutomatically: false,
-      recurFrequency: 1,
-      // datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
-      startDateTime: firebase.firestore.Timestamp.fromMillis(
-        newEvent.startDateTime
-      ),
-      endDateTime: firebase.firestore.Timestamp.fromMillis(
-        newEvent.startDateTime
-      ), // Will want to query for actual end dateTime later
-      creationTimestamp: firebase.firestore.Timestamp.now(),
-      attendees: [currentUser.uid],
-      newAttendeesNotifID: "0",
-      newPostsNotifID: "0",
-      location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
-    };
+    
+    let event = {}
+    // get the event creator's user data to get their name
+    // (I imagine this can be easily replaced with some redux magic)
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        console.log(doc.data())
+
+        // console.log('returning the addEvent action');
+        event = {
+          name: newEvent.name,
+          loop: newEvent.loop,
+          // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
+          creator: {
+            id: doc.id,
+            name: makeName(doc.data()),
+          },
+          address: newEvent.address,
+          recurAutomatically: false,
+          recurFrequency: 1,
+          // datetime: firebase.firestore.Timestamp.fromMillis(data.startDateTime), // DEPRECATED, start transitioning to startDateTime
+          startDateTime: firebase.firestore.Timestamp.fromMillis(
+            newEvent.startDateTime
+          ),
+          endDateTime: firebase.firestore.Timestamp.fromMillis(
+            newEvent.startDateTime
+          ), // Will want to query for actual end dateTime later
+          creationTimestamp: firebase.firestore.Timestamp.now(),
+          attendees: [
+            {
+              id: doc.id,
+              name: makeName(doc.data()),
+            },
+          ],
+          newAttendeesNotifID: "0",
+          newPostsNotifID: "0",
+          location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
+        };
+
+      });
+
     await firebase.firestore().collection("events").add(event);
     dispatch({ type: ADD_EVENT, payload: event });
   };

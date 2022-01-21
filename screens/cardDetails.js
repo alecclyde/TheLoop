@@ -44,10 +44,7 @@ import { bindActionCreators } from "redux";
 //Called by favorite and personal when you click on a card to display the content
 function CardDetails(props, { navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
-  const [eventCreator, setEventCreator] = useState({
-    id: props.route.params?.creatorID,
-    name: "",
-  });
+  const [eventCreator, setEventCreator] = useState();
 
   const [eventName, setEventName] = useState(props.route.params?.name);
   const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
@@ -87,6 +84,7 @@ function CardDetails(props, { navigation, route }) {
     setEventLoop(eventData.loop);
     setEventDateTime(eventData.startDateTime.seconds);
     setEventAddress(eventData.address);
+    setEventCreator(eventData.creator);
     setNewPostsNotifID(
       eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
     );
@@ -97,8 +95,9 @@ function CardDetails(props, { navigation, route }) {
     );
 
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
+    setEventAttendees(eventAttendees)
 
-    updateAttendeeList(eventData.attendees);
+    // updateAttendeeList(eventData.attendees);
   };
 
   const updateAttendeeList = (attendees) => {
