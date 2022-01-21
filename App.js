@@ -33,7 +33,7 @@ const firebaseConfig = {
   messagingSenderId: MESSAGING_SENDER_ID,
   appId: APP_ID,
   measurementId: MEASUREMENT_ID,
-  placesId: PLACES_ID,
+  placesId: API_KEY,
 };
 
 if (!firebase.apps.length) {
