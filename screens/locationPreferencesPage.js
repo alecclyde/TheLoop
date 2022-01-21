@@ -9,9 +9,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import MapView, { Circle, Marker } from "react-native-maps";
-import Geolocation, {
-  getCurrentPosition,
-} from "react-native-geolocation-service";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SearchBar, withTheme } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
@@ -33,8 +30,8 @@ import { Constants, Location, Permissions } from "expo";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { PLACES_ID } from "@env";
 
-navigator.geolocation = require("@react-native-community/geolocation");
-navigator.geolocation = require("react-native-geolocation-service");
+//navigator.geolocation = require("@react-native-community/geolocation");
+//navigator.geolocation = require("react-native-geolocation-service");
 
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
