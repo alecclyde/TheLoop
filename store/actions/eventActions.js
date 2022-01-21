@@ -19,8 +19,6 @@ export function addEvent(newEvent) {
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((doc) => {
-        console.log(doc.data())
-
         // console.log('returning the addEvent action');
         event = {
           name: newEvent.name,
@@ -55,6 +53,8 @@ export function addEvent(newEvent) {
       });
 
     await firebase.firestore().collection("events").add(event);
+
+    // lastly, add this event to the creator's list of events
     dispatch({ type: ADD_EVENT, payload: event });
   };
 }

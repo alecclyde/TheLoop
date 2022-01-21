@@ -7,7 +7,7 @@ import {
   ImageBackground,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { getUserData } from "../shared/firebaseMethods";
+import { getUserData, getEventData, editPost } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import { Text } from "react-native-elements";
 import { Header } from "react-native-elements";
@@ -34,6 +34,7 @@ function Home(props, { navigation, route }) {
   const [userID, setUserID] = useState("");
 
   const [events, setEvents] = useState([]);
+  const [eventIDs, setEventIDs] = useState([]);
 
   const isFocused = useIsFocused();
 
@@ -41,16 +42,6 @@ function Home(props, { navigation, route }) {
   function AuthStateChangedListener(user) {
     if (user) {
       setUserID(user.uid);
-      getUserData(user.uid).then((user) => {
-        setEmail(user.email);
-        setFirstName(user.firstName);
-        setLastName(user.lastName);
-      });
-    } else {
-      setUserID();
-      setEmail("");
-      setFirstName("");
-      setLastName("");
     }
   }
 
@@ -64,108 +55,121 @@ function Home(props, { navigation, route }) {
   }, []);
 
   useEffect(() => {
-    if (userID != null) {
-      setEvents([]);
-      firebase
-        .firestore()
-        .collection("events")
-        .where("attendees", "array-contains", userID)
-        .orderBy("startDateTime")
-        .get()
+    if (userID && isFocused) {
+      getUserData(userID).then((user) => {
+        // setEmail(user.email);
+        // setFirstName(user.firstName);
+        // setLastName(user.lastName);
+        setEventIDs(user.myEvents);
+      });
 
-        .then((snap) => {
-          snap.forEach((doc) => {
-            setEvents((events) => [
-              ...events,
-              {
-                id: doc.id,
-                name: doc.data().name,
-                loop: doc.data().loop,
-                startDateTime: doc.data().startDateTime,
-                creatorID: doc.data().creatorID,
-                address: doc.data().address,
-              },
-            ]);
-          });
-        });
     }
   }, [userID, isFocused]);
   //console.log(props.user);
 
+  useEffect(() => {
+
+    setEvents([]);
+
+    if (userID) {
+      eventIDs.forEach((eventID) => {
+        getEventData(eventID).then((event) => {
+
+          let creator;
+
+          // SPRINT7: collapse this to just use event.creator
+          if (event.creator == undefined) {
+            creator = {id: event.creatorID, name: ""}
+          } else {
+            creator = event.creator
+          }
+          setEvents((events) => [
+            ...events,
+            {
+              id: eventID,
+              name: event.name,
+              loop: event.loop,
+              startDateTime: event.startDateTime,
+              creator: creator,
+              address: event.address,
+            }
+          ]);
+        });
+      });
+
+      // setEvents(eventArray)
+    }
+  }, [eventIDs]);
+
   return (
-      <SafeAreaView style={globalStyles.container}>
-        <View style={{backgroundColor:"#D3D3D3"}}>
-
-
-          <View style={{ backgroundColor: "black" }}>
-            <Text h3 style={{ textAlign: "center", color: "#ffa835" }}>
-              Upcoming Events
-            </Text>
-          </View>
-
-
-            <ScrollView
-              persistentScrollbar={true}
-            >
-              {events.map((event) => (
-                <TouchableOpacity
-                  style={styles.clickable}
-                  key={event.id}
-                  onPress={() =>
-                    props.navigation.navigate("CardDetails", {
-                      id: event.id,
-                      name: event.name,
-                      loop: event.loop,
-                      creatorID: event.creatorID,
-                      startDateTime: event.startDateTime,
-                      address: event.address,
-                    })
-                  }
-                >
-                  <ListItem
-                    pad={16}
-                    bottomDivide={true}
-                    Component={TouchableScale}
-                    button
-                    friction={90}
-                    tension={100} // These props are passed to the parent component (here TouchableScale)
-                    activeScale={0.95} //
-                    linearGradientProps={{
-                      colors: ["#2C2C2C", "#2C2C2C"],
-                      start: { x: 1, y: 0 },
-                      end: { x: 0.2, y: 0 },
-                    }}
-                    ViewComponent={LinearGradient}
-                  >
-                    <Avatar
-                      size="large"
-                      //change this to either be icon of loop or that groups profile picture
-                      source={{
-                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                      }}
-                      resizeMode="cover"
-                      //style={{ width: "100%", height: "100%" }}
-                    />
-                    <ListItem.Content>
-                      <ListItem.Title style={styles.listingItem}>
-                        {event.name}
-                      </ListItem.Title>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        {event.loop}
-                      </ListItem.Subtitle>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        <Icon name="map-marker" size={16} color="white" />
-                        {"  "}
-                        {event.address}
-                      </ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron color="gray" />
-                  </ListItem>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+    <SafeAreaView style={globalStyles.container}>
+      <View style={{ backgroundColor: "#D3D3D3" }}>
+        <View style={{ backgroundColor: "black" }}>
+          <Text h3 style={{ textAlign: "center", color: "#ffa835" }}>
+            Upcoming Events
+          </Text>
         </View>
-      </SafeAreaView>
+
+        <ScrollView persistentScrollbar={true}>
+          {events.map((event) => (
+            <TouchableOpacity
+              style={styles.clickable}
+              key={event.id}
+              onPress={() =>
+                props.navigation.navigate("CardDetails", {
+                  id: event.id,
+                  name: event.name,
+                  loop: event.loop,
+                  creator: event.creator,
+                  startDateTime: event.startDateTime,
+                  address: event.address,
+                })
+              }
+            >
+              <ListItem
+                pad={16}
+                bottomDivide={true}
+                Component={TouchableScale}
+                button
+                friction={90}
+                tension={100} // These props are passed to the parent component (here TouchableScale)
+                activeScale={0.95} //
+                linearGradientProps={{
+                  colors: ["#2C2C2C", "#2C2C2C"],
+                  start: { x: 1, y: 0 },
+                  end: { x: 0.2, y: 0 },
+                }}
+                ViewComponent={LinearGradient}
+              >
+                <Avatar
+                  size="large"
+                  //change this to either be icon of loop or that groups profile picture
+                  source={{
+                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                  }}
+                  resizeMode="cover"
+                  //style={{ width: "100%", height: "100%" }}
+                />
+                <ListItem.Content>
+                  <ListItem.Title style={styles.listingItem}>
+                    {event.name}
+                  </ListItem.Title>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    {event.loop}
+                  </ListItem.Subtitle>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    <Icon name="map-marker" size={16} color="white" />
+                    {"  "}
+                    {event.address}
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <ListItem.Chevron color="gray" />
+              </ListItem>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -193,8 +197,8 @@ const styles = StyleSheet.create({
 });
 
 //Initialize the states you want to use on the page
-const mapStateToProps = state => ({
-  user: state.user
+const mapStateToProps = (state) => ({
+  user: state.user,
 });
 
 //Initialize what actions you are going to use on the page

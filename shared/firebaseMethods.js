@@ -134,6 +134,12 @@ export async function getUserData(userID) {
 export async function getEventData(eventID) {
   try {
     // Get some event data
+    const event = await firebase
+      .firestore()
+      .collection("events")
+      .doc(eventID)
+      .get();
+    return event.data();
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);

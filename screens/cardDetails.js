@@ -44,7 +44,7 @@ import { bindActionCreators } from "redux";
 //Called by favorite and personal when you click on a card to display the content
 function CardDetails(props, { navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
-  const [eventCreator, setEventCreator] = useState();
+  const [eventCreator, setEventCreator] = useState(props.route.params?.creator);
 
   const [eventName, setEventName] = useState(props.route.params?.name);
   const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
@@ -73,7 +73,7 @@ function CardDetails(props, { navigation, route }) {
       });
 
       setUserID(user.uid);
-      if (user.uid == props.route.params?.creatorID) setIsCreator(true);
+      if (user.uid == eventCreator.id) setIsCreator(true);
     }
   };
 
@@ -84,7 +84,8 @@ function CardDetails(props, { navigation, route }) {
     setEventLoop(eventData.loop);
     setEventDateTime(eventData.startDateTime.seconds);
     setEventAddress(eventData.address);
-    setEventCreator(eventData.creator);
+    // SPRINT7: phase out the second half of this
+    // setEventCreator(eventData.creator || {id: eventData.creatorID, name: ""});
     setNewPostsNotifID(
       eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
     );
@@ -95,7 +96,7 @@ function CardDetails(props, { navigation, route }) {
     );
 
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
-    setEventAttendees(eventAttendees)
+    setEventAttendees(eventData.attendees)
 
     // updateAttendeeList(eventData.attendees);
   };
@@ -226,7 +227,7 @@ function CardDetails(props, { navigation, route }) {
             deletePost(
               {
                 eventID: props.route.params?.id,
-                creatorID: props.route.params?.creatorID,
+                creatorID: eventCreator.id,
                 newPostsNotifID: newPostsNotifID,
               },
               {
@@ -471,7 +472,9 @@ function CardDetails(props, { navigation, route }) {
                 <Text style={styles.titlesub}>Attendees</Text>
                 {eventAttendees.map((attendee) => (
                   <Text key={attendee.id} style={styles.subp}>
-                    {attendee.name}
+                    {/* SPRINT7: remove conditional, uncomment {attendee.name} */}
+                    { attendee.name == undefined ? "This list is using an old format. Let Robbie know! ": attendee.name}
+                    {/* {attendee.name} */}
                   </Text>
                 ))}
 
