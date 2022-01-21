@@ -11,3 +11,7 @@
 
 ## Link to InVision wireframe
 [https://loop12.invisionapp.com/freehand/The-Loop-ZXtXsYqrF](https://loop12.invisionapp.com/freehand/The-Loop-ZXtXsYqrF)
+
+install mapview
+autocomplete
+react-native-geolocation-service
