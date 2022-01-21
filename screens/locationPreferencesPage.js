@@ -32,7 +32,9 @@ import { Formik } from "formik";
 import { Constants, Location, Permissions } from "expo";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { PLACES_ID } from "@env";
-//import { Searchbar } from "react-native-paper";
+
+navigator.geolocation = require("@react-native-community/geolocation");
+navigator.geolocation = require("react-native-geolocation-service");
 
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
@@ -43,10 +45,13 @@ function LocationPreferencesPage(props, { navigation }) {
   //const [sliding, setSliding] = useState("Inactive");
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-  const latitude = 41.241489;
-  const longitude = -77.041924;
+  const latitude = 40.15974;
+  const longitude = -76.988419;
   const position = 0;
-  //const left = (this.state.value * (windowWidth - 60)) / 100 - 15;
+  const messiahPlace = {
+    description: "Messiah University",
+    geometry: { location: { lat: 40.15974, lng: -76.988419 } },
+  };
 
   return (
     <ImageBackground
@@ -57,23 +62,60 @@ function LocationPreferencesPage(props, { navigation }) {
       style={{ width: "100%", height: "100%" }}
     >
       <SafeAreaView style={globalStyles.container}>
-        <View style={styles.container}>
-          <GooglePlacesAutocomplete
-            placeholder="Search"
-            onPress={(data, details = null) => {
-              // 'details' is provided when fetchDetails = true
-              console.log(data, details);
-            }}
-            query={{
-              key: PLACES_ID,
-              language: "en",
-            }}
-          />
-        </View>
-
         <View style={[styles.holder, { flexDirection: "column" }]}>
-          {/* {(props) => (
-            <> */}
+          <View style={{ flex: 4 }}>
+            <GooglePlacesAutocomplete
+              placeholder="Search"
+              minLength={2} // minimum length of text to search
+              autoFocus={false}
+              returnKeyType={"search"} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+              listViewDisplayed="auto" // true/false/undefined
+              fetchDetails={true}
+              renderDescription={(row) => row.description} // custom description render
+              onPress={(data, details = null) => {
+                console.log(data);
+                console.log(details);
+              }}
+              getDefaultValue={() => {
+                return ""; // text input default value
+              }}
+              query={{
+                // available options: https://developers.google.com/places/web-service/autocomplete
+                key: PLACES_ID,
+                language: "en", // language of the results
+                types: "(cities)", // default: 'geocode'
+              }}
+              styles={{
+                description: {
+                  fontWeight: "bold",
+                },
+                predefinedPlacesDescription: {
+                  color: "#1faadb",
+                },
+              }}
+              currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+              currentLocationLabel="Current location"
+              nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+              GoogleReverseGeocodingQuery={
+                {
+                  // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                }
+              }
+              GooglePlacesSearchQuery={{
+                // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                rankby: "distance",
+                //types: "food",
+              }}
+              filterReverseGeocodingByTypes={[
+                "locality",
+                "administrative_area_level_3",
+              ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+              predefinedPlaces={[messiahPlace]}
+              debounce={200}
+              currentLocation={true}
+              currentLocationLabel="Current location"
+            />
+          </View>
           <View style={[styles.container, { flex: 6 }]}>
             <MapView
               style={styles.mapStyle}
@@ -114,21 +156,7 @@ function LocationPreferencesPage(props, { navigation }) {
               />
             </MapView>
           </View>
-          <View style={styles.slider}>
-            <GooglePlacesAutocomplete
-              placeholder="Search"
-              onPress={(data, details = null) => {
-                // 'details' is provided when fetchDetails = true
-                console.log(data, details);
-              }}
-              query={{
-                key: PLACES_ID,
-                language: "en",
-              }}
-              currentLocation={true}
-              currentLocationLabel="Current location"
-            />
-          </View>
+
           <View style={[styles.container, { flex: 2 }]}>
             <Text style={styles.mileText}>{range}</Text>
             <Slider
@@ -164,22 +192,6 @@ function LocationPreferencesPage(props, { navigation }) {
               // onPress={() => {
               //   console.log(parseInt(range) + " miles");
               // }}
-            />
-            <Button
-              title="LOCATION"
-              titleStyle={{ fontSize: 26, color: "#FFFFFF" }}
-              buttonStyle={{
-                borderWidth: 10,
-                borderWidth: 1,
-                width: windowWidth * 0.5,
-                height: windowHight * 0.09,
-                borderColor: "black",
-                titleColor: "black",
-                backgroundColor: "#2B7D9C",
-                borderRadius: 50,
-              }}
-              style={{ padding: 45 }}
-              //onPress={}
             />
           </View>
           {/* </>
