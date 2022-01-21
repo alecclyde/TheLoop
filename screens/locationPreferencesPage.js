@@ -13,7 +13,6 @@ import Geolocation, {
   getCurrentPosition,
 } from "react-native-geolocation-service";
 import Icon from "react-native-vector-icons/FontAwesome";
-import * as Location from "expo-location";
 import { SearchBar, withTheme } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
 import * as firebase from "firebase";
@@ -30,12 +29,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { globalStyles } from "../styles/global";
 import { addDistance } from "../store/actions/eventActions";
 import { Formik } from "formik";
+import { Constants, Location, Permissions } from "expo";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { PLACES_ID } from "@env";
+//import { Searchbar } from "react-native-paper";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
 
 function LocationPreferencesPage(props, { navigation }) {
   const [range, setRange] = useState("1 mile");
+  const [searchQuery, setSearchQuery] = React.useState("");
   //const [sliding, setSliding] = useState("Inactive");
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
@@ -53,15 +57,20 @@ function LocationPreferencesPage(props, { navigation }) {
       style={{ width: "100%", height: "100%" }}
     >
       <SafeAreaView style={globalStyles.container}>
-        <View style={[{ flexDirection: "column" }]}>
-          <SearchBar
-            placeholder="Type Here..."
-            onChangeText={(text) => {
-              setSearch({ text });
+        <View style={styles.container}>
+          <GooglePlacesAutocomplete
+            placeholder="Search"
+            onPress={(data, details = null) => {
+              // 'details' is provided when fetchDetails = true
+              console.log(data, details);
             }}
-            value={search.text}
+            query={{
+              key: PLACES_ID,
+              language: "en",
+            }}
           />
         </View>
+
         <View style={[styles.holder, { flexDirection: "column" }]}>
           {/* {(props) => (
             <> */}
@@ -105,10 +114,23 @@ function LocationPreferencesPage(props, { navigation }) {
               />
             </MapView>
           </View>
-
+          <View style={styles.slider}>
+            <GooglePlacesAutocomplete
+              placeholder="Search"
+              onPress={(data, details = null) => {
+                // 'details' is provided when fetchDetails = true
+                console.log(data, details);
+              }}
+              query={{
+                key: PLACES_ID,
+                language: "en",
+              }}
+              currentLocation={true}
+              currentLocationLabel="Current location"
+            />
+          </View>
           <View style={[styles.container, { flex: 2 }]}>
             <Text style={styles.mileText}>{range}</Text>
-
             <Slider
               style={styles.slider}
               minimumValue={1}
@@ -142,6 +164,22 @@ function LocationPreferencesPage(props, { navigation }) {
               // onPress={() => {
               //   console.log(parseInt(range) + " miles");
               // }}
+            />
+            <Button
+              title="LOCATION"
+              titleStyle={{ fontSize: 26, color: "#FFFFFF" }}
+              buttonStyle={{
+                borderWidth: 10,
+                borderWidth: 1,
+                width: windowWidth * 0.5,
+                height: windowHight * 0.09,
+                borderColor: "black",
+                titleColor: "black",
+                backgroundColor: "#2B7D9C",
+                borderRadius: 50,
+              }}
+              style={{ padding: 45 }}
+              //onPress={}
             />
           </View>
           {/* </>

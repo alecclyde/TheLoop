@@ -2,6 +2,7 @@ import * as firebase from "firebase";
 import * as firestore from "firebase/firestore";
 import { Alert } from "react-native";
 import { StackActions } from "@react-navigation/native";
+import locationPreferencesPage from "../screens/locationPreferencesPage";
 
 // export async function registration(
 //   email,
