@@ -96,8 +96,6 @@ function Home(props, { navigation, route }) {
           ]);
         });
       });
-
-      // setEvents(eventArray)
     }
   }, [eventIDs]);
 

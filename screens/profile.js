@@ -8,7 +8,7 @@ import {
   ImageBackground,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { getUserData } from "../shared/firebaseMethods";
+import { getUserData, getEventData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import { Text } from "react-native-elements";
 import { Header } from "react-native-elements";
@@ -40,9 +40,11 @@ function Profile(props, { navigation, route }) {
       setEmail(props.user.email);
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
+      setEventIDs(props.user.myEvents);
     }
   });
 
+  const [eventIDs, setEventIDs] = useState([]);
   const [events, setEvents] = useState([]);
 
   const isFocused = useIsFocused();
@@ -74,32 +76,33 @@ function Profile(props, { navigation, route }) {
   // }, []);
 
   useEffect(() => {
-    // if (userID != null) {
-    setEvents([]);
-    firebase
-      .firestore()
-      .collection("events")
-      .where("attendees", "array-contains", props.user.uid)
-      .orderBy("startDateTime")
-      .get()
+    if (props.user) {
+      eventIDs.forEach((eventID) => {
+        getEventData(eventID).then((event) => {
 
-      .then((snap) => {
-        snap.forEach((doc) => {
+          let creator;
+
+          // SPRINT7: collapse this to just use event.creator
+          if (event.creator == undefined) {
+            creator = {id: event.creatorID, name: ""}
+          } else {
+            creator = event.creator
+          }
           setEvents((events) => [
             ...events,
             {
-              id: doc.id,
-              name: doc.data().name,
-              loop: doc.data().loop,
-              startDateTime: doc.data().startDateTime,
-              creatorID: doc.data().creatorID,
-              address: doc.data().address,
-            },
+              id: eventID,
+              name: event.name,
+              loop: event.loop,
+              startDateTime: event.startDateTime,
+              creator: creator,
+              address: event.address,
+            }
           ]);
         });
       });
-    //}
-  }, [userID, isFocused]);
+    }
+  }, [eventIDs]);
   //console.log(props.user);
 
   return (
@@ -137,7 +140,7 @@ function Profile(props, { navigation, route }) {
                   id: event.id,
                   name: event.name,
                   loop: event.loop,
-                  creatorID: event.creatorID,
+                  creator: event.creator,
                   startDateTime: event.startDateTime,
                   address: event.address,
                 })
