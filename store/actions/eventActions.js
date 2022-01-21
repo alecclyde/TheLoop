@@ -36,6 +36,15 @@ export function addEvent(newEvent) {
   };
 }
 
+export function addDistance(values) {
+  return async function addEventThunk(dispatch, getState) {
+    const user = firebase.auth().currentUser;
+    await firebase.firestore().collection("users").doc(user).update({
+      distanceTolerance: values.range,
+    });
+  };
+}
+
 export function getEvents() {
   return async function getEventsThunk(dispatch, getState) {
     const events = await //get events from database
