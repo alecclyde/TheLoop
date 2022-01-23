@@ -148,6 +148,10 @@ function EventCreation(props) {
             {(props) => (
               // What is this magic diamond and why can't it be removed?
               // The world may never know.
+
+              // 1/20/22 - I think the magic diamond exists so that there's only one
+              // 'element' in this part. Everything else is a child of it. It might
+              // still work if you replaced the diamond with view? -Robbie
               <>
                 {/* <Text style={globalStyles.titleText}></Text> */}
 
