@@ -140,6 +140,7 @@ export async function getEventData(eventID) {
       .doc(eventID)
       .get();
     return event.data();
+    
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
@@ -185,7 +186,7 @@ export async function registerEvent(eventData, userData) {
           .doc(eventData.eventID)
           .update({
             attendees: firebase.firestore.FieldValue.arrayUnion(
-              userData.userID
+              userData
             ),
             newAttendeesNotifID: doc.id,
           });
@@ -243,7 +244,7 @@ export async function unregisterEvent(eventData, userData) {
       .collection("events")
       .doc(eventData.eventID)
       .update({
-        attendees: firebase.firestore.FieldValue.arrayRemove(userData.userID),
+        attendees: firebase.firestore.FieldValue.arrayRemove(userData),
       });
 
     // replace this one with a hook (if I find out what Trevor meant)

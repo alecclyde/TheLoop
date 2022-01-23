@@ -9,8 +9,10 @@ import { makeName } from "../../shared/commonMethods";
 export function addEvent(newEvent) {
   // console.log("calling addEvent");
   return async function addEventThunk(dispatch, getState) {
-    
-    let event = {}
+
+    let event = {};
+    const doc = firebase.firestore().collection("events").doc();
+
     // get the event creator's user data to get their name
     // (I imagine this can be easily replaced with some redux magic)
     await firebase
@@ -49,12 +51,18 @@ export function addEvent(newEvent) {
           newPostsNotifID: "0",
           location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
         };
-
       });
 
-    await firebase.firestore().collection("events").add(event);
+    await firebase.firestore().collection("events").doc(doc.id).set(event);
 
     // lastly, add this event to the creator's list of events
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        myEvents: firebase.firestore.FieldValue.arrayUnion(doc.id)
+      });
     dispatch({ type: ADD_EVENT, payload: event });
   };
 }

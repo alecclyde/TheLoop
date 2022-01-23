@@ -10,7 +10,7 @@ import {
   ImageBackground,
   View,
   FlatList,
-  TouchableOpacity, 
+  TouchableOpacity,
 } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
@@ -18,16 +18,12 @@ import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
-
-
-
-
+import { combineReducers } from "redux";
 
 export default function Search({ navigation }) {
   const [events, setEvents] = useState([]);
-  const [search, setSearch] = useState({text: ''});
+  const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-
 
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
@@ -39,22 +35,34 @@ export default function Search({ navigation }) {
       .then((snap) => {
         snap.docs.forEach((doc) => {
           if (doc.exists) {
-            setEvents((events) => [...events, {id: doc.id, loop: doc.data().loop, name: doc.data().name, creatorID: doc.data().creatorID}])
-          };
+            setEvents((events) => [
+              ...events,
+              {
+                id: doc.id,
+                loop: doc.data().loop,
+                name: doc.data().name,
+                creator:
+                // SPRINT7: remove conditional, uncomment actual line
+                  doc.data().creator == undefined
+                    ? { id: doc.data().creatorID, name: "" }
+                    : doc.data().creator,
+                  //doc.data().creator,
+              },
+            ]);
+          }
         });
       });
   }, [isFocused]);
 
-
-
-
   return (
     <View>
-        <SearchBar
-  placeholder="Type Here..."
-  onChangeText={(text)=> {setSearch({text})}}
-  value={search.text}
-/>
+      <SearchBar
+        placeholder="Type Here..."
+        onChangeText={(text) => {
+          setSearch({ text });
+        }}
+        value={search.text}
+      />
       <ImageBackground
         source={{
           uri: "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?size=626&ext=jpg",
@@ -72,7 +80,7 @@ export default function Search({ navigation }) {
                   id: item.id,
                   loop: item.loop,
                   name: item.name,
-                  creatorID: item.creatorID,
+                  creator: item.creator,
                 })
               }
             >
@@ -119,22 +127,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
 // const MapComponent = () => {
 //   const [location, setLocation] = React.useState(null);
 //   const [error, setError] = React.useState(null);
@@ -169,17 +161,16 @@ const styles = StyleSheet.create({
 //   },
 // });
 
-
-  // React.useEffect(() => {
-  //   (async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       setError("Permission to access location was denied");
-  //       return;
-  //     }
-  //     const locate = await Location.getCurrentPositionAsync({
-  //       accuracy: 6,
-  //     });
-  //     setLocation(locate.coords);
-  //   })();
-  // }, []);
+// React.useEffect(() => {
+//   (async () => {
+//     let { status } = await Location.requestForegroundPermissionsAsync();
+//     if (status !== "granted") {
+//       setError("Permission to access location was denied");
+//       return;
+//     }
+//     const locate = await Location.getCurrentPositionAsync({
+//       accuracy: 6,
+//     });
+//     setLocation(locate.coords);
+//   })();
+// }, []);
