@@ -539,7 +539,7 @@ function CardDetails(props, { navigation, route }) {
                     createPost(
                       {
                         eventID: props.route.params?.id,
-                        creatorID: props.route.params?.creatorID,
+                        creatorID: eventCreator.id,
                         eventName: eventName,
                         newPostsNotifID: newPostsNotifID,
                       },
