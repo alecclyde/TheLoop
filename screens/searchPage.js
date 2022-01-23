@@ -24,7 +24,6 @@ import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
 
-
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
 
@@ -52,7 +51,12 @@ function Search(props, { navigation }) {
                 id: doc.id,
                 loop: doc.data().loop,
                 name: doc.data().name,
-                creatorID: doc.data().creatorID,
+                creator:
+                  // SPRINT7: remove conditional, uncomment actual line
+                  doc.data().creator == undefined
+                    ? { userID: doc.data().creatorID, userName: "" }
+                    : doc.data().creator,
+                //doc.data().creator,
                 address: doc.data().address,
               },
             ]);
@@ -93,7 +97,7 @@ function Search(props, { navigation }) {
                     id: item.id,
                     loop: item.loop,
                     name: item.name,
-                    creatorID: item.creatorID,
+                    creator: item.creator,
                     address: item.address,
                   })
                 }
