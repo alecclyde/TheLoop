@@ -29,7 +29,7 @@ publish: &publish
 jobs:
   publish_to_expo_dev:
     environment:
-      EXPO_RELEASE_CHANNEL: production_branch
+      EXPO_RELEASE_CHANNEL: production
     <<: *publish
 
   publish_to_expo_prod:
@@ -47,7 +47,7 @@ workflows:
       - publish_to_expo_dev:
           filters:
             branches:
-              only: production_branch
+              only: production
       - publish_to_expo_prod:
           filters:
             branches:

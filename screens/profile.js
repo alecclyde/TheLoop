@@ -108,19 +108,19 @@ function Profile(props, { navigation, route }) {
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ backgroundColor: "#D3D3D3" }}>
-        <View style={styles.header}>
+        <View style={globalStyles.header}>
           <View style={styles.headerContent}>
             <Image
-              style={styles.avatar}
+              style={globalStyles.avatar}
               source={{
                 uri: "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png",
               }}
             />
 
-            <Text style={styles.name}>
+            <Text style={globalStyles.name}>
               {firstName} {lastName}{" "}
             </Text>
-            <Text style={styles.userInfo}>{email} </Text>
+            <Text style={globalStyles.userInfo}>{email} </Text>
           </View>
         </View>
 
@@ -194,34 +194,6 @@ function Profile(props, { navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    ...Platform.select({
-      ios: {
-        backgroundColor: "#FFA500",
-      },
-      android: {
-        backgroundColor: "#FFA500",
-      },
-    }),
-  },
-  avatar: {
-    width: 130,
-    height: 130,
-    borderRadius: 63,
-    borderWidth: 4,
-    borderColor: "white",
-    marginBottom: 10,
-  },
-  name: {
-    fontSize: 22,
-    color: "#000000",
-    fontWeight: "600",
-  },
-  userInfo: {
-    fontSize: 16,
-    color: "#000000",
-    fontWeight: "600",
-  },
   headerContent: {
     padding: 30,
     alignItems: "center",
@@ -236,7 +208,7 @@ const styles = StyleSheet.create({
   },
   clickable: {
     justifyContent: "center",
-    backgroundColor: "#2C2C2C",
+    backgroundColor: "red",
     alignSelf: "center",
     borderWidth: 0,
     width: 365,

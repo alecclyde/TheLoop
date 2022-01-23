@@ -2,6 +2,7 @@ import * as firebase from "firebase";
 import * as firestore from "firebase/firestore";
 import { Alert } from "react-native";
 import { StackActions } from "@react-navigation/native";
+import locationPreferencesPage from "../screens/locationPreferencesPage";
 
 // export async function registration(
 //   email,
@@ -65,7 +66,7 @@ export async function setUserLoops(joinedLoops, navigation) {
       .update({ joinedLoops: joinedLoops })
 
       .then(() => {
-        navigation.navigate("RootStack");
+        navigation.navigate("locationPreferencesPage");
         return true;
       });
 
