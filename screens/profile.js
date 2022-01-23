@@ -8,7 +8,7 @@ import {
   ImageBackground,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { getUserData } from "../shared/firebaseMethods";
+import { getUserData, getEventData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import { Text } from "react-native-elements";
 import { Header } from "react-native-elements";
@@ -40,9 +40,11 @@ function Profile(props, { navigation, route }) {
       setEmail(props.user.email);
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
+      setEventIDs(props.user.myEvents);
     }
   });
 
+  const [eventIDs, setEventIDs] = useState([]);
   const [events, setEvents] = useState([]);
 
   const isFocused = useIsFocused();
@@ -74,50 +76,51 @@ function Profile(props, { navigation, route }) {
   // }, []);
 
   useEffect(() => {
-    // if (userID != null) {
-    setEvents([]);
-    firebase
-      .firestore()
-      .collection("events")
-      .where("attendees", "array-contains", props.user.uid)
-      .orderBy("startDateTime")
-      .get()
+    if (props.user) {
+      eventIDs.forEach((eventID) => {
+        getEventData(eventID).then((event) => {
 
-      .then((snap) => {
-        snap.forEach((doc) => {
+          let creator;
+
+          // SPRINT7: collapse this to just use event.creator
+          if (event.creator == undefined) {
+            creator = {userID: event.creatorID, userName: ""}
+          } else {
+            creator = event.creator
+          }
           setEvents((events) => [
             ...events,
             {
-              id: doc.id,
-              name: doc.data().name,
-              loop: doc.data().loop,
-              startDateTime: doc.data().startDateTime,
-              creatorID: doc.data().creatorID,
-              address: doc.data().address,
-            },
+              id: eventID,
+              name: event.name,
+              loop: event.loop,
+              startDateTime: event.startDateTime,
+              creator: creator,
+              address: event.address,
+            }
           ]);
         });
       });
-    //}
-  }, [userID, isFocused]);
+    }
+  }, [eventIDs]);
   //console.log(props.user);
 
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ backgroundColor: "#D3D3D3" }}>
-        <View style={styles.header}>
+        <View style={globalStyles.header}>
           <View style={styles.headerContent}>
             <Image
-              style={styles.avatar}
+              style={globalStyles.avatar}
               source={{
                 uri: "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png",
               }}
             />
 
-            <Text style={styles.name}>
+            <Text style={globalStyles.name}>
               {firstName} {lastName}{" "}
             </Text>
-            <Text style={styles.userInfo}>{email} </Text>
+            <Text style={globalStyles.userInfo}>{email} </Text>
           </View>
         </View>
 
@@ -137,7 +140,7 @@ function Profile(props, { navigation, route }) {
                   id: event.id,
                   name: event.name,
                   loop: event.loop,
-                  creatorID: event.creatorID,
+                  creator: event.creator,
                   startDateTime: event.startDateTime,
                   address: event.address,
                 })
@@ -191,34 +194,6 @@ function Profile(props, { navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    ...Platform.select({
-      ios: {
-        backgroundColor: "#FFA500",
-      },
-      android: {
-        backgroundColor: "#FFA500",
-      },
-    }),
-  },
-  avatar: {
-    width: 130,
-    height: 130,
-    borderRadius: 63,
-    borderWidth: 4,
-    borderColor: "white",
-    marginBottom: 10,
-  },
-  name: {
-    fontSize: 22,
-    color: "#000000",
-    fontWeight: "600",
-  },
-  userInfo: {
-    fontSize: 16,
-    color: "#000000",
-    fontWeight: "600",
-  },
   headerContent: {
     padding: 30,
     alignItems: "center",
@@ -233,7 +208,7 @@ const styles = StyleSheet.create({
   },
   clickable: {
     justifyContent: "center",
-    backgroundColor: "#2C2C2C",
+    backgroundColor: "red",
     alignSelf: "center",
     borderWidth: 0,
     width: 365,
