@@ -205,7 +205,7 @@ export async function registerEvent(eventData, userData) {
         .collection("events")
         .doc(eventData.eventID)
         .update({
-          attendees: firebase.firestore.FieldValue.arrayUnion(userData.userID),
+          attendees: firebase.firestore.FieldValue.arrayUnion(userData),
         });
     }
 

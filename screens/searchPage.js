@@ -44,7 +44,7 @@ export default function Search({ navigation }) {
                 creator:
                 // SPRINT7: remove conditional, uncomment actual line
                   doc.data().creator == undefined
-                    ? { id: doc.data().creatorID, name: "" }
+                    ? { userID: doc.data().creatorID, userName: "" }
                     : doc.data().creator,
                   //doc.data().creator,
               },

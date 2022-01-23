@@ -27,8 +27,8 @@ export function addEvent(newEvent) {
           loop: newEvent.loop,
           // creator: currentUser.uid, // DEPRECATED, start transitioning into creatorID
           creator: {
-            id: doc.id,
-            name: makeName(doc.data()),
+            userID: doc.id,
+            userName: makeName(doc.data()),
           },
           address: newEvent.address,
           recurAutomatically: false,
@@ -43,8 +43,8 @@ export function addEvent(newEvent) {
           creationTimestamp: firebase.firestore.Timestamp.now(),
           attendees: [
             {
-              id: doc.id,
-              name: makeName(doc.data()),
+              userID: doc.id,
+              userName: makeName(doc.data()),
             },
           ],
           newAttendeesNotifID: "0",

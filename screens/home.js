@@ -79,7 +79,7 @@ function Home(props, { navigation, route }) {
 
           // SPRINT7: collapse this to just use event.creator
           if (event.creator == undefined) {
-            creator = {id: event.creatorID, name: ""}
+            creator = {userID: event.creatorID, userName: ""}
           } else {
             creator = event.creator
           }
