@@ -32,7 +32,7 @@ export default function RootStack() {
         name="HomeStack"
         component={HomeStack}
         options={{
-          backgroundColor: "red",
+          backgroundColor: "orange",
           title: "",
           tabBarIcon: ({ color, size }) => (
             <Icon raised size={30} color="white" name="home" />

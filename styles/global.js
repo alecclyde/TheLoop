@@ -117,7 +117,7 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: "#2B7D9C",
       },
       android: {
-        backgroundColor: "#DCDCDC",
+        backgroundColor: "#2B7D9C",
       },
     }),
   },
