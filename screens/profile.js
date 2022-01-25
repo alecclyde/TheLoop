@@ -129,7 +129,6 @@ function Profile(props, { navigation, route }) {
 
 
 
-
             
 
             <ScrollView
