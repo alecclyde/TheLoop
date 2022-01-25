@@ -11,3 +11,7 @@
 
 ## Link to InVision wireframe
 [https://loop12.invisionapp.com/freehand/The-Loop-ZXtXsYqrF](https://loop12.invisionapp.com/freehand/The-Loop-ZXtXsYqrF)
+
+expo install react-native-maps
+npm install react-native-google-places-autocomplete --save
+npm install react-native-geolocation-service

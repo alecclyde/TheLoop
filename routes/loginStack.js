@@ -6,6 +6,7 @@ import RootStack from "./tabNavigator";
 import ResetPassword from "../screens/resetPassword";
 import Header from "../shared/header";
 import userEventPreferences from "../screens/userEventPreferences";
+import locationPreferencesPage from "../screens/locationPreferencesPage";
 
 //Screens in the profile tab
 
@@ -22,6 +23,10 @@ export default function ProfileStack() {
       <Stack.Screen
         name="userEventPreferences"
         component={userEventPreferences}
+      />
+      <Stack.Screen
+        name="locationPreferencesPage"
+        component={locationPreferencesPage}
       />
       <Stack.Screen name="RootStack" component={RootStack} />
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
