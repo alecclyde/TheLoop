@@ -107,7 +107,6 @@ function Profile(props, { navigation, route }) {
 
   return (
     <SafeAreaView style={globalStyles.container}>
-      <View style={{ backgroundColor: "#D3D3D3" }}>
         <View style={globalStyles.header}>
           <View style={styles.headerContent}>
             <Image
@@ -124,6 +123,80 @@ function Profile(props, { navigation, route }) {
           </View>
         </View>
 
+            <Text h3 style={styles.titles}>
+              Upcoming Events
+            </Text>
+
+
+
+
+            
+
+            <ScrollView
+              persistentScrollbar={true}
+              horizontal={true}
+              style={{ flex: 1 }}
+            >
+              {events.map((event) => (
+                <TouchableOpacity
+                  style={styles.clickable}
+                  key={event.id}
+                  onPress={() =>
+                    props.navigation.navigate("CardDetails", {
+                      id: event.id,
+                      name: event.name,
+                      loop: event.loop,
+                      creatorID: event.creatorID,
+                      startDateTime: event.startDateTime,
+                      address: event.address,
+                    })
+                  }
+                >
+                  <ListItem
+                    pad={16}
+                    bottomDivide={true}
+                    Component={TouchableScale}
+                    button
+                    friction={90}
+                    tension={100} // These props are passed to the parent component (here TouchableScale)
+                    activeScale={0.95} //
+                    linearGradientProps={{
+                      colors: ["#3B4046", "#3B4046"],
+                      start: { x: 1, y: 0 },
+                      end: { x: 0.2, y: 0 },
+                    }}
+                    ViewComponent={LinearGradient}
+                  >
+                    <Avatar
+                      size="large"
+                      //change this to either be icon of loop or that groups profile picture
+                      source={{
+                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                      }}
+                      resizeMode="cover"
+                      //style={{ width: "100%", height: "100%" }}
+                    />
+                    <ListItem.Content>
+                      <ListItem.Title style={styles.listingItem}>
+                        {event.name}
+                      </ListItem.Title>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        {event.loop}
+                      </ListItem.Subtitle>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        <Icon name="map-marker" size={16} color="white" />
+                        {"  "}
+                        {event.address}
+                      </ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron color="gray" />
+                  </ListItem>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+        
+{/* 
         <View style={{ backgroundColor: "black" }}>
           <Text h3 style={{ textAlign: "center", color: "#ffa835" }}>
             Upcoming Events
@@ -187,8 +260,7 @@ function Profile(props, { navigation, route }) {
               </ListItem>
             </TouchableOpacity>
           ))}
-        </ScrollView>
-      </View>
+        </ScrollView> */}
     </SafeAreaView>
   );
 }
@@ -208,15 +280,21 @@ const styles = StyleSheet.create({
   },
   clickable: {
     justifyContent: "center",
-    backgroundColor: "red",
     alignSelf: "center",
-    borderWidth: 0,
-    width: 365,
+    backgroundColor: "#3B4046",
     borderRadius: 10,
-    borderColor: "#2C2C2C",
-    paddingVertical: 5,
+    margin: 5,
+    paddingVertical: 37,
+    shadowOffset: {width: 1, height: .1},
+    shadowOpacity: 0.8,
+    shadowColor: 'black',
 
-    //margin: 5,
+  },
+    titles: {
+    textAlign: "left",
+    color: "white",
+    marginLeft: 10,
+    fontFamily: 'Helvetica-Bold',
   },
 });
 
