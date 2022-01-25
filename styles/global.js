@@ -114,7 +114,7 @@ export const globalStyles = StyleSheet.create({
   header: {
     ...Platform.select({
       ios: {
-        backgroundColor: "#FFA500",
+        backgroundColor: "#2B7D9C",
       },
       android: {
         backgroundColor: "#DCDCDC",

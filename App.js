@@ -38,10 +38,10 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
-  //console.log(firebaseConfig.apiKey) // delete
+  console.log(firebaseConfig.apiKey) // delete
 } else {
   firebase.app(); // if already initialized, use that one
-  //console.log(firebaseConfig.apiKey) // delete
+  console.log(firebaseConfig.apiKey) // delete
 }
 
 export default function App() {
