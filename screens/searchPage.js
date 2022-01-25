@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SearchBar, withTheme } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
@@ -172,7 +171,7 @@ function Search(props, { navigation }) {
           </MapView>
           <TouchableOpacity
             style={styles.expander}
-            onPress={() => props.navigation.navigate("mapView")}
+            onPress={() => props.navigation.navigate("MapView")}
           >
             <Icon
               //style={styles.icon}

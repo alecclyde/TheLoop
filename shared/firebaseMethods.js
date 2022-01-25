@@ -2,7 +2,7 @@ import * as firebase from "firebase";
 import * as firestore from "firebase/firestore";
 import { Alert } from "react-native";
 import { StackActions } from "@react-navigation/native";
-import locationPreferencesPage from "../screens/locationPreferencesPage";
+import LocationPreferencesPage from "../screens/locationPreferencesPage";
 
 // export async function registration(
 //   email,
@@ -66,7 +66,7 @@ export async function setUserLoops(joinedLoops, navigation) {
       .update({ joinedLoops: joinedLoops })
 
       .then(() => {
-        navigation.navigate("locationPreferencesPage");
+        navigation.navigate("LocationPreferencesPage");
         return true;
       });
 
@@ -141,7 +141,6 @@ export async function getEventData(eventID) {
       .doc(eventID)
       .get();
     return event.data();
-    
   } catch (err) {
     console.log(err);
     Alert.alert("something went wrong!", err.message);
@@ -186,9 +185,7 @@ export async function registerEvent(eventData, userData) {
           .collection("events")
           .doc(eventData.eventID)
           .update({
-            attendees: firebase.firestore.FieldValue.arrayUnion(
-              userData
-            ),
+            attendees: firebase.firestore.FieldValue.arrayUnion(userData),
             newAttendeesNotifID: doc.id,
           });
       });

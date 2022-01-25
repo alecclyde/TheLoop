@@ -25,7 +25,7 @@ export function registration(email, password, lastName, firstName, navigation) {
         .doc(currentUser.uid)
         .set(user);
       dispatch({ type: SET_USER, payload: { ...user, uid: currentUser.uid } });
-      navigation.navigate("userEventPreferences");
+      navigation.navigate("UserEventPreferences");
     } catch (err) {
       Alert.alert("There is something wrong!", err.message);
     }
