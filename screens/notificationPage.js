@@ -4,6 +4,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  SafeAreaView,
   Image,
   FlatList,
   ScrollView,
@@ -197,6 +198,9 @@ export default function Notifications({ navigation, route }) {
   }, [user, isFocused]);
 
   return (
+    <SafeAreaView
+    style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
+  >
     <View>
       <FlatList
         style={styles.root}
@@ -225,6 +229,7 @@ export default function Notifications({ navigation, route }) {
         )}
       />
     </View>
+    </SafeAreaView>
   );
 }
 
@@ -236,7 +241,7 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderColor: "#FFFFFF",
+    borderColor: "#2B7D9C",
     alignItems: "flex-start",
   },
   text: {
@@ -259,7 +264,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: "#CCCCCC",
+    backgroundColor: "#2B7D9C",
   },
   timeAgo: {
     fontSize: 12,
