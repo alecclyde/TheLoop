@@ -45,10 +45,7 @@ import { bindActionCreators } from "redux";
 //Called by favorite and personal when you click on a card to display the content
 function CardDetails(props, { navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
-  const [eventCreator, setEventCreator] = useState({
-    id: props.route.params?.creatorID,
-    name: "",
-  });
+  const [eventCreator, setEventCreator] = useState(props.route.params?.creator);
 
   const [eventName, setEventName] = useState(props.route.params?.name);
   const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
@@ -89,7 +86,7 @@ function CardDetails(props, { navigation, route }) {
       });
 
       setUserID(user.uid);
-      if (user.uid == props.route.params?.creatorID) setIsCreator(true);
+      if (user.uid == eventCreator.userID) setIsCreator(true);
     }
   };
 
@@ -100,6 +97,8 @@ function CardDetails(props, { navigation, route }) {
     setEventLoop(eventData.loop);
     setEventDateTime(eventData.startDateTime.seconds);
     setEventAddress(eventData.address);
+    // SPRINT7: phase out the second half of this
+    // setEventCreator(eventData.creator || {id: eventData.creatorID, name: ""});
     setNewPostsNotifID(
       eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
     );
@@ -110,47 +109,47 @@ function CardDetails(props, { navigation, route }) {
     );
 
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
+    setEventAttendees(eventData.attendees)
 
     // updateAttendeeList(eventData.attendees);
-    setEventAttendees(eventData.eventAttendees)
   };
 
-  const updateAttendeeList = (attendees) => {
-    eventAtens = eventAtens.filter((attendee) =>
-      attendees.includes(attendee.id)
-    );
+  // const updateAttendeeList = (attendees) => {
+  //   eventAtens = eventAtens.filter((attendee) =>
+  //     attendees.includes(attendee.id)
+  //   );
 
-    setEventAttendees(eventAtens);
+  //   setEventAttendees(eventAtens);
 
-    attendees.forEach((attendee) => {
-      // if the array of existing attendees doesn't include this possible new one
-      if (!eventAtens.some((elem) => elem.id == attendee)) {
-        firebase
-          .firestore()
-          .collection("users")
-          .doc(attendee)
-          .get()
-          .then((snap) => {
-            if (snap.exists) {
-              // prevents errors if a user gets deleted
-              const attendeeName = makeName(snap.data());
-              // console.log("new read: " + attendeeName)
+  //   attendees.forEach((attendee) => {
+  //     // if the array of existing attendees doesn't include this possible new one
+  //     if (!eventAtens.some((elem) => elem.id == attendee)) {
+  //       firebase
+  //         .firestore()
+  //         .collection("users")
+  //         .doc(attendee)
+  //         .get()
+  //         .then((snap) => {
+  //           if (snap.exists) {
+  //             // prevents errors if a user gets deleted
+  //             const attendeeName = makeName(snap.data());
+  //             // console.log("new read: " + attendeeName)
 
-              setEventAttendees((eventAttendees) => [
-                ...eventAttendees,
-                { id: snap.id, name: attendeeName },
-              ]);
-              eventAtens.push({ id: snap.id, name: attendeeName });
+  //             setEventAttendees((eventAttendees) => [
+  //               ...eventAttendees,
+  //               { id: snap.id, name: attendeeName },
+  //             ]);
+  //             eventAtens.push({ id: snap.id, name: attendeeName });
 
-              // if current ID is the creator, set creator accordingly
-              if (snap.id == eventCreator.id) {
-                setEventCreator({ id: eventCreator.id, name: attendeeName });
-              }
-            }
-          });
-      }
-    });
-  };
+  //             // if current ID is the creator, set creator accordingly
+  //             if (snap.id == eventCreator.id) {
+  //               setEventCreator({ id: eventCreator.id, name: attendeeName });
+  //             }
+  //           }
+  //         });
+  //     }
+  //   });
+  // };
 
   const reducer = (state, action) => {
     let newState = state;
@@ -253,7 +252,7 @@ function CardDetails(props, { navigation, route }) {
             deletePost(
               {
                 eventID: props.route.params?.id,
-                creatorID: props.route.params?.creatorID,
+                creatorID: eventCreator.userID,
                 newPostsNotifID: newPostsNotifID,
               },
               {
@@ -273,13 +272,13 @@ function CardDetails(props, { navigation, route }) {
    */
   const handleNotifyAllUsers = (notifType) => {
     var notifData = {
-      creatorName: eventCreator.name,
+      creatorName: eventCreator.userName,
       eventName: eventName,
     };
 
     eventAttendees.forEach((attendee) => {
-      if (attendee.id != eventCreator.id) {
-        createNotification(attendee.id, notifType, notifData);
+      if (attendee.userID != eventCreator.userID) {
+        createNotification(attendee.userID, notifType, notifData);
       }
     });
   };
@@ -325,7 +324,7 @@ function CardDetails(props, { navigation, route }) {
 
   // determines whether or not the logged in user is attending the selected event
   useEffect(() => {
-    if (eventAttendees.some((elem) => elem.id == userID)) {
+    if (eventAttendees.some((elem) => elem.userID == userID)) {
       setIsAttending(true);
     } else {
       setIsAttending(false);
@@ -358,7 +357,7 @@ function CardDetails(props, { navigation, route }) {
           <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
             <View>
               <Text style={styles.Title}>{eventName} </Text>
-              <Text style={styles.subt}> By: {eventCreator.name} </Text>
+              <Text style={styles.subt}> By: {eventCreator.userName} </Text>
               <Text style={{ position: "absolute", right: 0.1 }}>
                 {" "}
                 ICON {eventLoop}
@@ -600,8 +599,10 @@ function CardDetails(props, { navigation, route }) {
 
                 <Text style={styles.titlesub}>Attendees</Text>
                 {eventAttendees.map((attendee) => (
-                  <Text key={attendee.id} style={styles.subp}>
-                    {attendee.name}
+                  <Text key={attendee.userID} style={styles.subp}>
+                    {/* SPRINT7: remove conditional, uncomment {attendee.name} */}
+                    { attendee.userName == undefined ? "This list is using an old format. Let Robbie know! ": attendee.userName}
+                    {/* {attendee.name} */}
                   </Text>
                 ))}
                 {/* {sampleUsers.map((attendee) => (
@@ -627,7 +628,7 @@ function CardDetails(props, { navigation, route }) {
                         registerEvent(
                           {
                             eventID: props.route.params?.id,
-                            creatorID: eventCreator.id,
+                            creatorID: eventCreator.userID,
                             eventName: eventName,
                             newAttendeesNotifID: newAttendeesNotifID,
                           },
@@ -637,7 +638,7 @@ function CardDetails(props, { navigation, route }) {
                         unregisterEvent(
                           {
                             eventID: props.route.params?.id,
-                            creatorID: eventCreator.id,
+                            creatorID: eventCreator.userID,
                             newAttendeesNotifID: newAttendeesNotifID,
                           },
                           { userID, userName }
@@ -671,7 +672,7 @@ function CardDetails(props, { navigation, route }) {
                     createPost(
                       {
                         eventID: props.route.params?.id,
-                        creatorID: props.route.params?.creatorID,
+                        creatorID: eventCreator.userID,
                         eventName: eventName,
                         newPostsNotifID: newPostsNotifID,
                       },

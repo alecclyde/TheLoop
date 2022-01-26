@@ -4,11 +4,13 @@ import {
   Text,
   View,
   TouchableOpacity,
+  SafeAreaView,
   Image,
   FlatList,
   ScrollView,
 } from "react-native";
 import { grabNotifications } from "../shared/firebaseMethods";
+import { globalStyles } from "../styles/global";
 import firebase from "firebase";
 import { makeTimeDifferenceString } from "../shared/commonMethods";
 import { Button } from "react-native-elements";
@@ -200,6 +202,9 @@ export default function Notifications({ navigation, route }) {
   }, [user, isFocused]);
 
   return (
+    <SafeAreaView
+    style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
+  >
     <View>
       <FlatList
         style={styles.root}
@@ -210,7 +215,7 @@ export default function Notifications({ navigation, route }) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={[styles.container, !item.seen && {backgroundColor: "#EBEBEB"}]}>
-            <Image source={placeholderImage} style={styles.avatar} />
+            <Image source={placeholderImage} style={globalStyles.notifavatar} />
             <View style={styles.content}>
               <View style={styles.mainContent}>
                 <View style={styles.text}>
@@ -228,6 +233,7 @@ export default function Notifications({ navigation, route }) {
         )}
       />
     </View>
+    </SafeAreaView>
   );
 }
 
@@ -239,13 +245,8 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderColor: "#FFFFFF",
+    borderColor: "#2B7D9C",
     alignItems: "flex-start",
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
   },
   text: {
     marginBottom: 5,
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: "#CCCCCC",
+    backgroundColor: "#2B7D9C",
   },
   timeAgo: {
     fontSize: 12,

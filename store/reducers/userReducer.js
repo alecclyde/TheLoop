@@ -1,17 +1,16 @@
-import { SET_USER } from '../constants';
-import { REMOVE_USER } from '../constants';
-
+import { SET_USER } from "../constants";
+import { REMOVE_USER } from "../constants";
 
 const userReducer = (state = null, action) => {
-    switch(action.type) {
-        case SET_USER:
-            return action.payload;
-        case REMOVE_USER:
-            return null;
+  switch (action.type) {
+    case SET_USER:
+      return action.payload;
+    case REMOVE_USER:
+      return null;
     default:
-        return state;
-    }
-}
+      return state;
+  }
+};
 export default userReducer;
 
 // export async function setUser(dispatch, getState) {
@@ -22,4 +21,4 @@ export default userReducer;
 //should this replace the firebasemethods?
 //should I store all the events in redux?
 //how to replace the user without replacing the entire store
-//how does initialstate work? 
+//how does initialstate work?
