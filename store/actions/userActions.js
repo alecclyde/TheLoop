@@ -1,6 +1,7 @@
 import { SET_USER } from "../constants";
 import { UPDATE_USER } from "../constants";
 import { REMOVE_USER } from "../constants";
+import { ADD_DISTANCE } from "../constants";
 
 import * as firebase from "firebase";
 import { Alert } from "react-native";
@@ -93,9 +94,14 @@ export function setUserLoops(joinedLoops, navigation) {
   };
 }
 
-// export function setUser(user) {
-//     return {
-//         type: SET_USER,
-//         payload: user
-//     }
-// }
+export function addDistance(values, navigation) {
+  return async function addDistanceThunk(dispatch, getState) {
+    const user = firebase.auth().currentUser;
+    //await firebase.firestore().collection("users").doc(user).update({
+    //   distanceTolerance: values.range,
+    // });
+
+    dispatch({ type: ADD_DISTANCE });
+    navigation.navigate("RootStack");
+  };
+}
