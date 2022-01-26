@@ -49,12 +49,12 @@ function Login(props, { navigation }) {
   //     unsubscriber;
   //   };
   // });
-  useEffect(() => {
-    //console.log(props.user);
-    if (props.user != null) {
-      props.navigation.navigate("RootStack");
-    }
-  });
+  // useEffect(() => {
+  //   //console.log(props.user);
+  //   if (props.user != null) {
+  //     props.navigation.navigate("RootStack");
+  //   }
+  // });
 
   return (
     <View>

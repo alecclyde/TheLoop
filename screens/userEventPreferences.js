@@ -268,7 +268,7 @@ export default function UserEventPreferences({ navigation }) {
                           backgroundColor: "#2B7D9C",
                         }}
                         style={{ flex: 1 }}
-                        onPress={() => props.handleSubmit}
+                        onPress={props.handleSubmit}
                         // onPress={() => {
                         //   console.log(props.values);
                         // }}

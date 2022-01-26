@@ -185,7 +185,10 @@ function LocationPreferencesPage(props, { navigation }) {
                 borderRadius: 50,
               }}
               style={{ padding: 45 }}
-              onPress={props.addDistance(range)}
+              onPress={() => {
+                props.addDistance(range);
+              }}
+              //onPress={() => {(props).handleSubmit}}
               // onPress={() => {
               //   console.log(parseInt(range) + " miles");
               // }}

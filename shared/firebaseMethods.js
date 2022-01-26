@@ -60,14 +60,15 @@ export async function setUserLoops(joinedLoops, navigation) {
   try {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
-
+    console.log("bogo");
     db.collection("users")
       .doc(currentUser.uid)
       .update({ joinedLoops: joinedLoops })
 
       .then(() => {
         navigation.navigate("LocationPreferencesPage");
-        return true;
+        console.log("setUserLoops Ogre");
+        //return true;
       });
 
     // probably should navigate to event page after this

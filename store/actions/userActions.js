@@ -26,6 +26,7 @@ export function registration(email, password, lastName, firstName, navigation) {
         .set(user);
       dispatch({ type: SET_USER, payload: { ...user, uid: currentUser.uid } });
       navigation.navigate("UserEventPreferences");
+      console.log("registration ogre");
     } catch (err) {
       Alert.alert("There is something wrong!", err.message);
     }
