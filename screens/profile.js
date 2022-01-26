@@ -123,10 +123,52 @@ function Profile(props, { navigation, route }) {
           </View>
         </View>
 
+
+          <View style={styles.statusBar}>
+            
+          <View style={styles.statusBarText}>
+          <View style={styles.statusBarTextLine}>
+            <Text style={styles.statusBarTextLine}>
+              Followers
+            </Text>
+            </View>
+            <View style={styles.statusBarTextLine}>
+            <Text>
+              12
+            </Text>
+            </View>
+          </View>
+
+          <View style={styles.verticleLine}></View>
+
+          <View style={styles.statusBarText}>
+          <Text style={styles.statusBarTextLine}>
+              Following
+            </Text>
+            <Text style={styles.statusBarTextLine}>
+              12
+            </Text>
+          </View>
+
+          <View style={styles.verticleLine}></View>
+
+          <View style={styles.statusBarText}>
+          <Text style={styles.statusBarTextLine}>
+              Loops
+            </Text>
+            <Text style={styles.statusBarTextLine}>
+              12
+            </Text>
+          </View>
+              
+          </View>
+
+
+
+
             <Text h3 style={styles.titles}>
               Upcoming Events
             </Text>
-
 
 
             
@@ -287,14 +329,51 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 1, height: .1},
     shadowOpacity: 0.8,
     shadowColor: 'black',
-
   },
+  statusBar: {
+    justifyContent: "center",
+    alignSelf: "center",
+    backgroundColor: "#3B4046",
+    borderRadius: 10,
+    margin: 5,
+    paddingVertical: 37,
+    shadowOffset: {width: 1, height: .1},
+    shadowOpacity: 0.8,
+    shadowColor: 'black',
+    alignSelf: "stretch",
+    flexDirection: "row",
+  },
+
     titles: {
     textAlign: "left",
     color: "white",
     marginLeft: 10,
     fontFamily: 'Helvetica-Bold',
   },
+
+  statusBarText:{
+    margin: 5,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    fontSize: 12,
+  },
+
+  verticleLine: {
+    height: '100%',
+    width: 1,
+    backgroundColor: '#909090',
+    textAlign: "center",
+  },
+
+  statusBarTextLine:{
+    flex: 1,
+    flexDirection: "column",
+  }
+
+
+
+
 });
 
 const mapStateToProps = (state) => ({
