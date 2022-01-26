@@ -155,6 +155,7 @@ function Search(props, { navigation }) {
               longitudeDelta: 0.05,
             }}
             customMapStyle={mapStyle}
+            loadingEnabled={true}
 
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >

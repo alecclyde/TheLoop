@@ -66,6 +66,7 @@ function mapView({ navigation }) {
             latitudeDelta: 0.04,
             longitudeDelta: 0.05,
           }}
+          loadingEnabled={true}
           customMapStyle={mapStyle}
         >
           <Marker

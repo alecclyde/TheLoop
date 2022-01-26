@@ -130,6 +130,7 @@ function LocationPreferencesPage(props, { navigation }) {
               }}
               customMapStyle={mapStyle}
               loadingEnabled={true}
+              scrollEnabled={false}
 
               //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
             >
