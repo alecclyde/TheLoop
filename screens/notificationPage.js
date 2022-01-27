@@ -42,8 +42,15 @@ export default function Notifications({ navigation, route }) {
           </Text>
         );
 
-      case "reply":
-        return null;
+      case "new-reply":
+        return (
+          <Text>
+            <Text style={{ fontWeight: "bold" }}>{notifData.replierName}</Text>
+            <Text> replied to your post in </Text>
+            <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+            <Text>.</Text>
+          </Text>
+        );
 
       case "event-change":
         return (

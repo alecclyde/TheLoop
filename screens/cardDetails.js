@@ -32,9 +32,10 @@ import {
   deletePost,
   createNotification,
   createReply,
+  deleteReply,
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
-import { makeName } from "../shared/commonMethods";
+import { makeName, makeTimeDifferenceString } from "../shared/commonMethods";
 import { useIsFocused } from "@react-navigation/core";
 import { connect } from "react-redux";
 // import { registerEvent } from "../store/actions/eventActions";
@@ -47,6 +48,7 @@ function CardDetails(props, { navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
   const [eventCreator, setEventCreator] = useState(props.route.params?.creator);
 
+  const [eventID, setEventID] = useState(props.route.params?.id);
   const [eventName, setEventName] = useState(props.route.params?.name);
   const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
   const [eventDateTime, setEventDateTime] = useState(
@@ -71,13 +73,13 @@ function CardDetails(props, { navigation, route }) {
   const sampleUsers = [
     {
       id: 1,
-      name: "Alec"
+      name: "Alec",
     },
     {
       id: 2,
-      name: "Robbie"
-    }
-  ]
+      name: "Robbie",
+    },
+  ];
 
   const AuthStateChangedListener = (user) => {
     if (user) {
@@ -109,7 +111,7 @@ function CardDetails(props, { navigation, route }) {
     );
 
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
-    setEventAttendees(eventData.attendees)
+    setEventAttendees(eventData.attendees);
 
     // updateAttendeeList(eventData.attendees);
   };
@@ -225,7 +227,6 @@ function CardDetails(props, { navigation, route }) {
   const enterReplyMode = (post) => {
     setEditMode(true);
     setPostReplyID(post.id);
-    console.log(post);
   };
 
   const exitReplyMode = () => {
@@ -261,6 +262,22 @@ function CardDetails(props, { navigation, route }) {
                 posterName: post.posterName,
               }
             ),
+        },
+      ]
+    );
+  };
+
+  const handleDeleteReply = (postID, reply) => {
+    Alert.alert(
+      "Really delete?",
+      "Are you sure you want to delete this reply?",
+      [
+        {
+          text: "Cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => deleteReply(eventID, postID, reply),
         },
       ]
     );
@@ -514,7 +531,8 @@ function CardDetails(props, { navigation, route }) {
                           {
                             postID: item.id,
                             posterID: item.posterID,
-                            eventID: props.route.params?.id,
+                            eventID: eventID,
+                            eventName: eventName,
                           },
                           {
                             userID: userID,
@@ -562,25 +580,41 @@ function CardDetails(props, { navigation, route }) {
               )}
 
               {/* replies start here */}
-              {/* <View style={{ paddingRight: 20, flex: 1 }}> */}
+              <View style={{ paddingLeft: 20 }}>
+                {item.replies.map((reply) => (
+                  <View key={reply.id}>
+                    <Divider
+                      orientation="horizontal"
+                      style={{ paddingVertical: 5 }}
+                    />
 
-                <FlatList
-                  data={item.replies}
-                  keyExtractor={(item) => item.id}
-                  contentContainerStyle = {{ flexGrow: 1}}
-                  removeClippedSubviews= {false}
-                  extraData={state}
-                  style={{flex: 1}}
-                  renderItem={({ item }) => (
-                    <View>
-                      <Text>{item.message}</Text>
+                    <View style={{ flexDirection: "row" }}>
+                        <Text style={{ fontWeight: "bold" }}>
+                          {reply.replierName}
+                        </Text>
+                        
+
+                      <View style={{ flex: 1 }} />
+                      <Text style={{ color: "gray" }}>
+                        {makeTimeDifferenceString(
+                          reply.creationTimestamp.seconds
+                        )}{" "}
+                        ago
+                      </Text>
+                      {(reply.replierID == userID || isCreator) && (
+                        <Icon
+                          name="trash"
+                          color="#517fa4"
+                          size={22}
+                          style={{ paddingLeft: 5, alignContent: "center" }}
+                          onPress={() => handleDeleteReply(item.id, reply)}
+                        />
+                      )}
                     </View>
-                  )}
-                />
-                
-                {/* Reinsert flatlist here (maybe) */}
-              {/* </View> */}
-              <Text>end of replies</Text>
+                    <Text>{reply.message}</Text>
+                  </View>
+                ))}
+              </View>
             </Card>
           )}
           ListHeaderComponent={
@@ -601,15 +635,12 @@ function CardDetails(props, { navigation, route }) {
                 {eventAttendees.map((attendee) => (
                   <Text key={attendee.userID} style={styles.subp}>
                     {/* SPRINT7: remove conditional, uncomment {attendee.name} */}
-                    { attendee.userName == undefined ? "This list is using an old format. Let Robbie know! ": attendee.userName}
+                    {attendee.userName == undefined
+                      ? "This list is using an old format. Let Robbie know! "
+                      : attendee.userName}
                     {/* {attendee.name} */}
                   </Text>
                 ))}
-                {/* {sampleUsers.map((attendee) => (
-                  <Text key={attendee.id} style={styles.subp}>
-                    {attendee.name}
-                  </Text>
-                ))} */}
 
                 <Divider orientation="horizontal" />
 
@@ -647,7 +678,6 @@ function CardDetails(props, { navigation, route }) {
                     }}
                   />
                 )}
-                <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
               </View>
             </ScrollView>
           }
@@ -735,7 +765,6 @@ function CardDetails(props, { navigation, route }) {
             </Card>
           </KeyboardAvoidingView>
         )}
-
       </View>
     </SafeAreaView>
   );
