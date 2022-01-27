@@ -32,23 +32,23 @@ export default function ResetPassword({ navigation }) {
   // const getUser = async () => getUserData(firebase.auth().currentUser.uid).then((user) => setUser(user))
   // console.log(user);
 
-  function AuthStateChangedListener(user) {
-    if (user) {
-      getUserData(user.uid).then((user) => {
-        navigation.navigate("RootStack", {userData: user})
-      }
-      );
-    }
-  }
-  useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
+  // function AuthStateChangedListener(user) {
+  //   if (user) {
+  //     getUserData(user.uid).then((user) => {
+  //       navigation.navigate("RootStack", {userData: user})
+  //     }
+  //     );
+  //   }
+  // }
+  // useEffect(() => {
+  //   const unsubscriber = firebase
+  //     .auth()
+  //     .onAuthStateChanged(AuthStateChangedListener);
 
-    return () => {
-      unsubscriber;
-    };
-  });
+  //   return () => {
+  //     unsubscriber;
+  //   };
+  // });
 
   // if(userLoaded){
     return (
@@ -66,15 +66,16 @@ export default function ResetPassword({ navigation }) {
               <>
               <View style= {{flexDirection: "row", justifyContent: "center"}}>
               
-            <Image
-                source={require("../assets/Logo_Cropped.png")}
-                style={{
-                width: 90,
-                height: 90,
-                marginRight: 10,
-                marginBottom: 60,
-                marginTop: 12}}
-              />
+              <Image
+                    source={require("../assets/The-Loop-8.png")}
+                    style={{
+                      width: 380,
+                      height: 170,
+                      marginRight: 10,
+                      marginBottom: 15,
+                      marginTop: 10,
+                    }}
+                  />
             </View>
                 <ScrollView onBlur={Keyboard.dismiss}>
                 <Text style={globalStyles.titleText}>Forgot your password?</Text>
