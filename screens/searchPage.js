@@ -68,8 +68,8 @@ function Search(props, { navigation }) {
 
   return (
     <SafeAreaView
-    style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
-  >
+      style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
+    >
       <View style={[styles.holder, { flexDirection: "column" }]}>
         <View style={{ flex: 1 }}>
           <SearchBar
@@ -153,6 +153,7 @@ function Search(props, { navigation }) {
               longitudeDelta: 0.05,
             }}
             customMapStyle={mapStyle}
+            loadingEnabled={true}
 
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >
@@ -169,7 +170,7 @@ function Search(props, { navigation }) {
           </MapView>
           <TouchableOpacity
             style={styles.expander}
-            onPress={() => props.navigation.navigate("mapView")}
+            onPress={() => props.navigation.navigate("MapView")}
           >
             <Icon
               //style={styles.icon}
@@ -181,7 +182,7 @@ function Search(props, { navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      </SafeAreaView>
+    </SafeAreaView>
   );
 }
 

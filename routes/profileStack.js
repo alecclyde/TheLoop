@@ -38,7 +38,7 @@ export default function ProfileStack({navigation}){
           <Icon
             name="gear"
             size={30}
-            color="orange"
+            color="white"
           />
         }
         onPress={() => navigation.navigate("Settings")}>
