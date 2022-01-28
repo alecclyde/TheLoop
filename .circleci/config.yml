@@ -24,7 +24,7 @@ publish: &publish
         name: Publish to Expo
         command: npx expo-cli publish --non-interactive --max-workers 1 --release-channel $EXPO_RELEASE_CHANNEL
         environment:
-          NODE_OPTIONS: --max_old_space_size=3999
+          NODE_OPTIONS: --max_old_space_size=3999 ./node_modules/@angular/cli/bin/ng build
 
 jobs:
   publish_to_expo_dev:
