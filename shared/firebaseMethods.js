@@ -321,6 +321,7 @@ export async function createPost(eventData, userData, postText) {
       creationTimestamp: firebase.firestore.Timestamp.now(),
       updatedTimestamp: firebase.firestore.Timestamp.now(),
       edited: false,
+      replies: [],
     });
   } catch (err) {
     console.log(err);
