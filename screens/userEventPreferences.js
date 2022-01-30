@@ -32,7 +32,7 @@ export default function UserEventPreferences({ navigation }) {
   const [checkOutdoors, setCheckOutdoors] = useState(false);
   const [checkAcademic, setCheckAcademic] = useState(false);
   const [checkMedia, setCheckMedia] = useState(false);
-
+  console.log("test");
   return (
     <View>
       <ImageBackground
@@ -58,14 +58,7 @@ export default function UserEventPreferences({ navigation }) {
               }}
               //validationSchema={setUserLoopsSchema}
               onSubmit={(joinedLoops) => {
-                var success = setUserLoops(joinedLoops, navigation);
-                if (success) {
-                  Alert.alert(
-                    "Success!",
-                    "Loop preferences successfully saved!"
-                  );
-                  //actions.resetForm();
-                }
+                setUserLoops(joinedLoops, navigation);
               }}
             >
               {(props) => (

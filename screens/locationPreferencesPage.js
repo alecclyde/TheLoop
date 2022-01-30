@@ -18,13 +18,13 @@ import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
+import { addDistance } from "../store/actions/userActions";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import Slider from "@react-native-community/slider";
 import { Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { globalStyles } from "../styles/global";
-import { addDistance } from "../store/actions/eventActions";
 import { Formik } from "formik";
 import { Constants, Location, Permissions } from "expo";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -36,7 +36,7 @@ import { PLACES_ID } from "@env";
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
 
-function LocationPreferencesPage(props, { navigation }) {
+function LocationPreferencesPage(props) {
   const [range, setRange] = useState("1 mile");
   const [searchQuery, setSearchQuery] = React.useState("");
   //const [sliding, setSliding] = useState("Inactive");
@@ -130,6 +130,7 @@ function LocationPreferencesPage(props, { navigation }) {
               }}
               customMapStyle={mapStyle}
               loadingEnabled={true}
+              scrollEnabled={false}
 
               //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
             >
@@ -185,7 +186,10 @@ function LocationPreferencesPage(props, { navigation }) {
                 borderRadius: 50,
               }}
               style={{ padding: 45 }}
-              onPress={props.addDistance(range)}
+              onPress={() => {
+                props.addDistance(range, props.navigation);
+              }}
+              //onPress={() => {(props).handleSubmit}}
               // onPress={() => {
               //   console.log(parseInt(range) + " miles");
               // }}
@@ -335,11 +339,11 @@ const styles = StyleSheet.create({
   },
 });
 const mapStateToProps = (state) => ({
-  events: state.events,
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addDistance: (event) => dispatch(addDistance(event)),
+  addDistance: (range, navigation) => dispatch(addDistance(range, navigation)),
 });
 
 export default connect(
