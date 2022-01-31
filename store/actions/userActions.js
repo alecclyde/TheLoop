@@ -25,7 +25,8 @@ export function registration(email, password, lastName, firstName, navigation) {
         .collection("users")
         .doc(currentUser.uid)
         .set(user);
-      dispatch({ type: SET_USER, payload: { ...user, uid: currentUser.uid } });
+
+      dispatch({ type: SET_USER, payload: { ...user, uid: currentUser.uid, loggedIn: true} });
       navigation.navigate("UserEventPreferences");
       console.log("registration ogre");
     } catch (err) {
@@ -49,7 +50,7 @@ export function signIn(email, password, navigation) {
       //console.log(user.data());
       dispatch({
         type: SET_USER,
-        payload: { ...user.data(), uid: currentUser.uid },
+        payload: { ...user.data(), uid: currentUser.uid, loggedIn: true },
       });
       navigation.navigate("RootStack");
     } catch (err) {
@@ -76,7 +77,7 @@ export function signOut(navigation) {
 }
 
 export function setUserLoops(joinedLoops, navigation) {
-  return async function signOutThunk(dispatch, getState) {
+  return async function setUserLoopsThunk(dispatch, getState) {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
 
@@ -84,12 +85,9 @@ export function setUserLoops(joinedLoops, navigation) {
       .collection("users")
       .doc(currentUser.uid)
       .update({ joinedLoops: joinedLoops })
-
-      .then(() => {
-        navigation.navigate("RootStack");
-      });
     //console.log(user);
     dispatch({ type: UPDATE_USER });
+    navigation.navigate("RootStack");
     // probably should navigate to event page after this
   };
 }

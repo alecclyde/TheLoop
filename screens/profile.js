@@ -29,10 +29,13 @@ function Profile(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userID, setUserID] = useState("");
+  const [email, setEmail] = useState(props.user.email);
+  const [firstName, setFirstName] = useState(props.user.firstName);
+  const [lastName, setLastName] = useState(props.user.LastName);
+  const [userID, setUserID] = useState(props.user.userID);
+  const [eventIDs, setEventIDs] = useState([]);
+  const [events, setEvents] = useState([]);
+
 
   // work around an error when logging out
   useEffect(() => {
@@ -44,8 +47,6 @@ function Profile(props, { navigation, route }) {
     }
   });
 
-  const [eventIDs, setEventIDs] = useState([]);
-  const [events, setEvents] = useState([]);
 
   const isFocused = useIsFocused();
 
@@ -102,12 +103,12 @@ function Profile(props, { navigation, route }) {
         });
       });
     }
-  }, [eventIDs]);
+  }, []);
   //console.log(props.user);
 
   return (
     <SafeAreaView style={globalStyles.container}>
-        <View style={globalStyles.header}>
+        <View style={{...globalStyles.header, height: "40%"}}>
           <View style={styles.headerContent}>
             <Image
               style={globalStyles.avatar}
@@ -127,15 +128,15 @@ function Profile(props, { navigation, route }) {
           <View style={styles.statusBar}>
             
           <View style={styles.statusBarText}>
-          <View style={styles.statusBarTextLine}>
-            <Text style={styles.statusBarTextLine}>
-              Followers
-            </Text>
+            <View style={styles.statusBarTextLine}>
+              <Text style={styles.statusBarTextLine}>
+                Followers
+              </Text>
             </View>
             <View style={styles.statusBarTextLine}>
-            <Text>
-              12
-            </Text>
+            <Text style={styles.statusBarTextLine}>
+                12aaaaaaaaaaaaaaaaaaaaaa
+              </Text>
             </View>
           </View>
 
@@ -355,8 +356,9 @@ const styles = StyleSheet.create({
     margin: 5,
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center",
-    fontSize: 12,
+    //justifyContent: "center",
+    //fontSize: 12,
+    flexWrap: "wrap",
   },
 
   verticleLine: {
@@ -368,7 +370,13 @@ const styles = StyleSheet.create({
 
   statusBarTextLine:{
     flex: 1,
-    flexDirection: "column",
+    width: "100%",
+    fontSize: 16,
+    color: "white",
+    fontWeight: "bold",
+    flexDirection: "row",
+    flexBasis: "50%",
+    flexWrap: "wrap",
   }
 
 
@@ -378,10 +386,12 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
   user: state.user,
+  events: state.events,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   signOut: (navigation) => dispatch(signOut(navigation)),
+  getEvents: () => dispatch(getEvents()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
