@@ -102,7 +102,7 @@ function Profile(props, { navigation, route }) {
         });
       });
     }
-  }, [eventIDs]);
+  },[eventIDs]);
   //console.log(props.user);
 
   return (
@@ -127,37 +127,24 @@ function Profile(props, { navigation, route }) {
           <View style={styles.statusBar}>
             
           <View style={styles.statusBarText}>
-          <View style={styles.statusBarTextLine}>
-            <Text style={styles.statusBarTextLine}>
-              Followers
-            </Text>
-            </View>
             <View style={styles.statusBarTextLine}>
-            <Text>
-              12
-            </Text>
+              <Text style={styles.statusBarTextLine}>
+                Followers
+              </Text>
             </View>
           </View>
 
           <View style={styles.verticleLine}></View>
-
-          <View style={styles.statusBarText}>
-          <Text style={styles.statusBarTextLine}>
-              Following
-            </Text>
-            <Text style={styles.statusBarTextLine}>
-              12
-            </Text>
-          </View>
-
+            <View style={styles.statusBarText}>
+              <Text style={styles.statusBarTextLine}>
+                Following
+              </Text>
+            </View>
           <View style={styles.verticleLine}></View>
 
           <View style={styles.statusBarText}>
-          <Text style={styles.statusBarTextLine}>
-              Loops
-            </Text>
             <Text style={styles.statusBarTextLine}>
-              12
+              Loops
             </Text>
           </View>
               
@@ -369,6 +356,10 @@ const styles = StyleSheet.create({
   statusBarTextLine:{
     flex: 1,
     flexDirection: "column",
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+    fontSize: 20,
   }
 
 
