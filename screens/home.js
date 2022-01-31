@@ -45,7 +45,7 @@ function Home(props) {
         ]);
       });
     });
-  },[]);
+  });
 
 
   return (

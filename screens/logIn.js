@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  TextInput,
-  ScrollView,
-  Keyboard,
-  StyleSheet,
   SafeAreaView,
-  ImageBackground,
 } from "react-native";
 //import { signIn, getUserData } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
@@ -16,13 +11,9 @@ import { Button } from "react-native-elements";
 import { Image } from "react-native-elements";
 import { Input } from "react-native-elements";
 import { Text } from "react-native-elements";
-import AppLoading from "expo-app-loading";
-import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { signIn } from "../store/actions/userActions";
-
-import * as firebase from "firebase";
-import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
+import { useIsFocused } from '@react-navigation/native';
 
 const LoginSchema = yup.object({
   email: yup.string().email().required("Please enter your email"),
@@ -32,6 +23,7 @@ const LoginSchema = yup.object({
 function Login(props, { navigation }) {
   const [user, setUser] = useState("");
   const [loggedIn, setloggedIn] = useState(props.user.loggedIn);
+  const isFocused = useIsFocused();
   // const getUser = async () => getUserData(firebase.auth().currentUser.uid).then((user) => setUser(user))
   // console.log(user);
 
@@ -52,10 +44,12 @@ function Login(props, { navigation }) {
   useEffect(() => {
     //console.log(props.user);
     if (loggedIn) {
-      console.log("already logged in");
-      //props.navigation.navigate("RootStack");
+      if(isFocused){
+        console.log(props.user.loggedIn);
+        props.navigation.navigate("RootStack");
+      }
     }
-  });
+  },[props, isFocused]);
 
   return (
     <SafeAreaView

@@ -37,6 +37,8 @@ function mapView({ navigation }) {
     firebase
       .firestore()
       .collection("events")
+      .orderBy("creationTimestamp")
+      .limit(5)
       .get()
       .then((snap) => {
         snap.docs.forEach((doc) => {
