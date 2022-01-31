@@ -94,7 +94,7 @@ function Home(props, { navigation, route }) {
         });
       });
     }
-  }, []);
+  });
 
   return (
     <SafeAreaView
