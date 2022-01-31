@@ -102,7 +102,7 @@ function Profile(props, { navigation, route }) {
         });
       });
     }
-  }, [eventIDs]);
+  }, []);
   //console.log(props.user);
 
   return (
