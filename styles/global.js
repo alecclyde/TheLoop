@@ -82,8 +82,8 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 25,
   },
   avatar: {
-    width: 130,
-    height: 130,
+    width: 110,
+    height: 110,
     borderRadius: 63,
     borderWidth: 4,
     borderColor: "white",

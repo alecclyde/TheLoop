@@ -29,10 +29,13 @@ function Profile(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
   // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userID, setUserID] = useState("");
+  const [email, setEmail] = useState(props.user.email);
+  const [firstName, setFirstName] = useState(props.user.firstName);
+  const [lastName, setLastName] = useState(props.user.LastName);
+  const [userID, setUserID] = useState(props.user.userID);
+  const [eventIDs, setEventIDs] = useState([]);
+  const [events, setEvents] = useState([]);
+
 
   // work around an error when logging out
   useEffect(() => {
@@ -44,8 +47,6 @@ function Profile(props, { navigation, route }) {
     }
   });
 
-  const [eventIDs, setEventIDs] = useState([]);
-  const [events, setEvents] = useState([]);
 
   const isFocused = useIsFocused();
 
@@ -107,7 +108,7 @@ function Profile(props, { navigation, route }) {
 
   return (
     <SafeAreaView style={globalStyles.container}>
-        <View style={globalStyles.header}>
+        <View style={{...globalStyles.header, height: "40%"}}>
           <View style={styles.headerContent}>
             <Image
               style={globalStyles.avatar}
@@ -123,10 +124,52 @@ function Profile(props, { navigation, route }) {
           </View>
         </View>
 
+
+          <View style={styles.statusBar}>
+            
+          <View style={styles.statusBarText}>
+            <View style={styles.statusBarTextLine}>
+              <Text style={styles.statusBarTextLine}>
+                Followers
+              </Text>
+            </View>
+            <View style={styles.statusBarTextLine}>
+            <Text style={styles.statusBarTextLine}>
+                12aaaaaaaaaaaaaaaaaaaaaa
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.verticleLine}></View>
+
+          <View style={styles.statusBarText}>
+          <Text style={styles.statusBarTextLine}>
+              Following
+            </Text>
+            <Text style={styles.statusBarTextLine}>
+              12
+            </Text>
+          </View>
+
+          <View style={styles.verticleLine}></View>
+
+          <View style={styles.statusBarText}>
+          <Text style={styles.statusBarTextLine}>
+              Loops
+            </Text>
+            <Text style={styles.statusBarTextLine}>
+              12
+            </Text>
+          </View>
+              
+          </View>
+
+
+
+
             <Text h3 style={styles.titles}>
               Upcoming Events
             </Text>
-
 
 
             
@@ -287,22 +330,68 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 1, height: .1},
     shadowOpacity: 0.8,
     shadowColor: 'black',
-
   },
+  statusBar: {
+    justifyContent: "center",
+    alignSelf: "center",
+    backgroundColor: "#3B4046",
+    borderRadius: 10,
+    margin: 5,
+    paddingVertical: 37,
+    shadowOffset: {width: 1, height: .1},
+    shadowOpacity: 0.8,
+    shadowColor: 'black',
+    alignSelf: "stretch",
+    flexDirection: "row",
+  },
+
     titles: {
     textAlign: "left",
     color: "white",
     marginLeft: 10,
     fontFamily: 'Helvetica-Bold',
   },
+
+  statusBarText:{
+    margin: 5,
+    flex: 1,
+    flexDirection: "row",
+    //justifyContent: "center",
+    //fontSize: 12,
+    flexWrap: "wrap",
+  },
+
+  verticleLine: {
+    height: '100%',
+    width: 1,
+    backgroundColor: '#909090',
+    textAlign: "center",
+  },
+
+  statusBarTextLine:{
+    flex: 1,
+    width: "100%",
+    fontSize: 16,
+    color: "white",
+    fontWeight: "bold",
+    flexDirection: "row",
+    flexBasis: "50%",
+    flexWrap: "wrap",
+  }
+
+
+
+
 });
 
 const mapStateToProps = (state) => ({
   user: state.user,
+  events: state.events,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   signOut: (navigation) => dispatch(signOut(navigation)),
+  getEvents: () => dispatch(getEvents()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

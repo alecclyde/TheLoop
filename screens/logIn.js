@@ -31,7 +31,7 @@ const LoginSchema = yup.object({
 
 function Login(props, { navigation }) {
   const [user, setUser] = useState("");
-  const [userLoaded, setUserLoaded] = useState(false);
+  const [loggedIn, setloggedIn] = useState(props.user.loggedIn);
   // const getUser = async () => getUserData(firebase.auth().currentUser.uid).then((user) => setUser(user))
   // console.log(user);
 
@@ -49,12 +49,13 @@ function Login(props, { navigation }) {
   //     unsubscriber;
   //   };
   // });
-  // useEffect(() => {
-  //   //console.log(props.user);
-  //   if (props.user != null) {
-  //     props.navigation.navigate("RootStack");
-  //   }
-  // });
+  useEffect(() => {
+    //console.log(props.user);
+    if (loggedIn) {
+      console.log("already logged in");
+      //props.navigation.navigate("RootStack");
+    }
+  });
 
   return (
     <SafeAreaView

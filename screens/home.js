@@ -10,91 +10,43 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUserData, getEventData, editPost } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import { Text } from "react-native-elements";
-import { Header } from "react-native-elements";
-import { Button } from "react-native-elements";
 import { ListItem, Avatar } from "react-native-elements";
 import { TouchableScale } from "react-native-touchable-scale";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Divider } from "react-native-elements";
-import * as firebase from "firebase";
-import moment from "moment";
-import { useIsFocused } from "@react-navigation/native";
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
-import { color } from "react-native-elements/dist/helpers";
 
-function Home(props, { navigation, route }) {
-  // const email = route.params?.userData.email ?? 'email';
-  // const firstName = route.params?.userData.firstName ?? 'firstName';
-  // const lastName = route.params?.userData.lastName ?? 'lastName';
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userID, setUserID] = useState("");
-
+function Home(props) {
   const [events, setEvents] = useState([]);
-  const [eventIDs, setEventIDs] = useState([]);
-
-  const isFocused = useIsFocused();
-
-  // Listener to update user data
-  function AuthStateChangedListener(user) {
-    if (user) {
-      setUserID(user.uid);
-    }
-  }
-
-  useEffect(() => {
-    const unsubscriber = firebase
-      .auth()
-      .onAuthStateChanged(AuthStateChangedListener);
-    return () => {
-      unsubscriber;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (userID && isFocused) {
-      getUserData(userID).then((user) => {
-        // setEmail(user.email);
-        // setFirstName(user.firstName);
-        // setLastName(user.lastName);
-        setEventIDs(user.myEvents);
-      });
-    }
-  }, [userID, isFocused]);
-  //console.log(props.user);
 
   useEffect(() => {
     setEvents([]);
+    props.user.myEvents.forEach((eventID) => {
+      getEventData(eventID).then((event) => {
+        let creator;
 
-    if (userID) {
-      eventIDs.forEach((eventID) => {
-        getEventData(eventID).then((event) => {
-          let creator;
-
-          // SPRINT7: collapse this to just use event.creator
-          if (event.creator == undefined) {
-            creator = { userID: event.creatorID, userName: "" };
-          } else {
-            creator = event.creator;
-          }
-          setEvents((events) => [
-            ...events,
-            {
-              id: eventID,
-              name: event.name,
-              loop: event.loop,
-              startDateTime: event.startDateTime,
-              creator: creator,
-              address: event.address,
-            },
-          ]);
-        });
+        // SPRINT7: collapse this to just use event.creator
+        if (event.creator == undefined) {
+          creator = { userID: event.creatorID, userName: "" };
+        } else {
+          creator = event.creator;
+        }
+        setEvents((events) => [
+          ...events,
+          {
+            id: eventID,
+            name: event.name,
+            loop: event.loop,
+            startDateTime: event.startDateTime,
+            creator: creator,
+            address: event.address,
+          },
+        ]);
       });
-    }
-  }, []);
+    });
+  },[]);
+
 
   return (
     <SafeAreaView
