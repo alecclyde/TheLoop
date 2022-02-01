@@ -8,12 +8,13 @@ import {
   StyleSheet,
   Text,
   ImageBackground,
+  SafeAreaView,
   View,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-
+import { globalStyles } from "../styles/global";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SearchBar, withTheme } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
@@ -66,12 +67,8 @@ function Search(props, { navigation }) {
   }, [isFocused]);
 
   return (
-    <ImageBackground
-      source={{
-        uri: "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?size=626&ext=jpg",
-      }}
-      resizeMode="cover"
-      style={{ width: "100%", height: "100%" }}
+    <SafeAreaView
+      style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
       <View style={[styles.holder, { flexDirection: "column" }]}>
         <View style={{ flex: 1 }}>
@@ -156,6 +153,7 @@ function Search(props, { navigation }) {
               longitudeDelta: 0.05,
             }}
             customMapStyle={mapStyle}
+            loadingEnabled={true}
 
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >
@@ -172,7 +170,7 @@ function Search(props, { navigation }) {
           </MapView>
           <TouchableOpacity
             style={styles.expander}
-            onPress={() => props.navigation.navigate("mapView")}
+            onPress={() => props.navigation.navigate("MapView")}
           >
             <Icon
               //style={styles.icon}
@@ -184,7 +182,7 @@ function Search(props, { navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-    </ImageBackground>
+    </SafeAreaView>
   );
 }
 
