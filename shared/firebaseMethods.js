@@ -175,7 +175,7 @@ export async function registerEvent(eventData, userData) {
     // if newAttendeesNotifID is "0", then there isn't a notification waiting
     if (eventData.newAttendeesNotifID == "0") {
       // make a new notification
-      await createNotification(eventData.creatorID, "new-joins", {
+      await createNotification(eventData.eventCreator.userID, "new-joins", {
         eventName: eventData.eventName,
         eventID: eventData.eventID,
         userData: userData,
@@ -194,7 +194,7 @@ export async function registerEvent(eventData, userData) {
       // otherwise, update the notification document
       updateAddAttendeeNotification(
         eventData.newAttendeesNotifID,
-        eventData.creatorID,
+        eventData.eventCreator.userID,
         userData
       );
 
@@ -214,7 +214,14 @@ export async function registerEvent(eventData, userData) {
       .collection("users")
       .doc(userData.userID)
       .update({
-        myEvents: firebase.firestore.FieldValue.arrayUnion(eventData.eventID),
+        myEvents: firebase.firestore.FieldValue.arrayUnion({
+          address: eventData.eventAddress,
+          creator: eventData.eventCreator,
+          id: eventData.eventID,
+          loop: eventData.eventLoop,
+          name: eventData.eventName,
+          startDateTime: eventData.eventStartDateTime,
+        }),
       });
   } catch (err) {
     console.log(err);
@@ -233,7 +240,7 @@ export async function unregisterEvent(eventData, userData) {
     if (eventData.newAttendeesNotifID != "0") {
       await updateRemoveAttendeeNotification(
         eventData.newAttendeesNotifID,
-        eventData.creatorID,
+        eventData.eventCreator.userID,
         userData
       );
     }
@@ -252,7 +259,14 @@ export async function unregisterEvent(eventData, userData) {
       .collection("users")
       .doc(userData.userID)
       .update({
-        myEvents: firebase.firestore.FieldValue.arrayRemove(eventData.eventID),
+        myEvents: firebase.firestore.FieldValue.arrayRemove({
+          address: eventData.eventAddress,
+          creator: eventData.eventCreator,
+          id: eventData.eventID,
+          loop: eventData.eventLoop,
+          name: eventData.eventName,
+          startDateTime: eventData.eventStartDateTime,
+        }),
       });
   } catch (err) {
     console.log(err);
