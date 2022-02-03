@@ -97,7 +97,7 @@ function CardDetails(props, { navigation, route }) {
 
     setEventName(eventData.name);
     setEventLoop(eventData.loop);
-    setEventDateTime(eventData.startDateTime.seconds);
+    setEventDateTime(eventData.startDateTime);
     setEventAddress(eventData.address);
     // SPRINT7: phase out the second half of this
     // setEventCreator(eventData.creator || {id: eventData.creatorID, name: ""});
@@ -627,8 +627,8 @@ function CardDetails(props, { navigation, route }) {
                 <Text style={styles.sub}> {eventAddress} </Text>
                 <Text style={styles.titlesub}> When? </Text>
                 <Text style={styles.sub}>
-                  {moment.unix(eventDateTime).format("MMMM Do, YYYY")} at{" "}
-                  {moment.unix(eventDateTime).format("h:mm A")}
+                  {moment.unix(eventDateTime.seconds).format("MMMM Do, YYYY")} at{" "}
+                  {moment.unix(eventDateTime.seconds).format("h:mm A")}
                 </Text>
 
                 <Text style={styles.titlesub}>Attendees</Text>
@@ -659,8 +659,11 @@ function CardDetails(props, { navigation, route }) {
                         registerEvent(
                           {
                             eventID: props.route.params?.id,
-                            creatorID: eventCreator.userID,
+                            eventCreator: eventCreator,
                             eventName: eventName,
+                            eventAddress: eventAddress,
+                            eventLoop: eventLoop,
+                            eventStartDateTime: eventDateTime,
                             newAttendeesNotifID: newAttendeesNotifID,
                           },
                           { userID, userName }
@@ -669,7 +672,11 @@ function CardDetails(props, { navigation, route }) {
                         unregisterEvent(
                           {
                             eventID: props.route.params?.id,
-                            creatorID: eventCreator.userID,
+                            eventCreator: eventCreator,
+                            eventName: eventName,
+                            eventAddress: eventAddress,
+                            eventLoop: eventLoop,
+                            eventStartDateTime: eventDateTime,
                             newAttendeesNotifID: newAttendeesNotifID,
                           },
                           { userID, userName }
