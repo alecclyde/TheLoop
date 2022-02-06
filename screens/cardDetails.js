@@ -186,7 +186,7 @@ function CardDetails(props, { navigation, route }) {
     console.log(error);
   };
 
-  let eventLoopIconName = () => {
+  var eventLoopIconName = (eventLoop) => {
     switch (eventLoop) {
       case "Sports":
         return "futbol-o";
@@ -398,10 +398,13 @@ function CardDetails(props, { navigation, route }) {
             <View>
               <Text style={styles.Title}>{eventName} </Text>
               <Text style={styles.subt}> By: {eventCreator.userName} </Text>
-              <Text style={{ position: "absolute", right: 0.1 }}>
-                {" "}
-                ICON {eventLoop}
-              </Text>
+              {/* <Text style={{ position: "absolute", right: 0.1 }}> */}
+              <Icon
+                name={eventLoopIconName(eventLoop)}
+                style={{ position: "absolute", right: 0.1 }}
+              />
+              {/* {eventLoop} */}
+              {/* </Text> */}
               <Icon
                 onPress={() => props.navigation.dispatch(StackActions.pop(1))}
                 name="arrow-left"
