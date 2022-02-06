@@ -40,6 +40,10 @@ import { useIsFocused } from "@react-navigation/core";
 import { connect } from "react-redux";
 // import { registerEvent } from "../store/actions/eventActions";
 import { bindActionCreators } from "redux";
+import { Dimensions } from "react-native";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHight = Dimensions.get("window").height;
 
 // yuh yuh
 
@@ -184,6 +188,29 @@ function CardDetails(props, { navigation, route }) {
 
   const onError = (error) => {
     console.log(error);
+  };
+
+  var eventLoopIconName = (eventLoop) => {
+    switch (eventLoop) {
+      case "Sports":
+        return "futbol-o";
+      case "Music":
+        return "music";
+      case "Volunteer":
+        return "plus";
+      case "Game":
+        return "gamepad";
+      case "Social":
+        return "users";
+      case "Arts":
+        return "paint-brush";
+      case "Outdoors":
+        return "pagelines";
+      case "Academic":
+        return "book";
+      case "Media":
+        return "camera";
+    }
   };
 
   const onPostResult = (querySnapshot) => {
@@ -375,10 +402,14 @@ function CardDetails(props, { navigation, route }) {
             <View>
               <Text style={styles.Title}>{eventName} </Text>
               <Text style={styles.subt}> By: {eventCreator.userName} </Text>
-              <Text style={{ position: "absolute", right: 0.1 }}>
-                {" "}
-                ICON {eventLoop}
-              </Text>
+              {/* <Text style={{ position: "absolute", right: 0.1 }}> */}
+              <Icon
+                name={eventLoopIconName(eventLoop)}
+                style={{ position: "absolute", right: 0.1 }}
+                size={windowWidth * 0.05}
+              />
+              {/* {eventLoop} */}
+              {/* </Text> */}
               <Icon
                 onPress={() => props.navigation.dispatch(StackActions.pop(1))}
                 name="arrow-left"
@@ -589,10 +620,9 @@ function CardDetails(props, { navigation, route }) {
                     />
 
                     <View style={{ flexDirection: "row" }}>
-                        <Text style={{ fontWeight: "bold" }}>
-                          {reply.replierName}
-                        </Text>
-                        
+                      <Text style={{ fontWeight: "bold" }}>
+                        {reply.replierName}
+                      </Text>
 
                       <View style={{ flex: 1 }} />
                       <Text style={{ color: "gray" }}>
@@ -627,8 +657,8 @@ function CardDetails(props, { navigation, route }) {
                 <Text style={styles.sub}> {eventAddress} </Text>
                 <Text style={styles.titlesub}> When? </Text>
                 <Text style={styles.sub}>
-                  {moment.unix(eventDateTime.seconds).format("MMMM Do, YYYY")} at{" "}
-                  {moment.unix(eventDateTime.seconds).format("h:mm A")}
+                  {moment.unix(eventDateTime.seconds).format("MMMM Do, YYYY")}{" "}
+                  at {moment.unix(eventDateTime.seconds).format("h:mm A")}
                 </Text>
 
                 <Text style={styles.titlesub}>Attendees</Text>
