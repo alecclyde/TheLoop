@@ -40,6 +40,10 @@ import { useIsFocused } from "@react-navigation/core";
 import { connect } from "react-redux";
 // import { registerEvent } from "../store/actions/eventActions";
 import { bindActionCreators } from "redux";
+import { Dimensions } from "react-native";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHight = Dimensions.get("window").height;
 
 // yuh yuh
 
@@ -402,6 +406,7 @@ function CardDetails(props, { navigation, route }) {
               <Icon
                 name={eventLoopIconName(eventLoop)}
                 style={{ position: "absolute", right: 0.1 }}
+                size={windowWidth * 0.05}
               />
               {/* {eventLoop} */}
               {/* </Text> */}
