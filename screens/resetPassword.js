@@ -53,7 +53,6 @@ export default function ResetPassword({ navigation }) {
   // if(userLoaded){
     return (
       <SafeAreaView style={globalStyles.container}>
-        <View style={{ flex: 1 }} />
         <View>
           <Formik
             initialValues={{ email: "" }}
@@ -64,7 +63,12 @@ export default function ResetPassword({ navigation }) {
           >
             {(props) => (
               <>
-              <View style= {{flexDirection: "row", justifyContent: "center"}}>
+              <View style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              marginTop: 50,
+              marginBottom: 40,
+              }}>
               
               <Image
                     source={require("../assets/The-Loop-8.png")}

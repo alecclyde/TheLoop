@@ -76,7 +76,7 @@ function Login(props, { navigation }) {
                   style={{
                     flexDirection: "row",
                     justifyContent: "center",
-                    marginTop: 100,
+                    marginTop: 50,
                     marginBottom: 40,
                   }}
                 >
@@ -127,9 +127,7 @@ function Login(props, { navigation }) {
                   title="Sign In"
                   buttonStyle={{ height: 50, margin: 8, backgroundColor: '#3B4046'}}
                   containerStyle={{
-                    marginBottom: 5,
                     borderRadius: 10, // adds the rounded corners
-                    
                   }}
                 />
               </>
@@ -138,7 +136,7 @@ function Login(props, { navigation }) {
           <View style={{ alignItems: "center" }}>
             <Text
               h5
-              style={{ textAlign: "center", padding: 20, marginTop: 65, color: "white" }}
+              style={{ textAlign: "center", padding: 20, marginTop: 30, color: "white" }}
             >
               Don't have an account?
             </Text>

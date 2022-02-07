@@ -102,8 +102,6 @@ function Home(props, { navigation, route }) {
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
-      {/* <View style={{backgroundColor:"#D3D3D3"}}> */}
-
       <Text h3 style={styles.titles}>
         Upcoming Events
       </Text>
