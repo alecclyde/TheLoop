@@ -175,7 +175,7 @@ export async function registerEvent(eventData, userData) {
     // if newAttendeesNotifID is "0", then there isn't a notification waiting
     if (eventData.newAttendeesNotifID == "0") {
       // make a new notification
-      await createNotification(eventData.creatorID, "new-joins", {
+      await createNotification(eventData.eventCreator.userID, "new-joins", {
         eventName: eventData.eventName,
         eventID: eventData.eventID,
         userData: userData,
@@ -194,7 +194,7 @@ export async function registerEvent(eventData, userData) {
       // otherwise, update the notification document
       updateAddAttendeeNotification(
         eventData.newAttendeesNotifID,
-        eventData.creatorID,
+        eventData.eventCreator.userID,
         userData
       );
 
@@ -214,7 +214,14 @@ export async function registerEvent(eventData, userData) {
       .collection("users")
       .doc(userData.userID)
       .update({
-        myEvents: firebase.firestore.FieldValue.arrayUnion(eventData.eventID),
+        myEvents: firebase.firestore.FieldValue.arrayUnion({
+          address: eventData.eventAddress,
+          creator: eventData.eventCreator,
+          id: eventData.eventID,
+          loop: eventData.eventLoop,
+          name: eventData.eventName,
+          startDateTime: eventData.eventStartDateTime,
+        }),
       });
   } catch (err) {
     console.log(err);
@@ -233,7 +240,7 @@ export async function unregisterEvent(eventData, userData) {
     if (eventData.newAttendeesNotifID != "0") {
       await updateRemoveAttendeeNotification(
         eventData.newAttendeesNotifID,
-        eventData.creatorID,
+        eventData.eventCreator.userID,
         userData
       );
     }
@@ -252,7 +259,14 @@ export async function unregisterEvent(eventData, userData) {
       .collection("users")
       .doc(userData.userID)
       .update({
-        myEvents: firebase.firestore.FieldValue.arrayRemove(eventData.eventID),
+        myEvents: firebase.firestore.FieldValue.arrayRemove({
+          address: eventData.eventAddress,
+          creator: eventData.eventCreator,
+          id: eventData.eventID,
+          loop: eventData.eventLoop,
+          name: eventData.eventName,
+          startDateTime: eventData.eventStartDateTime,
+        }),
       });
   } catch (err) {
     console.log(err);
@@ -321,6 +335,7 @@ export async function createPost(eventData, userData, postText) {
       creationTimestamp: firebase.firestore.Timestamp.now(),
       updatedTimestamp: firebase.firestore.Timestamp.now(),
       edited: false,
+      replies: [],
     });
   } catch (err) {
     console.log(err);
@@ -381,6 +396,73 @@ export async function deletePost(eventData, postData) {
 }
 
 /**
+ * Replies to a post in an event
+ * @param postData - the data for the post (needs postID, posterID, eventID, eventName)
+ * @param userData - the user data of the replier (needs userID and userName)
+ * @param replyText - the text of the reply
+ */
+export async function createReply(postData, userData, replyText) {
+  // If the person is not replying to themselves, create a notification
+  if (userData.userID != postData.posterID) {
+    // create a notification
+
+    await createNotification(postData.posterID, "new-reply", {
+      eventName: postData.eventName,
+      replierName: userData.userName,
+    });
+  }
+  // generate an ID for the document
+  let replyID = firebase
+    .firestore()
+    .collection("posts")
+    .doc(postData.eventID)
+    .collection("posts")
+    .doc();
+
+  await firebase
+    .firestore()
+    .collection("posts")
+    .doc(postData.eventID)
+    .collection("posts")
+    .doc(postData.postID)
+    .update({
+      replies: firebase.firestore.FieldValue.arrayUnion({
+        creationTimestamp: firebase.firestore.Timestamp.now(),
+        updatedTimestamp: firebase.firestore.Timestamp.now(),
+        edited: false,
+        message: replyText,
+        replierID: userData.userID,
+        replierName: userData.userName,
+        id: replyID.id,
+      }),
+      updatedTimestamp: firebase.firestore.Timestamp.now(),
+    });
+}
+
+/**
+ * Deletes a reply from a post
+ * @param eventID - the data for the event (needs eventID, eventName)
+ * @param postID - the data for the original post (needs postID, posterID)
+ * @param reply - the reply to be deleted (should contain the entire reply object)
+ */
+export async function deleteReply(eventID, postID, reply) {
+  try {
+    await firebase
+      .firestore()
+      .collection("posts")
+      .doc(eventID)
+      .collection("posts")
+      .doc(postID)
+      .update({
+        replies: firebase.firestore.FieldValue.arrayRemove(reply),
+      });
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+/**
  * Creates a notification for a user
  * @param userID - The userID receiving the notification
  * @param notifType - The type of notification being added
@@ -409,9 +491,19 @@ export async function createNotification(userID, notifType, notifData) {
         });
         return doc;
 
-      case "reply":
+      case "new-reply":
         // man oh man I hope I can get replies working eventually
-        break;
+        // boy have I got good news for you
+
+        await doc.set({
+          type: notifType,
+          creationTimestamp: firebase.firestore.Timestamp.now(),
+          updatedTimestamp: firebase.firestore.Timestamp.now(),
+          eventName: notifData.eventName,
+          replierName: notifData.replierName,
+          seen: false,
+        });
+        return doc;
 
       case "event-change":
         // create an event-change notification with notifData.eventName and notifData.creatorName
@@ -687,6 +779,28 @@ export async function setNotifSeen(userID, notifID, notifData) {
         break;
 
       case "announcement":
+        await firebase
+          .firestore()
+          .collection("users")
+          .doc(userID)
+          .collection("notifications")
+          .doc(notifID)
+          .update({
+            seen: true,
+          });
+        break;
+
+      case "new-reply":
+        await firebase
+          .firestore()
+          .collection("users")
+          .doc(userID)
+          .collection("notifications")
+          .doc(notifID)
+          .update({
+            seen: true,
+          });
+        break;
       case "event-change":
       case "event-kick":
       case "report":
