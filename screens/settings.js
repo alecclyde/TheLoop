@@ -198,7 +198,7 @@ function UserProfileView(props) {
               title="Privacy Policy"
               onPress={() =>
                 Linking.openURL(
-                  "https://github.com/alecclyde/TheLoop/blob/policy_additions/Privacy-Policy.md"
+                  "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md"
                 )
               }
             ></Button>
@@ -206,7 +206,7 @@ function UserProfileView(props) {
               title="Terms & Conditions"
               onPress={() =>
                 Linking.openURL(
-                  "https://github.com/alecclyde/TheLoop/blob/policy_additions/Terms%26Conditions.md"
+                  "https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md"
                 )
               }
             ></Button>
