@@ -13,7 +13,7 @@ import { grabNotifications } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import firebase from "firebase";
 import { makeTimeDifferenceString } from "../shared/commonMethods";
-import { Button } from "react-native-elements";
+import { Button, withTheme } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function Notifications({ navigation, route }) {
@@ -235,20 +235,22 @@ export default function Notifications({ navigation, route }) {
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: "#D3D3D3",
+    backgroundColor: "#3B4046",
   },
   container: {
     padding: 16,
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderColor: "#2B7D9C",
+    borderColor: "#3B4046",
     alignItems: "flex-start",
   },
   text: {
     marginBottom: 5,
     flexDirection: "row",
     flexWrap: "wrap",
-  },
+    //color: 'white', WHY DIS NOT WORK
+    
+  },                        // 3B4046 2B7D9C <_< dem colors
   content: {
     flex: 1,
     marginLeft: 16,
