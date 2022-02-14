@@ -9,7 +9,6 @@ import { makeName } from "../../shared/commonMethods";
 export function addEvent(newEvent) {
   // console.log("calling addEvent");
   return async function addEventThunk(dispatch, getState) {
-
     let event = {};
     const doc = firebase.firestore().collection("events").doc();
 
@@ -53,7 +52,11 @@ export function addEvent(newEvent) {
         };
       });
 
-    await firebase.firestore().collection("events").doc(doc.id).set(event);
+    await firebase.firestore().collection("events").doc(doc.id).set(event)
+    .then((call) => {
+      console.log(doc.id)
+      console.log(event)
+    })
 
     // lastly, add this event to the creator's list of events
     await firebase
@@ -61,7 +64,14 @@ export function addEvent(newEvent) {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
-        myEvents: firebase.firestore.FieldValue.arrayUnion(doc.id)
+        myEvents: firebase.firestore.FieldValue.arrayUnion({
+          address: event.address,
+          creator: event.creator,
+          id: doc.id,
+          loop: event.loop,
+          name: event.name,
+          startDateTime: event.startDateTime,
+        }),
       });
     dispatch({ type: ADD_EVENT, payload: event });
   };

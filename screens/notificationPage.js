@@ -42,8 +42,15 @@ export default function Notifications({ navigation, route }) {
           </Text>
         );
 
-      case "reply":
-        return null;
+      case "new-reply":
+        return (
+          <Text>
+            <Text style={{ fontWeight: "bold" }}>{notifData.replierName}</Text>
+            <Text> replied to your post in </Text>
+            <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+            <Text>.</Text>
+          </Text>
+        );
 
       case "event-change":
         return (
@@ -191,9 +198,13 @@ export default function Notifications({ navigation, route }) {
   // grab the posts when user is authenticated or screen is refocused
   useEffect(() => {
     if (user) {
-      grabNotifications(user.uid).then((data) => {
-        setNotifications(data);
-      });
+      if (isFocused == true) {
+        grabNotifications(user.uid).then((data) => {
+          setNotifications(data);
+        });
+
+      }
+      
     }
   }, [user, isFocused]);
 
@@ -210,7 +221,7 @@ export default function Notifications({ navigation, route }) {
         }}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.container}>
+          <View style={[styles.container, !item.seen && {backgroundColor: "#EBEBEB"}]}>
             <Image source={placeholderImage} style={globalStyles.notifavatar} />
             <View style={styles.content}>
               <View style={styles.mainContent}>
