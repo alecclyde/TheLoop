@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   Image,
   FlatList,
-  ScrollView,
 } from "react-native";
 import { grabNotifications } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
@@ -34,17 +33,17 @@ export default function Notifications({ navigation, route }) {
     switch (notifType) {
       case "announcement":
         return (
-          <Text>
-            <Text style={{ fontWeight: "bold" }}>{notifData.creatorName}</Text>
-            <Text> has made a new announcement in </Text>
-            <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
+          <Text style={styles.notifText}>
+            <Text style={{ fontWeight: "bold"}}>{notifData.creatorName}</Text>
+            <Text style={{color: 'white'}}> has made a new announcement in </Text>
+            <Text style={{ fontWeight: "bold"}}>{notifData.eventName}</Text>
             <Text>.</Text>
           </Text>
         );
 
       case "new-reply":
         return (
-          <Text>
+          <Text style={styles.notifText}>
             <Text style={{ fontWeight: "bold" }}>{notifData.replierName}</Text>
             <Text> replied to your post in </Text>
             <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
@@ -54,7 +53,7 @@ export default function Notifications({ navigation, route }) {
 
       case "event-change":
         return (
-          <Text>
+          <Text style={styles.notifText}>
             <Text style={{ fontWeight: "bold" }}>{notifData.creatorName}</Text>
             <Text> has made changes in </Text>
             <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
@@ -77,7 +76,7 @@ export default function Notifications({ navigation, route }) {
 
         if (multipleUsers) {
           return (
-            <Text>
+            <Text style={styles.notifText}>
               <Text style={{ fontWeight: "bold" }}>
                 {notifData.newPosts[0].userName}
               </Text>
@@ -93,7 +92,7 @@ export default function Notifications({ navigation, route }) {
         } else {
           if (notifData.newPosts.length == 1) {
             return (
-              <Text>
+              <Text style={styles.notifText}>
                 <Text style={{ fontWeight: "bold" }}>
                   {notifData.newPosts[0].userName}
                 </Text>
@@ -106,7 +105,7 @@ export default function Notifications({ navigation, route }) {
             );
           } else {
             return (
-              <Text>
+              <Text style={styles.notifText}>
                 <Text style={{ fontWeight: "bold" }}>
                   {notifData.newPosts[0].userName}
                 </Text>
@@ -127,7 +126,7 @@ export default function Notifications({ navigation, route }) {
       case "new-joins":
         if (notifData.newAttendees.length == 1) {
           return (
-            <Text>
+            <Text style={styles.notifText}>
               <Text style={{ fontWeight: "bold" }}>
                 {notifData.newAttendees[0].userName}
               </Text>
@@ -138,7 +137,7 @@ export default function Notifications({ navigation, route }) {
           );
         } else if (notifData.newAttendees.length == 2) {
           return (
-            <Text>
+            <Text style={styles.notifText}>
               <Text style={{ fontWeight: "bold" }}>
                 {notifData.newAttendees[0].userName}
               </Text>
@@ -151,7 +150,7 @@ export default function Notifications({ navigation, route }) {
           );
         } else if (notifData.newAttendees.length > 2) {
           return (
-            <Text>
+            <Text style={styles.notifText}>
               <Text style={{ fontWeight: "bold" }}>
                 {notifData.newAttendees[0].userName}
               </Text>
@@ -258,10 +257,8 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 5,
     flexDirection: "row",
-    flexWrap: "wrap",
-    //color: 'white', WHY DIS NOT WORK
-    
-  },                        // 3B4046 2B7D9C <_< dem colors
+    flexWrap: "wrap",    
+  },                        
   content: {
     flex: 1,
     marginLeft: 16,
@@ -281,10 +278,13 @@ const styles = StyleSheet.create({
   },
   timeAgo: {
     fontSize: 12,
-    color: "#696969",
+    color: "#A0A0A0",
   },
   name: {
     fontSize: 16,
     color: "#b37400",
   },
+  notifText: {
+    color: 'white'
+  }
 });
