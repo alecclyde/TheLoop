@@ -60,41 +60,43 @@ function Home(props, { navigation, route }) {
         // setEmail(user.email);
         // setFirstName(user.firstName);
         // setLastName(user.lastName);
-        setEventIDs(user.myEvents);
+
+        setEvents(user.myEvents);
+        // setEventIDs(user.myEvents);
       });
     }
   }, [userID, isFocused]);
   //console.log(props.user);
 
-  useEffect(() => {
-    setEvents([]);
+  // useEffect(() => {
+  //   setEvents([]);
 
-    if (userID) {
-      eventIDs.forEach((eventID) => {
-        getEventData(eventID).then((event) => {
-          let creator;
+  //   if (userID) {
+  //     eventIDs.forEach((eventID) => {
+  //       getEventData(eventID).then((event) => {
+  //         let creator;
 
-          // SPRINT7: collapse this to just use event.creator
-          if (event.creator == undefined) {
-            creator = { userID: event.creatorID, userName: "" };
-          } else {
-            creator = event.creator;
-          }
-          setEvents((events) => [
-            ...events,
-            {
-              id: eventID,
-              name: event.name,
-              loop: event.loop,
-              startDateTime: event.startDateTime,
-              creator: creator,
-              address: event.address,
-            },
-          ]);
-        });
-      });
-    }
-  }, [eventIDs]);
+  //         // SPRINT7: collapse this to just use event.creator
+  //         if (event.creator == undefined) {
+  //           creator = { userID: event.creatorID, userName: "" };
+  //         } else {
+  //           creator = event.creator;
+  //         }
+  //         setEvents((events) => [
+  //           ...events,
+  //           {
+  //             id: eventID,
+  //             name: event.name,
+  //             loop: event.loop,
+  //             startDateTime: event.startDateTime,
+  //             creator: creator,
+  //             address: event.address,
+  //           },
+  //         ]);
+  //       });
+  //     });
+  //   }
+  // }, [eventIDs]);
 
   return (
     <SafeAreaView
@@ -111,62 +113,65 @@ function Home(props, { navigation, route }) {
         horizontal={true}
         style={{ flex: 1 }}
       >
-        {events.map((event) => (
-          <TouchableOpacity
-            style={styles.clickable}
-            key={event.id}
-            onPress={() =>
-              props.navigation.navigate("CardDetails", {
-                id: event.id,
-                name: event.name,
-                loop: event.loop,
-                creator: event.creator,
-                startDateTime: event.startDateTime,
-                address: event.address,
-              })
-            }
-          >
-            <ListItem
-              pad={16}
-              bottomDivide={true}
-              Component={TouchableScale}
-              button
-              friction={90}
-              tension={100} // These props are passed to the parent component (here TouchableScale)
-              activeScale={0.95} //
-              linearGradientProps={{
-                colors: ["#3B4046", "#3B4046"],
-                start: { x: 1, y: 0 },
-                end: { x: 0.2, y: 0 },
-              }}
-              ViewComponent={LinearGradient}
+        {events // upcoming events
+          .filter((item) => item.startDateTime > moment().unix())
+          .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
+          .map((event) => (
+            <TouchableOpacity
+              style={styles.clickable}
+              key={event.id}
+              onPress={() =>
+                props.navigation.navigate("CardDetails", {
+                  id: event.id,
+                  name: event.name,
+                  loop: event.loop,
+                  creator: event.creator,
+                  startDateTime: event.startDateTime,
+                  address: event.address,
+                })
+              }
             >
-              <Avatar
-                size="large"
-                //change this to either be icon of loop or that groups profile picture
-                source={{
-                  uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+              <ListItem
+                pad={16}
+                bottomDivide={true}
+                Component={TouchableScale}
+                button
+                friction={90}
+                tension={100} // These props are passed to the parent component (here TouchableScale)
+                activeScale={0.95} //
+                linearGradientProps={{
+                  colors: ["#3B4046", "#3B4046"],
+                  start: { x: 1, y: 0 },
+                  end: { x: 0.2, y: 0 },
                 }}
-                resizeMode="cover"
-                //style={{ width: "100%", height: "100%" }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={styles.listingItem}>
-                  {event.name}
-                </ListItem.Title>
-                <ListItem.Subtitle style={styles.descriptionItem}>
-                  {event.loop}
-                </ListItem.Subtitle>
-                <ListItem.Subtitle style={styles.descriptionItem}>
-                  <Icon name="map-marker" size={16} color="white" />
-                  {"  "}
-                  {event.address}
-                </ListItem.Subtitle>
-              </ListItem.Content>
-              <ListItem.Chevron color="gray" />
-            </ListItem>
-          </TouchableOpacity>
-        ))}
+                ViewComponent={LinearGradient}
+              >
+                <Avatar
+                  size="large"
+                  //change this to either be icon of loop or that groups profile picture
+                  source={{
+                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                  }}
+                  resizeMode="cover"
+                  //style={{ width: "100%", height: "100%" }}
+                />
+                <ListItem.Content>
+                  <ListItem.Title style={styles.listingItem}>
+                    {event.name}
+                  </ListItem.Title>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    {event.loop}
+                  </ListItem.Subtitle>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    <Icon name="map-marker" size={16} color="white" />
+                    {"  "}
+                    {event.address}
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <ListItem.Chevron color="gray" />
+              </ListItem>
+            </TouchableOpacity>
+          ))}
       </ScrollView>
 
       <Text h3 style={styles.titles}>
@@ -178,62 +183,65 @@ function Home(props, { navigation, route }) {
         horizontal={true}
         style={{ flex: 1 }}
       >
-        {events.map((event) => (
-          <TouchableOpacity
-            style={styles.clickable}
-            key={event.id}
-            onPress={() =>
-              props.navigation.navigate("CardDetails", {
-                id: event.id,
-                name: event.name,
-                loop: event.loop,
-                creator: event.creator,
-                startDateTime: event.startDateTime,
-                address: event.address,
-              })
-            }
-          >
-            <ListItem
-              pad={16}
-              bottomDivide={true}
-              Component={TouchableScale}
-              button
-              friction={90}
-              tension={100} // These props are passed to the parent component (here TouchableScale)
-              activeScale={0.95} //
-              linearGradientProps={{
-                colors: ["#3B4046", "#3B4046"],
-                start: { x: 1, y: 0 },
-                end: { x: 0.2, y: 0 },
-              }}
-              ViewComponent={LinearGradient}
+        {events // previous events
+          .filter((item) => item.startDateTime <= moment().unix())
+          .sort((item1, item2) => item2.startDateTime - item1.startDateTime)
+          .map((event) => (
+            <TouchableOpacity
+              style={styles.clickable}
+              key={event.id}
+              onPress={() =>
+                props.navigation.navigate("CardDetails", {
+                  id: event.id,
+                  name: event.name,
+                  loop: event.loop,
+                  creator: event.creator,
+                  startDateTime: event.startDateTime,
+                  address: event.address,
+                })
+              }
             >
-              <Avatar
-                size="large"
-                //change this to either be icon of loop or that groups profile picture
-                source={{
-                  uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+              <ListItem
+                pad={16}
+                bottomDivide={true}
+                Component={TouchableScale}
+                button
+                friction={90}
+                tension={100} // These props are passed to the parent component (here TouchableScale)
+                activeScale={0.95} //
+                linearGradientProps={{
+                  colors: ["#3B4046", "#3B4046"],
+                  start: { x: 1, y: 0 },
+                  end: { x: 0.2, y: 0 },
                 }}
-                resizeMode="cover"
-                //style={{ width: "100%", height: "100%" }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={styles.listingItem}>
-                  {event.name}
-                </ListItem.Title>
-                <ListItem.Subtitle style={styles.descriptionItem}>
-                  {event.loop}
-                </ListItem.Subtitle>
-                <ListItem.Subtitle style={styles.descriptionItem}>
-                  <Icon name="map-marker" size={16} color="white" />
-                  {"  "}
-                  {event.address}
-                </ListItem.Subtitle>
-              </ListItem.Content>
-              <ListItem.Chevron color="gray" />
-            </ListItem>
-          </TouchableOpacity>
-        ))}
+                ViewComponent={LinearGradient}
+              >
+                <Avatar
+                  size="large"
+                  //change this to either be icon of loop or that groups profile picture
+                  source={{
+                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                  }}
+                  resizeMode="cover"
+                  //style={{ width: "100%", height: "100%" }}
+                />
+                <ListItem.Content>
+                  <ListItem.Title style={styles.listingItem}>
+                    {event.name}
+                  </ListItem.Title>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    {event.loop}
+                  </ListItem.Subtitle>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    <Icon name="map-marker" size={16} color="white" />
+                    {"  "}
+                    {event.address}
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <ListItem.Chevron color="gray" />
+              </ListItem>
+            </TouchableOpacity>
+          ))}
       </ScrollView>
 
       <Text h3 style={styles.titles}>
@@ -245,62 +253,63 @@ function Home(props, { navigation, route }) {
         horizontal={true}
         style={{ flex: 1 }}
       >
-        {events.map((event) => (
-          <TouchableOpacity
-            style={styles.clickable}
-            key={event.id}
-            onPress={() =>
-              props.navigation.navigate("CardDetails", {
-                id: event.id,
-                name: event.name,
-                loop: event.loop,
-                creator: event.creator,
-                startDateTime: event.startDateTime,
-                address: event.address,
-              })
-            }
-          >
-            <ListItem
-              pad={16}
-              bottomDivide={true}
-              Component={TouchableScale}
-              button
-              friction={90}
-              tension={100} // These props are passed to the parent component (here TouchableScale)
-              activeScale={0.95} //
-              linearGradientProps={{
-                colors: ["#3B4046", "#3B4046"],
-                start: { x: 1, y: 0 },
-                end: { x: 0.2, y: 0 },
-              }}
-              ViewComponent={LinearGradient}
+        {events // ??? TBA sorted events
+          .map((event) => (
+            <TouchableOpacity
+              style={styles.clickable}
+              key={event.id}
+              onPress={() =>
+                props.navigation.navigate("CardDetails", {
+                  id: event.id,
+                  name: event.name,
+                  loop: event.loop,
+                  creator: event.creator,
+                  startDateTime: event.startDateTime,
+                  address: event.address,
+                })
+              }
             >
-              <Avatar
-                size="large"
-                //change this to either be icon of loop or that groups profile picture
-                source={{
-                  uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+              <ListItem
+                pad={16}
+                bottomDivide={true}
+                Component={TouchableScale}
+                button
+                friction={90}
+                tension={100} // These props are passed to the parent component (here TouchableScale)
+                activeScale={0.95} //
+                linearGradientProps={{
+                  colors: ["#3B4046", "#3B4046"],
+                  start: { x: 1, y: 0 },
+                  end: { x: 0.2, y: 0 },
                 }}
-                resizeMode="cover"
-                //style={{ width: "100%", height: "100%" }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={styles.listingItem}>
-                  {event.name}
-                </ListItem.Title>
-                <ListItem.Subtitle style={styles.descriptionItem}>
-                  {event.loop}
-                </ListItem.Subtitle>
-                <ListItem.Subtitle style={styles.descriptionItem}>
-                  <Icon name="map-marker" size={16} color="white" />
-                  {"  "}
-                  {event.address}
-                </ListItem.Subtitle>
-              </ListItem.Content>
-              <ListItem.Chevron color="gray" />
-            </ListItem>
-          </TouchableOpacity>
-        ))}
+                ViewComponent={LinearGradient}
+              >
+                <Avatar
+                  size="large"
+                  //change this to either be icon of loop or that groups profile picture
+                  source={{
+                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                  }}
+                  resizeMode="cover"
+                  //style={{ width: "100%", height: "100%" }}
+                />
+                <ListItem.Content>
+                  <ListItem.Title style={styles.listingItem}>
+                    {event.name}
+                  </ListItem.Title>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    {event.loop}
+                  </ListItem.Subtitle>
+                  <ListItem.Subtitle style={styles.descriptionItem}>
+                    <Icon name="map-marker" size={16} color="white" />
+                    {"  "}
+                    {event.address}
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <ListItem.Chevron color="gray" />
+              </ListItem>
+            </TouchableOpacity>
+          ))}
       </ScrollView>
       {/* </View> */}
     </SafeAreaView>

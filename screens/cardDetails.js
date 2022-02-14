@@ -31,13 +31,19 @@ import {
   editPost,
   deletePost,
   createNotification,
+  createReply,
+  deleteReply,
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
-import { makeName } from "../shared/commonMethods";
+import { makeName, makeTimeDifferenceString } from "../shared/commonMethods";
 import { useIsFocused } from "@react-navigation/core";
 import { connect } from "react-redux";
 // import { registerEvent } from "../store/actions/eventActions";
 import { bindActionCreators } from "redux";
+import { Dimensions } from "react-native";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHight = Dimensions.get("window").height;
 
 // yuh yuh
 
@@ -46,6 +52,7 @@ function CardDetails(props, { navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
   const [eventCreator, setEventCreator] = useState(props.route.params?.creator);
 
+  const [eventID, setEventID] = useState(props.route.params?.id);
   const [eventName, setEventName] = useState(props.route.params?.name);
   const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
   const [eventDateTime, setEventDateTime] = useState(
@@ -60,11 +67,23 @@ function CardDetails(props, { navigation, route }) {
 
   const [editMode, setEditMode] = useState(false);
   const [postEditID, setPostEditID] = useState();
+  const [postReplyID, setPostReplyID] = useState();
 
   const [newPostsNotifID, setNewPostsNotifID] = useState();
   const [newAttendeesNotifID, setNewAttendeesNotifID] = useState();
 
   var eventAtens = [];
+
+  const sampleUsers = [
+    {
+      id: 1,
+      name: "Alec",
+    },
+    {
+      id: 2,
+      name: "Robbie",
+    },
+  ];
 
   const AuthStateChangedListener = (user) => {
     if (user) {
@@ -82,7 +101,7 @@ function CardDetails(props, { navigation, route }) {
 
     setEventName(eventData.name);
     setEventLoop(eventData.loop);
-    setEventDateTime(eventData.startDateTime.seconds);
+    setEventDateTime(eventData.startDateTime);
     setEventAddress(eventData.address);
     // SPRINT7: phase out the second half of this
     // setEventCreator(eventData.creator || {id: eventData.creatorID, name: ""});
@@ -96,7 +115,7 @@ function CardDetails(props, { navigation, route }) {
     );
 
     // setEventCreator({id: eventData.creator, name: eventCreator.name})
-    setEventAttendees(eventData.attendees)
+    setEventAttendees(eventData.attendees);
 
     // updateAttendeeList(eventData.attendees);
   };
@@ -171,6 +190,29 @@ function CardDetails(props, { navigation, route }) {
     console.log(error);
   };
 
+  var eventLoopIconName = (eventLoop) => {
+    switch (eventLoop) {
+      case "Sports":
+        return "futbol-o";
+      case "Music":
+        return "music";
+      case "Volunteer":
+        return "plus";
+      case "Game":
+        return "gamepad";
+      case "Social":
+        return "users";
+      case "Arts":
+        return "paint-brush";
+      case "Outdoors":
+        return "pagelines";
+      case "Academic":
+        return "book";
+      case "Media":
+        return "camera";
+    }
+  };
+
   const onPostResult = (querySnapshot) => {
     querySnapshot.docChanges().forEach((change) => {
       var data = change.doc.data();
@@ -181,6 +223,7 @@ function CardDetails(props, { navigation, route }) {
         posterName: data.posterName,
         creationTimestamp: data.creationTimestamp,
         edited: data.edited,
+        replies: data.replies,
       };
       if (change.type === "added") {
         dispatch({ type: "add", payload: payload });
@@ -206,6 +249,16 @@ function CardDetails(props, { navigation, route }) {
   const exitEditMode = () => {
     setEditMode(false);
     setPostEditID();
+  };
+
+  const enterReplyMode = (post) => {
+    setEditMode(true);
+    setPostReplyID(post.id);
+  };
+
+  const exitReplyMode = () => {
+    setEditMode(false);
+    setPostReplyID();
   };
 
   // const handleEditPost = (post) => {
@@ -236,6 +289,22 @@ function CardDetails(props, { navigation, route }) {
                 posterName: post.posterName,
               }
             ),
+        },
+      ]
+    );
+  };
+
+  const handleDeleteReply = (postID, reply) => {
+    Alert.alert(
+      "Really delete?",
+      "Are you sure you want to delete this reply?",
+      [
+        {
+          text: "Cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => deleteReply(eventID, postID, reply),
         },
       ]
     );
@@ -306,6 +375,14 @@ function CardDetails(props, { navigation, route }) {
     }
   }, [eventAttendees, userID]);
 
+  const Replies = (props) => {
+    return (
+      <View>
+        <FlatList />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={{ backgroundColor: "#D3D3D3", flex: 1 }}>
@@ -325,10 +402,14 @@ function CardDetails(props, { navigation, route }) {
             <View>
               <Text style={styles.Title}>{eventName} </Text>
               <Text style={styles.subt}> By: {eventCreator.userName} </Text>
-              <Text style={{ position: "absolute", right: 0.1 }}>
-                {" "}
-                ICON {eventLoop}
-              </Text>
+              {/* <Text style={{ position: "absolute", right: 0.1 }}> */}
+              <Icon
+                name={eventLoopIconName(eventLoop)}
+                style={{ position: "absolute", right: 0.1 }}
+                size={windowWidth * 0.05}
+              />
+              {/* {eventLoop} */}
+              {/* </Text> */}
               <Icon
                 onPress={() => props.navigation.dispatch(StackActions.pop(1))}
                 name="arrow-left"
@@ -433,26 +514,137 @@ function CardDetails(props, { navigation, route }) {
               {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
               {!editMode && (
                 <View style={{ flexDirection: "row" }}>
+                  {
+                    <Icon
+                      name="comment"
+                      color="#517fa4"
+                      size={22}
+                      onPress={() => enterReplyMode(item)}
+                    />
+                  }
+
+                  <View style={{ flex: 1 }} />
                   {item.posterID == userID && (
                     <Icon
                       name="pencil"
                       color="#517fa4"
-                      size={20}
+                      size={22}
+                      style={{ paddingHorizontal: 5 }}
                       onPress={() => enterEditMode(item)}
                     />
                   )}
-
-                  <View style={{ flex: 1 }} />
                   {(item.posterID == userID || isCreator) && (
                     <Icon
                       name="trash"
                       color="#517fa4"
-                      size={20}
+                      size={22}
                       onPress={() => handleDeletePost(item)}
                     />
                   )}
                 </View>
               )}
+
+              {/* form that appears when replying to a post */}
+              {postReplyID == item.id && (
+                <View>
+                  <Formik
+                    initialValues={{
+                      replyText: "",
+                    }}
+                    onSubmit={(values, actions) => {
+                      if (values.postText === "") {
+                        Alert.alert(
+                          "Error",
+                          "Cannot create a reply with no text"
+                        );
+                      } else {
+                        createReply(
+                          {
+                            postID: item.id,
+                            posterID: item.posterID,
+                            eventID: eventID,
+                            eventName: eventName,
+                          },
+                          {
+                            userID: userID,
+                            userName: userName,
+                          },
+                          values.replyText.trim()
+                        );
+
+                        actions.resetForm();
+                        exitReplyMode();
+                      }
+                    }}
+                  >
+                    {(props) => (
+                      <>
+                        <Input
+                          placeholder={"Reply to " + item.posterName}
+                          // disabled={!isAttending || editMode}
+                          multiline={true}
+                          value={props.values.replyText}
+                          onChangeText={props.handleChange("replyText")}
+                          onBlur={() => {
+                            props.handleBlur("replyText");
+                          }}
+                          style={{ maxHeight: 100 }}
+                        />
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                            <Button
+                              title="Cancel"
+                              onPress={() => exitReplyMode()}
+                            />
+                          </View>
+                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                            <Button
+                              title="Reply"
+                              onPress={props.handleSubmit}
+                            />
+                          </View>
+                        </View>
+                      </>
+                    )}
+                  </Formik>
+                </View>
+              )}
+
+              {/* replies start here */}
+              <View style={{ paddingLeft: 20 }}>
+                {item.replies.map((reply) => (
+                  <View key={reply.id}>
+                    <Divider
+                      orientation="horizontal"
+                      style={{ paddingVertical: 5 }}
+                    />
+
+                    <View style={{ flexDirection: "row" }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        {reply.replierName}
+                      </Text>
+
+                      <View style={{ flex: 1 }} />
+                      <Text style={{ color: "gray" }}>
+                        {makeTimeDifferenceString(
+                          reply.creationTimestamp.seconds
+                        )}{" "}
+                        ago
+                      </Text>
+                      {(reply.replierID == userID || isCreator) && (
+                        <Icon
+                          name="trash"
+                          color="#517fa4"
+                          size={22}
+                          style={{ paddingLeft: 5, alignContent: "center" }}
+                          onPress={() => handleDeleteReply(item.id, reply)}
+                        />
+                      )}
+                    </View>
+                    <Text>{reply.message}</Text>
+                  </View>
+                ))}
+              </View>
             </Card>
           )}
           ListHeaderComponent={
@@ -465,15 +657,17 @@ function CardDetails(props, { navigation, route }) {
                 <Text style={styles.sub}> {eventAddress} </Text>
                 <Text style={styles.titlesub}> When? </Text>
                 <Text style={styles.sub}>
-                  {moment.unix(eventDateTime).format("MMMM Do, YYYY")} at{" "}
-                  {moment.unix(eventDateTime).format("h:mm A")}
+                  {moment.unix(eventDateTime.seconds).format("MMMM Do, YYYY")}{" "}
+                  at {moment.unix(eventDateTime.seconds).format("h:mm A")}
                 </Text>
 
                 <Text style={styles.titlesub}>Attendees</Text>
                 {eventAttendees.map((attendee) => (
                   <Text key={attendee.userID} style={styles.subp}>
                     {/* SPRINT7: remove conditional, uncomment {attendee.name} */}
-                    { attendee.userName == undefined ? "This list is using an old format. Let Robbie know! ": attendee.userName}
+                    {attendee.userName == undefined
+                      ? "This list is using an old format. Let Robbie know! "
+                      : attendee.userName}
                     {/* {attendee.name} */}
                   </Text>
                 ))}
@@ -495,8 +689,11 @@ function CardDetails(props, { navigation, route }) {
                         registerEvent(
                           {
                             eventID: props.route.params?.id,
-                            creatorID: eventCreator.userID,
+                            eventCreator: eventCreator,
                             eventName: eventName,
+                            eventAddress: eventAddress,
+                            eventLoop: eventLoop,
+                            eventStartDateTime: eventDateTime,
                             newAttendeesNotifID: newAttendeesNotifID,
                           },
                           { userID, userName }
@@ -505,7 +702,11 @@ function CardDetails(props, { navigation, route }) {
                         unregisterEvent(
                           {
                             eventID: props.route.params?.id,
-                            creatorID: eventCreator.userID,
+                            eventCreator: eventCreator,
+                            eventName: eventName,
+                            eventAddress: eventAddress,
+                            eventLoop: eventLoop,
+                            eventStartDateTime: eventDateTime,
                             newAttendeesNotifID: newAttendeesNotifID,
                           },
                           { userID, userName }
@@ -514,7 +715,6 @@ function CardDetails(props, { navigation, route }) {
                     }}
                   />
                 )}
-                <Divider orientation="horizontal" style={{ paddingTop: 15 }} />
               </View>
             </ScrollView>
           }
@@ -602,8 +802,6 @@ function CardDetails(props, { navigation, route }) {
             </Card>
           </KeyboardAvoidingView>
         )}
-
-        {/* </ScrollView> */}
       </View>
     </SafeAreaView>
   );
