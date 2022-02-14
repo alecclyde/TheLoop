@@ -226,7 +226,9 @@ export default function Notifications({ navigation, route }) {
               <View style={styles.mainContent}>
                 <View style={styles.text}>
                   {/* <Text style={styles.name}>{item.creatorName}</Text> */}
+                  <TouchableOpacity onPress={() => navigation.navigate("")}>
                   <Text>{stylizedMessage(item.type, item)}</Text>
+                  </TouchableOpacity>
                 </View>
                 <Text style={styles.timeAgo}>
                   {makeTimeDifferenceString(item.updatedTimestamp.seconds)} ago
