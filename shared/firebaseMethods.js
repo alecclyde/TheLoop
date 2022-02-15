@@ -408,6 +408,7 @@ export async function createReply(postData, userData, replyText) {
 
     await createNotification(postData.posterID, "new-reply", {
       eventName: postData.eventName,
+      eventID: postData.eventID,
       replierName: userData.userName,
     });
   }
@@ -486,6 +487,7 @@ export async function createNotification(userID, notifType, notifData) {
           creationTimestamp: firebase.firestore.Timestamp.now(),
           updatedTimestamp: firebase.firestore.Timestamp.now(),
           eventName: notifData.eventName,
+          eventID: notifData.eventID,
           creatorName: notifData.creatorName,
           seen: false,
         });
@@ -500,6 +502,7 @@ export async function createNotification(userID, notifType, notifData) {
           creationTimestamp: firebase.firestore.Timestamp.now(),
           updatedTimestamp: firebase.firestore.Timestamp.now(),
           eventName: notifData.eventName,
+          eventID: notifData.eventID,
           replierName: notifData.replierName,
           seen: false,
         });
@@ -512,6 +515,7 @@ export async function createNotification(userID, notifType, notifData) {
           creationTimestamp: firebase.firestore.Timestamp.now(),
           updatedTimestamp: firebase.firestore.Timestamp.now(),
           eventName: notifData.eventName,
+          eventID: notifData.eventID,
           creatorName: notifData.creatorName,
           seen: false,
         });

@@ -291,6 +291,7 @@ function CardDetails(props, { navigation, route }) {
     var notifData = {
       creatorName: eventCreator.userName,
       eventName: eventName,
+      eventID: eventID,
     };
 
     eventAttendees.forEach((attendee) => {
