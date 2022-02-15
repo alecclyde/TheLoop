@@ -38,32 +38,29 @@ function Search(props, { navigation }) {
 
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
-    setEvents([]);
-    firebase
-      .firestore()
-      .collection("events")
-      .get()
-      .then((snap) => {
-        snap.docs.forEach((doc) => {
-          if (doc.exists) {
-            setEvents((events) => [
-              ...events,
-              {
-                id: doc.id,
-                loop: doc.data().loop,
-                name: doc.data().name,
-                creator:
-                  // SPRINT7: remove conditional, uncomment actual line
-                  doc.data().creator == undefined
-                    ? { userID: doc.data().creatorID, userName: "" }
-                    : doc.data().creator,
-                //doc.data().creator,
-                address: doc.data().address,
-              },
-            ]);
-          }
+    // if (isFocused) {
+      setEvents([]);
+      firebase
+        .firestore()
+        .collection("events")
+        .get()
+        .then((snap) => {
+          snap.docs.forEach((doc) => {
+            if (doc.exists) {
+              setEvents((events) => [
+                ...events,
+                {
+                  id: doc.id,
+                  loop: doc.data().loop,
+                  name: doc.data().name,
+                  creator: doc.data().creator,
+                  address: doc.data().address,
+                },
+              ]);
+            }
+          });
         });
-      });
+    // }
   }, [isFocused]);
 
   return (
