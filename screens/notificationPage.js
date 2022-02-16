@@ -8,11 +8,10 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import { grabNotifications } from "../shared/firebaseMethods";
+import { getEventData, grabNotifications } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import firebase from "firebase";
 import { makeTimeDifferenceString } from "../shared/commonMethods";
-import { Button, withTheme } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function Notifications({ navigation, route }) {
@@ -226,7 +225,16 @@ export default function Notifications({ navigation, route }) {
               <View style={styles.mainContent}>
                 <View style={styles.text}>
                   {/* <Text style={styles.name}>{item.creatorName}</Text> */}
-                  <TouchableOpacity onPress={() => navigation.navigate("")}>
+                  <TouchableOpacity onPress={() =>{
+                    let event = getEventData(item.eventID);
+                    navigation.navigate("CardDetails", {
+                      id: event.id,
+                      name: event.name,
+                      loop: event.loop,
+                      creator: event.creator,
+                      startDateTime: event.startDateTime,
+                      address: event.address,
+                  })}}>
                   <Text>{stylizedMessage(item.type, item)}</Text>
                   </TouchableOpacity>
                 </View>
