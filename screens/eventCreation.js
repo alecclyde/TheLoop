@@ -16,7 +16,7 @@ import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 import { Text } from "react-native-elements";
-import LinearGradient from 'expo-linear-gradient';
+import LinearGradient from "expo-linear-gradient";
 
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
@@ -25,6 +25,12 @@ import moment from "moment";
 import { addEvent } from "../store/actions/eventActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { PLACES_ID } from "@env";
+import { Dimensions } from "react-native";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHight = Dimensions.get("window").height;
 
 // Test to make sure that a selected date and time hasn't happened yet
 function isFutureDate(ref, msg) {
@@ -102,18 +108,21 @@ function EventCreation(props) {
     showMode("time");
   };
 
+  const messiahPlace = {
+    description: "Messiah University",
+    geometry: { location: { lat: 40.15974, lng: -76.988419 } },
+  };
+
   return (
     <View
       style={{
         flex: 1,
       }}
     >
-
-
-<SafeAreaView
-      style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
-    >
-        <View style={{ alignItems: "center" }}>
+      <SafeAreaView
+        style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
+      >
+        <View style={({ alignItems: "center" }, { flexDirection: "column" })}>
           <Formik
             initialValues={{
               eventName: "",
@@ -124,15 +133,14 @@ function EventCreation(props) {
             }}
             validationSchema={CreateEventSchema}
             onSubmit={(values) => {
-
-              var success = props.addEvent(
-                {
-                  name: values.eventName,
-                  loop: values.eventLoop,
-                  startDateTime: moment(values.eventDate + " " + values.eventTime).format("x"),
-                  address: values.eventAddress,
-                }
-              );
+              var success = props.addEvent({
+                name: values.eventName,
+                loop: values.eventLoop,
+                startDateTime: moment(
+                  values.eventDate + " " + values.eventTime
+                ).format("x"),
+                address: values.eventAddress,
+              });
               if (success) {
                 Alert.alert("Success!", "Event successfully created!");
                 //console.log(props.events);
@@ -152,10 +160,77 @@ function EventCreation(props) {
                   value={props.values.eventName}
                   onChangeText={props.handleChange("eventName")}
                   onBlur={props.handleBlur("eventName")}
-                  placeholderTextColor='white'
+                  placeholderTextColor="white"
                 />
                 <Text style={globalStyles.errorText}>
                   {props.touched.eventName && props.errors.eventName}
+                </Text>
+
+                {/* <Input
+                  textAlign="center"
+                  placeholder="Address"
+                  
+                  placeholderTextColor='white'
+                /> */}
+                <View style={styles.searchBox}>
+                  <GooglePlacesAutocomplete
+                    value={props.values.eventAddress}
+                    onChangeText={props.handleChange("eventAddress")}
+                    onBlur={props.handleBlur("eventAddress")}
+                    placeholder="Search"
+                    minLength={2} // minimum length of text to search
+                    autoFocus={false}
+                    returnKeyType={"search"} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                    listViewDisplayed="auto" // true/false/undefined
+                    fetchDetails={true}
+                    renderDescription={(row) => row.description} // custom description render
+                    onPress={(data, details = null) => {
+                      console.log(data);
+                      console.log(details);
+                    }}
+                    getDefaultValue={() => {
+                      return ""; // text input default value
+                    }}
+                    query={{
+                      // available options: https://developers.google.com/places/web-service/autocomplete
+                      key: PLACES_ID,
+                      language: "en", // language of the results
+                      types: "(cities)", // default: 'geocode'
+                    }}
+                    style={{ marginBottom: 10 }}
+                    styles={{
+                      description: {
+                        fontWeight: "bold",
+                      },
+                      predefinedPlacesDescription: {
+                        color: "#1faadb",
+                      },
+                    }}
+                    currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                    currentLocationLabel="Current location"
+                    nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                    GoogleReverseGeocodingQuery={
+                      {
+                        // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                      }
+                    }
+                    GooglePlacesSearchQuery={{
+                      // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                      rankby: "distance",
+                      //types: "food",
+                    }}
+                    filterReverseGeocodingByTypes={[
+                      "locality",
+                      "administrative_area_level_3",
+                    ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+                    predefinedPlaces={[messiahPlace]}
+                    debounce={200}
+                    currentLocation={true}
+                    currentLocationLabel="Current location"
+                  />
+                </View>
+                <Text style={globalStyles.errorText}>
+                  {props.touched.eventAddress && props.errors.eventAddress}
                 </Text>
 
                 {/* Touching the date button opens the date picker */}
@@ -241,11 +316,11 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Sports");
                       }}
                     >
-                      <Text style={{color: "white"}}>Sports</Text>
+                      <Text style={{ color: "white" }}>Sports</Text>
                     </TouchableOpacity>
                   </View>
 
-                  <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5, }}>
+                  <View style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}>
                     <TouchableOpacity
                       style={[
                         loop == "Music"
@@ -258,7 +333,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Music");
                       }}
                     >
-                      <Text style={{color: "white"}}>Music</Text>
+                      <Text style={{ color: "white" }}>Music</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -275,7 +350,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Volunteer");
                       }}
                     >
-                      <Text style={{color: "white"}}>Volunteer</Text>
+                      <Text style={{ color: "white" }}>Volunteer</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -294,7 +369,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Game");
                       }}
                     >
-                      <Text style={{color: "white"}}>Game</Text>
+                      <Text style={{ color: "white" }}>Game</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -311,7 +386,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Social");
                       }}
                     >
-                      <Text style={{color: "white"}}>Social</Text>
+                      <Text style={{ color: "white" }}>Social</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -328,7 +403,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Arts");
                       }}
                     >
-                      <Text style={{color: "white"}}>Arts</Text>
+                      <Text style={{ color: "white" }}>Arts</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -346,7 +421,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Outdoors");
                       }}
                     >
-                      <Text style={{color: "white"}}>Outdoors</Text>
+                      <Text style={{ color: "white" }}>Outdoors</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -363,7 +438,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Academic");
                       }}
                     >
-                      <Text style={{color: "white"}}>Academic</Text>
+                      <Text style={{ color: "white" }}>Academic</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -380,7 +455,7 @@ function EventCreation(props) {
                         props.setFieldValue("eventLoop", "Media");
                       }}
                     >
-                      <Text style={{color: "white"}}>Media</Text>
+                      <Text style={{ color: "white" }}>Media</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -388,22 +463,11 @@ function EventCreation(props) {
                 <Text style={globalStyles.errorText}>
                   {props.touched.eventLoop && props.errors.eventLoop}
                 </Text>
-                <Input
-                  textAlign="center"
-                  placeholder="Address"
-                  value={props.values.eventAddress}
-                  onChangeText={props.handleChange("eventAddress")}
-                  onBlur={props.handleBlur("eventAddress")}
-                  placeholderTextColor='white'
-                />
-                <Text style={globalStyles.errorText}>
-                  {props.touched.eventAddress && props.errors.eventAddress}
-                </Text>
+
                 <View />
                 <View>
                   <Button
                     title="Create Event"
-
                     titleStyle={{ fontSize: 25, color: "white" }}
                     buttonStyle={{
                       borderWidth: 1,
@@ -411,7 +475,6 @@ function EventCreation(props) {
                       titleColor: "black",
                       backgroundColor: "#3B4046",
                       borderRadius: 10,
-
                     }}
                     style={{ padding: 45 }}
                     onPress={props.handleSubmit}
@@ -436,10 +499,17 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: "#2B7D9C",
   },
+  searchBox: {
+    //top: 0,
+    //position: "absolute",
+    flex: 1,
+    justifyContent: "center",
+    marginBottom: 50,
+  },
 });
 
-const mapStateToProps = state => ({
-  events: state.events
+const mapStateToProps = (state) => ({
+  events: state.events,
 });
 
 // const ActionCreators = Object.assign(
@@ -452,7 +522,7 @@ const mapStateToProps = state => ({
 // });
 
 const mapDispatchToProps = (dispatch) => ({
-  addEvent: (event) => dispatch(addEvent(event))
-})
+  addEvent: (event) => dispatch(addEvent(event)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventCreation);
