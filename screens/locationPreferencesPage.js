@@ -42,8 +42,8 @@ function LocationPreferencesPage(props) {
   //const [sliding, setSliding] = useState("Inactive");
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-  const latitude = 40.15974;
-  const longitude = -76.988419;
+  const [latitude, setLatitude] = useState(40.15974);
+  const [longitude, setLongitude] = useState( -76.988419)
   const position = 0;
   const messiahPlace = {
     description: "Messiah University",
@@ -70,8 +70,8 @@ function LocationPreferencesPage(props) {
               fetchDetails={true}
               renderDescription={(row) => row.description} // custom description render
               onPress={(data, details = null) => {
-                console.log(data);
-                console.log(details);
+                setLatitude(details.geometry.location.lat);
+                setLongitude(details.geometry.location.lng);
               }}
               getDefaultValue={() => {
                 return ""; // text input default value
@@ -344,6 +344,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   addDistance: (range, navigation) => dispatch(addDistance(range, navigation)),
+  setLocation: (latitude, longitude) => dispatch(setLocation(latitude, longitude))
 });
 
 export default connect(

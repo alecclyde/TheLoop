@@ -2,7 +2,7 @@ import { SET_USER } from "../constants";
 import { UPDATE_USER } from "../constants";
 import { REMOVE_USER } from "../constants";
 import { ADD_DISTANCE } from "../constants";
-
+import { SET_LOCATION } from "../constants";
 import * as firebase from "firebase";
 import { Alert } from "react-native";
 
@@ -104,4 +104,11 @@ export function addDistance(values, navigation) {
     dispatch({ type: ADD_DISTANCE });
     navigation.navigate("RootStack");
   };
+}
+
+export function setLocation(latitude, longitude) {
+  return async function setLocationThunk(dispatch, getState){
+
+    dispatch({ type: SET_LOCATION, payload: {latitude, longitude}})
+  }
 }
