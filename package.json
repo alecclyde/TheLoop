@@ -25,6 +25,7 @@
     "expo-linear-gradient": "~10.0.3",
     "expo-location": "~13.0.4",
     "expo-status-bar": "~1.1.0",
+    "expo-updates": "^0.11.6",
     "firebase": "8.2.3",
     "fontisto": "^3.0.4",
     "formik": "^2.2.9",
