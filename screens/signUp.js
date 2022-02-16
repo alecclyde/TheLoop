@@ -198,6 +198,9 @@ function SignUp(props, { navigation }) {
                       props.setFieldValue("terms", !checkTerms);
                     }}
                   />
+                  <Text style={styles.errorText}>
+                    {props.touched.terms && props.errors.terms}
+                  </Text>
 
                   <Button
                     onPress={props.handleSubmit}
@@ -262,6 +265,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textTransform: "capitalize",
     fontSize: 22,
+    textAlign: "center",
+  },
+  errorText: {
+    color: "crimson",
+    fontWeight: "bold",
+
+    // marginBottom: 6,
+    // marginTop: 2,
     textAlign: "center",
   },
 });
