@@ -169,14 +169,13 @@ function EventCreation(props) {
                 {/* <Input
                   textAlign="center"
                   placeholder="Address"
-                  
+                   // value={props.values.eventAddress}
+                    // onChangeText={props.handleChange("eventAddress")}
+                    // onBlur={props.handleBlur("eventAddress")}
                   placeholderTextColor='white'
                 /> */}
                 <View style={styles.searchBox}>
                   <GooglePlacesAutocomplete
-                    value={props.values.eventAddress}
-                    onChangeText={props.handleChange("eventAddress")}
-                    onBlur={props.handleBlur("eventAddress")}
                     placeholder="Search"
                     minLength={2} // minimum length of text to search
                     autoFocus={false}
@@ -197,7 +196,7 @@ function EventCreation(props) {
                       language: "en", // language of the results
                       types: "(cities)", // default: 'geocode'
                     }}
-                    style={{ marginBottom: 10 }}
+                    // style={{ marginBottom: 10 }}
                     styles={{
                       description: {
                         fontWeight: "bold",
@@ -504,7 +503,7 @@ const styles = StyleSheet.create({
     //position: "absolute",
     flex: 1,
     justifyContent: "center",
-    marginBottom: 50,
+    //marginBottom: 50,
   },
 });
 
