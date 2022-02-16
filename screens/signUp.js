@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   TextInput,
@@ -21,6 +21,8 @@ import { registration } from "../store/actions/userActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Image } from "react-native-elements";
+import { CheckBox } from "react-native-elements";
+import { Linking } from "react-native";
 
 //https://github.com/jquense/yup/issues/97#issuecomment-306547261
 //checks to see if both passwords are the same
@@ -52,152 +54,198 @@ const SignUpSchema = yup.object({
       "Password must contain at least 8 characters, one uppercase, and one number"
     ),
   password2: yup.string().equalTo(yup.ref("password")),
+  terms: yup.boolean().oneOf([true], "Must Accept Terms amd Conditions."),
 });
 
 function SignUp(props, { navigation }) {
+  //const [checkTerms, setCheckTerms] = useState(false);
+  const [checkTerms, setCheckTerms] = useState(false);
+
   return (
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
-    <View>
       <View>
-        <Formik
-          initialValues={{
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-            password2: "",
-          }}
-          validationSchema={SignUpSchema}
-          //What happens when you submit the form
-          onSubmit={(values) => {
-            props.registration(
-              values.email,
-              values.password,
-              values.lastName,
-              values.firstName,
-              props.navigation
-            );
-          }}
-        >
-          {(props) => (
-            <>
-            <Image
-                    source={require("../assets/The-Loop-8.png")}
-                    style={{
-                      width: 380,
-                      height: 170,
-                      marginRight: 10,
-                      marginBottom: 15,
-                      marginTop: 10,
-                    }}
-                  />
-              <ScrollView onBlur={Keyboard.dismiss}>
-                <Input
-                  placeholder="First name *"
-                  errorStyle={{ color: "red" }}
-                  errorMessage={
-                    props.touched.firstName && props.errors.firstName
-                  }
-                  value={props.values.firstName}
-                  onChangeText={props.handleChange("firstName")}
-                  onBlur={props.handleBlur("firstName")}
-                  placeholderTextColor='white'
-                  selectionColor='black'
-                  underlineColorAndroid='black'
-                />
-                <Input
-                  placeholder="Last name *"
-                  errorStyle={{ color: "red" }}
-                  errorMessage={props.touched.lastName && props.errors.lastName}
-                  value={props.values.lastName}
-                  onChangeText={props.handleChange("lastName")}
-                  placeholderTextColor='white'
-                  selectionColor='black'
-                  underlineColorAndroid='black'
-                />
-                <Input
-                  // leftIcon={<Icon name="user" size={24} color="black" />}
-                  errorStyle={{ color: "red" }}
-                  errorMessage={props.touched.email && props.errors.email}
-                  placeholder=" Enter your email *"
-                  value={props.values.email}
-                  onChangeText={props.handleChange("email")}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  onBlur={props.handleBlur("email")}
-                  placeholderTextColor='white'
-                  selectionColor='black'
-                  underlineColorAndroid='black'
-                />
-                <Input
-                  placeholder=" Enter your password *"
-                  secureTextEntry={true}
-                  errorStyle={{ color: "red" }}
-                  errorMessage={props.touched.password && props.errors.password}
-                  value={props.values.password}
-                  onChangeText={props.handleChange("password")}
-                  secureTextEntry={true}
-                  onBlur={props.handleBlur("password")}
-                  placeholderTextColor='white'
-                  selectionColor='black'
-                  underlineColorAndroid='black'
-                />
-                <Input
-                  // leftIcon={<Icon name="lock" size={24} color="black" />}
-                  errorStyle={{ color: "red" }}
-                  errorMessage={
-                    props.touched.password2 && props.errors.password2
-                  }
-                  placeholder="Please re-type your password *"
-                  value={props.values.password2}
-                  onChangeText={props.handleChange("password2")}
-                  secureTextEntry={true}
-                  onBlur={props.handleBlur("password2")}
-                  placeholderTextColor='white'
-                  selectionColor='black'
-                  underlineColorAndroid='black'
-                />
-
-                <Button
-                  onPress={props.handleSubmit}
-                  title="Sign Up"
-                  buttonStyle={{ height: 50, margin: 10, backgroundColor: '#3B4046' }}
-                  containerStyle={{
-                    marginBottom: 5,
-                    borderRadius: 10, // adds the rounded corners
+        <View>
+          <Formik
+            initialValues={{
+              firstName: "",
+              lastName: "",
+              email: "",
+              password: "",
+              password2: "",
+              terms: false,
+            }}
+            validationSchema={SignUpSchema}
+            //What happens when you submit the form
+            onSubmit={(values) => {
+              props.registration(
+                values.email,
+                values.password,
+                values.lastName,
+                values.firstName,
+                props.navigation
+              );
+            }}
+          >
+            {(props) => (
+              <>
+                <Image
+                  source={require("../assets/The-Loop-8.png")}
+                  style={{
+                    width: 380,
+                    height: 170,
+                    marginRight: 10,
+                    marginBottom: 15,
+                    marginTop: 10,
                   }}
                 />
-              </ScrollView>
-            </>
-          )}
-        </Formik>
+                <ScrollView onBlur={Keyboard.dismiss}>
+                  <Input
+                    placeholder="First name *"
+                    errorStyle={{ color: "red" }}
+                    errorMessage={
+                      props.touched.firstName && props.errors.firstName
+                    }
+                    value={props.values.firstName}
+                    onChangeText={props.handleChange("firstName")}
+                    onBlur={props.handleBlur("firstName")}
+                    placeholderTextColor="white"
+                    selectionColor="black"
+                    underlineColorAndroid="black"
+                  />
+                  <Input
+                    placeholder="Last name *"
+                    errorStyle={{ color: "red" }}
+                    errorMessage={
+                      props.touched.lastName && props.errors.lastName
+                    }
+                    value={props.values.lastName}
+                    onChangeText={props.handleChange("lastName")}
+                    placeholderTextColor="white"
+                    selectionColor="black"
+                    underlineColorAndroid="black"
+                  />
+                  <Input
+                    // leftIcon={<Icon name="user" size={24} color="black" />}
+                    errorStyle={{ color: "red" }}
+                    errorMessage={props.touched.email && props.errors.email}
+                    placeholder=" Enter your email *"
+                    value={props.values.email}
+                    onChangeText={props.handleChange("email")}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    onBlur={props.handleBlur("email")}
+                    placeholderTextColor="white"
+                    selectionColor="black"
+                    underlineColorAndroid="black"
+                  />
+                  <Input
+                    placeholder=" Enter your password *"
+                    secureTextEntry={true}
+                    errorStyle={{ color: "red" }}
+                    errorMessage={
+                      props.touched.password && props.errors.password
+                    }
+                    value={props.values.password}
+                    onChangeText={props.handleChange("password")}
+                    secureTextEntry={true}
+                    onBlur={props.handleBlur("password")}
+                    placeholderTextColor="white"
+                    selectionColor="black"
+                    underlineColorAndroid="black"
+                  />
+                  <Input
+                    // leftIcon={<Icon name="lock" size={24} color="black" />}
+                    errorStyle={{ color: "red" }}
+                    errorMessage={
+                      props.touched.password2 && props.errors.password2
+                    }
+                    placeholder="Please re-type your password *"
+                    value={props.values.password2}
+                    onChangeText={props.handleChange("password2")}
+                    secureTextEntry={true}
+                    onBlur={props.handleBlur("password2")}
+                    placeholderTextColor="white"
+                    selectionColor="black"
+                    underlineColorAndroid="black"
+                  />
+                  <CheckBox
+                    style={{}}
+                    containerStyle={{
+                      backgroundColor: "transparent",
+                      borderColor: "transparent",
+                    }}
+                    backgroundColor="white"
+                    checkedColor="black"
+                    errorStyle={{ color: "red" }}
+                    errorMessage={props.errors.terms}
+                    title={
+                      <Text
+                        style={styles.titleStyle}
+                        onPress={() =>
+                          Linking.openURL(
+                            "https://github.com/alecclyde/TheLoop/blob/main/README.md"
+                          )
+                        }
+                      >
+                        {"\t"}I accept Terms and Conditions
+                      </Text>
+                    }
+                    checked={checkTerms}
+                    onPress={() => {
+                      setCheckTerms(!checkTerms);
+                      props.setFieldValue("terms", !checkTerms);
+                    }}
+                  />
 
-        <View style={{ flexDirection: "row", justifyContent: "center"}}>
-          <Text h4 style={{ textAlign: "center", color: "white"}}>
-            or
-          </Text>
-        </View>
+                  <Button
+                    onPress={props.handleSubmit}
+                    title="Sign Up"
+                    buttonStyle={{
+                      height: 50,
+                      margin: 10,
+                      backgroundColor: "#3B4046",
+                    }}
+                    containerStyle={{
+                      marginBottom: 5,
+                      borderRadius: 10, // adds the rounded corners
+                    }}
+                  />
+                </ScrollView>
+              </>
+            )}
+          </Formik>
 
-        <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 150 }}>
-          <Button
-            icon={<Icon name="sign-in" size={15} color="white"/>}
-            containerStyle={{
-              borderRadius: 10, // adds the rounded corners
-              padding: 20
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <Text h4 style={{ textAlign: "center", color: "white" }}>
+              or
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              marginBottom: 150,
             }}
-            buttonStyle={{  backgroundColor: '#3B4046' }}
-            title="  Sign In"
-            onPress={() => props.navigation.navigate("LogIn")}
-          ></Button>
+          >
+            <Button
+              icon={<Icon name="sign-in" size={15} color="white" />}
+              containerStyle={{
+                borderRadius: 10, // adds the rounded corners
+                padding: 20,
+              }}
+              buttonStyle={{ backgroundColor: "#3B4046" }}
+              title="  Sign In"
+              onPress={() => props.navigation.navigate("LogIn")}
+            ></Button>
+          </View>
         </View>
       </View>
-    </View>
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   button: {
@@ -218,12 +266,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({
-  users: state.user
+const mapStateToProps = (state) => ({
+  users: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  registration: (email, password, lastName, firstName, navigation) => dispatch(registration(email, password, lastName, firstName, navigation))
-})
+  registration: (email, password, lastName, firstName, navigation) =>
+    dispatch(registration(email, password, lastName, firstName, navigation)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
