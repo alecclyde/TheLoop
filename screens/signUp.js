@@ -170,6 +170,13 @@ function SignUp(props, { navigation }) {
                     underlineColorAndroid="black"
                   />
                   <CheckBox
+                    style={{}}
+                    containerStyle={{
+                      backgroundColor: "transparent",
+                      borderColor: "transparent",
+                    }}
+                    backgroundColor="white"
+                    checkedColor="black"
                     errorStyle={{ color: "red" }}
                     errorMessage={props.errors.terms}
                     title={"I accept Terms and Conditions"}
