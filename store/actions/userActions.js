@@ -96,18 +96,24 @@ export function setUserLoops(joinedLoops, navigation) {
 
 export function addDistance(values, navigation) {
   return async function addDistanceThunk(dispatch, getState) {
-    const user = firebase.auth().currentUser;
-    //await firebase.firestore().collection("users").doc(user).update({
-    //   distanceTolerance: values.range,
-    // });
+    await firebase.firestore()
+    .collection('users')
+    .doc(firebase.auth().currentUser.uid)
+    .collection("distanceTolerance")
+    .set(values)
 
-    dispatch({ type: ADD_DISTANCE });
+    dispatch({ type: ADD_DISTANCE, payload: values });
     navigation.navigate("RootStack");
   };
 }
 
 export function setLocation(latitude, longitude) {
   return async function setLocationThunk(dispatch, getState){
+    await firebase.firestore()
+    .collection('users')
+    .doc(firebase.auth().currentUser.uid)
+    .collection("location")
+    .set({latitude, longitude})
 
     dispatch({ type: SET_LOCATION, payload: {latitude, longitude}})
   }
