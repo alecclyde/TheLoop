@@ -22,6 +22,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Image } from "react-native-elements";
 import { CheckBox } from "react-native-elements";
+import { Linking } from "react-native";
 
 //https://github.com/jquense/yup/issues/97#issuecomment-306547261
 //checks to see if both passwords are the same
@@ -179,7 +180,18 @@ function SignUp(props, { navigation }) {
                     checkedColor="black"
                     errorStyle={{ color: "red" }}
                     errorMessage={props.errors.terms}
-                    title={"I accept Terms and Conditions"}
+                    title={
+                      <Text
+                        style={styles.titleStyle}
+                        onPress={() =>
+                          Linking.openURL(
+                            "https://github.com/alecclyde/TheLoop/blob/main/README.md"
+                          )
+                        }
+                      >
+                        {"\t"}I accept Terms and Conditions
+                      </Text>
+                    }
                     checked={checkTerms}
                     onPress={() => {
                       setCheckTerms(!checkTerms);
