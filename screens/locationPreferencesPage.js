@@ -18,7 +18,7 @@ import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
-import { addDistance } from "../store/actions/userActions";
+import { addDistance, setLocation } from "../store/actions/userActions";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import Slider from "@react-native-community/slider";
 import { Dimensions } from "react-native";
@@ -72,6 +72,7 @@ function LocationPreferencesPage(props) {
               onPress={(data, details = null) => {
                 setLatitude(details.geometry.location.lat);
                 setLongitude(details.geometry.location.lng);
+                props.setLocation(latitude, longitude);
               }}
               getDefaultValue={() => {
                 return ""; // text input default value
