@@ -30,5 +30,11 @@ To see how to set up application in a developer environment, go to [SETUP.md](SE
 ## Team 🤝
 We are a team of five: [Robbie](https://github.com/airgo32), [Caden](https://github.com/NedacNostrebor), [Joe](https://github.com/Jmtonnies), [Tim](https://github.com/Tim12-code), and [Alec](https://github.com/alecclyde).
 
+## Privacy Policy
+Read our: [Privacy Policy](https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md) here. 
+
+Or peruse our [Terms and Conditions](https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md) if you wish.
+                
+
 ## License 	📙
 [MIT](https://choosealicense.com/licenses/mit/)
