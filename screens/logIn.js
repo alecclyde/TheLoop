@@ -60,9 +60,9 @@ function Login(props, { navigation }) {
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
+      <ScrollView>
     <View>
-      <View style={{ flex: 1 }} />
-      <View>
+      {/* <View style={{ flex: 1 }} /> */}
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={LoginSchema}
@@ -170,8 +170,8 @@ function Login(props, { navigation }) {
             ></Button>
           </View>
       </View>
-      <View style={{ flex: 1 }} />
-    </View>
+      {/* <View style={{ flex: 1 }} /> */}
+      </ScrollView>
     </SafeAreaView>
   );
 

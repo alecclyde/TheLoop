@@ -65,6 +65,17 @@ function SignUp(props, { navigation }) {
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
+      <Image
+        source={require("../assets/The-Loop-8.png")}
+        style={{
+          width: 380,
+          height: 170,
+          marginRight: 10,
+          marginBottom: 15,
+          marginTop: 10,
+        }}
+      />
+     <ScrollView onBlur={Keyboard.dismiss}>
       <View>
         <View>
           <Formik
@@ -90,17 +101,6 @@ function SignUp(props, { navigation }) {
           >
             {(props) => (
               <>
-                <Image
-                  source={require("../assets/The-Loop-8.png")}
-                  style={{
-                    width: 380,
-                    height: 170,
-                    marginRight: 10,
-                    marginBottom: 15,
-                    marginTop: 10,
-                  }}
-                />
-                <ScrollView onBlur={Keyboard.dismiss}>
                   <Input
                     placeholder="First name *"
                     errorStyle={{ color: "red" }}
@@ -215,7 +215,6 @@ function SignUp(props, { navigation }) {
                       borderRadius: 10, // adds the rounded corners
                     }}
                   />
-                </ScrollView>
               </>
             )}
           </Formik>
@@ -246,6 +245,7 @@ function SignUp(props, { navigation }) {
           </View>
         </View>
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
