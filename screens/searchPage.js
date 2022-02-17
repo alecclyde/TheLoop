@@ -16,7 +16,7 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import { globalStyles } from "../styles/global";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { SearchBar, withTheme } from "react-native-elements";
+import { SearchBar, withTheme, CheckBox } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
 import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
@@ -30,15 +30,23 @@ import { connect } from "react-redux";
 
 function Search(props, { navigation }) {
   const [events, setEvents] = useState([]);
-  const [search, setSearch] = useState({ text: "" });
+  const [searchTerm, setSearchTerm] = useState("");
   const isFocused = useIsFocused();
   const latitude = 41.241489;
   const longitude = -77.041924;
   const position = 0;
 
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [byName, setByName] = useState(true);
+  const [byLocation, setByLocation] = useState(true);
+  const [byLoop, setByLoop] = useState(true);
+
+  const [filteredEvents, setFilteredEvents] = useState([]);
+
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
-    // if (isFocused) {
+    if (isFocused) {
       setEvents([]);
       firebase
         .firestore()
@@ -60,28 +68,140 @@ function Search(props, { navigation }) {
             }
           });
         });
-    // }
+    }
   }, [isFocused]);
+
+  // update the list of filtered events
+  useEffect(() => {
+    if (searchTerm == "") {
+      setFilteredEvents([]);
+
+    } else {
+      let filteredEvents = new Set();
+      events.forEach((event) => {
+        if (
+          (byName && event.name.includes(searchTerm)) ||
+          (byLocation && event.address.includes(searchTerm)) ||
+          (byLoop && event.loop.includes(searchTerm))
+        ) {
+          filteredEvents.add(event);
+        }
+      });
+
+      setFilteredEvents([...filteredEvents]);
+    }
+  }, [searchTerm, byName, byLocation, byLoop]);
 
   return (
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
       <View style={[styles.holder, { flexDirection: "column" }]}>
-        <View style={{ flex: 1 }}>
-          <SearchBar
-            placeholder="Type Here..."
-            onChangeText={(text) => {
-              setSearch({ text });
-            }}
-            value={search.text}
-          />
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flex: 1 }}>
+            <SearchBar
+              placeholder="Type Here..."
+              onChangeText={(text) => {
+                setSearchTerm(text);
+              }}
+              containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0 }}
+              value={searchTerm}
+            />
+          </View>
+          <View style={{ flexDirection: "column", backgroundColor: "#393E42" }}>
+            <View style={{ flex: 1 }} />
+            <Icon
+              name="gear"
+              color="white"
+              size={30}
+              style={{ paddingHorizontal: 5, justifyContent: "center" }}
+              onPress={() => {
+                setShowFilters(!showFilters);
+              }}
+            />
+            <View style={{ flex: 1 }} />
+          </View>
         </View>
+        {showFilters && (
+          <View>
+            <View style={{ alignItems: "center", backgroundColor: "#393E42" }}>
+              <Text
+                style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+              >
+                Filter by...
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row", backgroundColor: "#393E42" }}>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Name"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byName}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByName(!byName);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Location"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byLocation}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByLocation(!byLocation);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Loop"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byLoop}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByLoop(!byLoop);
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+
         <View style={[styles.container, { flex: 2 }]}>
+        {(filteredEvents.length == 0) && (
+          <View style={{ alignItems: "center"}}>
+            <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
+            {searchTerm == "" ? "Start typing to search for an event": "No results..."}
+            </Text>
+          </View>
+        )}
           <FlatList
             //contentContainerStyle={{ paddingBottom: }}
             persistentScrollbar={true}
-            data={events}
+            data={filteredEvents}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
