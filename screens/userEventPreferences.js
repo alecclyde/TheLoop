@@ -34,14 +34,7 @@ export default function UserEventPreferences({ navigation }) {
   const [checkMedia, setCheckMedia] = useState(false);
 
   return (
-    <View>
-      <ImageBackground
-        source={{
-          uri: "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?size=626&ext=jpg",
-        }}
-        resizeMode="cover"
-        style={{ width: "100%", height: "100%" }}
-      >
+     
         <SafeAreaView style={globalStyles.container}>
           <View style={{ alignItems: "center" }}>
             <Formik
@@ -267,11 +260,7 @@ export default function UserEventPreferences({ navigation }) {
                           titleColor: "black",
                           backgroundColor: "#2B7D9C",
                         }}
-                        style={{ flex: 1 }}
                         onPress={props.handleSubmit}
-                        // onPress={() => {
-                        //   console.log(props.values);
-                        // }}
                       />
                     </View>
                   </View>
@@ -280,8 +269,6 @@ export default function UserEventPreferences({ navigation }) {
             </Formik>
           </View>
         </SafeAreaView>
-      </ImageBackground>
-    </View>
   );
 }
 

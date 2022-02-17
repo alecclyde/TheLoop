@@ -18,6 +18,7 @@ export function registration(email, password, lastName, firstName, navigation) {
         joinedLoops: [],
         distanceTolerance: 15,
         myEvents: [],
+        location: [],
         creationTimestamp: firebase.firestore.Timestamp.now(),
       };
       await firebase
@@ -99,8 +100,7 @@ export function addDistance(values, navigation) {
     await firebase.firestore()
     .collection('users')
     .doc(firebase.auth().currentUser.uid)
-    .collection("distanceTolerance")
-    .set(values)
+    .update({distanceTolerance: values})
 
     dispatch({ type: ADD_DISTANCE, payload: values });
     navigation.navigate("RootStack");
@@ -112,8 +112,7 @@ export function setLocation(latitude, longitude) {
     await firebase.firestore()
     .collection('users')
     .doc(firebase.auth().currentUser.uid)
-    .collection("location")
-    .set({latitude, longitude})
+    .update({location: {latitude, longitude}})
 
     dispatch({ type: SET_LOCATION, payload: {latitude, longitude}})
   }
