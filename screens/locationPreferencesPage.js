@@ -19,7 +19,7 @@ import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
 import { addDistance, setLocation } from "../store/actions/userActions";
-import { TouchableHighlight } from "react-native-gesture-handler";
+import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import Slider from "@react-native-community/slider";
 import { Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -51,13 +51,6 @@ function LocationPreferencesPage(props) {
   };
 
   return (
-    <ImageBackground
-      source={{
-        uri: "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?size=626&ext=jpg",
-      }}
-      resizeMode="cover"
-      style={{ width: "100%", height: "100%" }}
-    >
       <SafeAreaView style={globalStyles.container}>
         <View style={[styles.holder, { flexDirection: "column" }]}>
           <View style={{ flex: 4 }}>
@@ -200,7 +193,6 @@ function LocationPreferencesPage(props) {
           )} */}
         </View>
       </SafeAreaView>
-    </ImageBackground>
   );
 }
 
