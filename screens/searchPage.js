@@ -111,7 +111,7 @@ function Search(props, { navigation }) {
           <View style={{ flexDirection: "column", backgroundColor: "#393E42" }}>
             <View style={{ flex: 1 }} />
             <Icon
-              name="gear"
+              name="filter"
               color="white"
               size={30}
               style={{ paddingHorizontal: 5, justifyContent: "center" }}
@@ -194,7 +194,7 @@ function Search(props, { navigation }) {
         {(filteredEvents.length == 0) && (
           <View style={{ alignItems: "center"}}>
             <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
-            {searchTerm == "" ? "Start typing to search for an event": "No results..."}
+            {searchTerm == "" ? "Start typing to search for an event!": "No results..."}
             </Text>
           </View>
         )}
