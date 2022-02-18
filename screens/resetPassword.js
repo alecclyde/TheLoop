@@ -52,7 +52,8 @@ export default function ResetPassword({ navigation }) {
 
   // if(userLoaded){
     return (
-      <SafeAreaView style={globalStyles.container}>
+      <SafeAreaView style={globalStyles.container} onBlur={Keyboard.dismiss}>
+        <View style={{ flex: 1 }} />
         <View>
           <Formik
             initialValues={{ email: "" }}
@@ -63,12 +64,7 @@ export default function ResetPassword({ navigation }) {
           >
             {(props) => (
               <>
-              <View style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginTop: 50,
-              marginBottom: 40,
-              }}>
+              <View style= {{flexDirection: "row", justifyContent: "center"}}>
               
               <Image
                     source={require("../assets/The-Loop-8.png")}
@@ -81,7 +77,6 @@ export default function ResetPassword({ navigation }) {
                     }}
                   />
             </View>
-                <ScrollView onBlur={Keyboard.dismiss}>
                 <Text style={globalStyles.titleText}>Forgot your password?</Text>
                 <Text style={globalStyles.footerText}>Enter your email address below. We'll send an email with instructions on how to reset your password.</Text>
                   {/* Email */}
@@ -109,7 +104,6 @@ export default function ResetPassword({ navigation }) {
                   />
 
                   {/* <Text>{welcomeText}</Text> */}
-                </ScrollView>
               </>
             )}
           </Formik>

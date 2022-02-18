@@ -2,7 +2,7 @@ import { SET_USER } from "../constants";
 import { UPDATE_USER } from "../constants";
 import { REMOVE_USER } from "../constants";
 import { ADD_DISTANCE } from "../constants";
-
+import { SET_LOCATION } from "../constants";
 import * as firebase from "firebase";
 import { Alert } from "react-native";
 
@@ -18,6 +18,7 @@ export function registration(email, password, lastName, firstName, navigation) {
         joinedLoops: [],
         distanceTolerance: 15,
         myEvents: [],
+        location: [],
         creationTimestamp: firebase.firestore.Timestamp.now(),
       };
       await firebase
@@ -96,12 +97,23 @@ export function setUserLoops(joinedLoops, navigation) {
 
 export function addDistance(values, navigation) {
   return async function addDistanceThunk(dispatch, getState) {
-    const user = firebase.auth().currentUser;
-    //await firebase.firestore().collection("users").doc(user).update({
-    //   distanceTolerance: values.range,
-    // });
+    await firebase.firestore()
+    .collection('users')
+    .doc(firebase.auth().currentUser.uid)
+    .update({distanceTolerance: values})
 
-    dispatch({ type: ADD_DISTANCE });
+    dispatch({ type: ADD_DISTANCE, payload: values });
     navigation.navigate("RootStack");
   };
+}
+
+export function setLocation(latitude, longitude) {
+  return async function setLocationThunk(dispatch, getState){
+    await firebase.firestore()
+    .collection('users')
+    .doc(firebase.auth().currentUser.uid)
+    .update({location: {latitude, longitude}})
+
+    dispatch({ type: SET_LOCATION, payload: {latitude, longitude}})
+  }
 }

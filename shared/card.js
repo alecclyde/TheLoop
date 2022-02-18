@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     justifyContent: 'center',
+    backgroundColor: '#3B4046'
 
   }
 });

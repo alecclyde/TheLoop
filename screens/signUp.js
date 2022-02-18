@@ -59,13 +59,14 @@ function SignUp(props, { navigation }) {
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
-    <View  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    marginTop: 50,
-                    marginBottom: 40,
-                  }}
-                >
+    <View  
+    style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          marginTop: 50,
+          marginBottom: 40,
+        }}
+      >
       <View>
         <Formik
           initialValues={{

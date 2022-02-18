@@ -23,12 +23,14 @@ import { connect } from "react-redux";
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
 
-function mapView({ navigation }) {
+function mapView(props) {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-  const latitude = 41.241489;
-  const longitude = -77.041924;
+  const [latitude, setLatitude] = useState(props.user.location.latitude || 40.15974);
+  const [longitude, setLongitude] = useState( props.user.location.longitude || -76.988419);
+  // const latitude = 41.241489;
+  // const longitude = -77.041924;
   const position = 0;
 
   //Gets all the events from the database and sets them to the events
