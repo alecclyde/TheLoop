@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {SafeAreaView} from "react-native";
 import * as firebase from "firebase";
 import React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 // stacks
 import HomeStack from "./homeStack";
 import EventCreationStack from "./eventCreationStack";
@@ -13,16 +13,14 @@ import SearchEventsStack from "./searchEventsStack";
 const Tab = createBottomTabNavigator();
 export default function RootStack() {
   return (
-    <SafeAreaProvider>
+    
     <Tab.Navigator
       initialRouteName="HomeStack"
       screenOptions={{
-        
         headerShown: false,
         tabBarActiveBackgroundColor: "#2B7D9C",
         tabBarInactiveBackgroundColor: "#3B4046",
-        tabBarStyle: { flex: .10, borderTopWidth: 0},
-        tyle: {borderTopWidth: 0}
+        tabBarStyle: {flex: .11, paddingBottom:0, borderTopWidth: 0},
       }}
       
       labeled={false}
@@ -32,7 +30,6 @@ export default function RootStack() {
         name="HomeStack"
         component={HomeStack}
         options={{
-          backgroundColor: "orange",
           title: "",
           tabBarIcon: ({ color, size }) => (
             <Icon raised size={30} color="white" name="home" />
@@ -85,8 +82,7 @@ export default function RootStack() {
           tabBarIconStyle: {marginTop: 10}
         }}
       />
-      
     </Tab.Navigator>
-    </SafeAreaProvider>
+
   );
 }
