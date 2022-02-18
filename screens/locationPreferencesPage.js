@@ -28,7 +28,7 @@ import { globalStyles } from "../styles/global";
 import { Formik } from "formik";
 import { Constants, Location, Permissions } from "expo";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { PLACES_ID } from "@env";
+import { API_KEY } from "@env";
 
 //navigator.geolocation = require("@react-native-community/geolocation");
 //navigator.geolocation = require("react-native-geolocation-service");
@@ -78,7 +78,7 @@ function LocationPreferencesPage(props) {
               }}
               query={{
                 // available options: https://developers.google.com/places/web-service/autocomplete
-                key: PLACES_ID,
+                key: API_KEY,
                 language: "en", // language of the results
                 types: "(cities)", // default: 'geocode'
               }}

@@ -26,7 +26,7 @@ import { addEvent } from "../store/actions/eventActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { PLACES_ID } from "@env";
+import { API_KEY } from "@env";
 import { Dimensions } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
@@ -192,7 +192,7 @@ function EventCreation(props) {
                     }}
                     query={{
                       // available options: https://developers.google.com/places/web-service/autocomplete
-                      key: PLACES_ID,
+                      key: API_KEY,
                       language: "en", // language of the results
                       types: "(cities)", // default: 'geocode'
                     }}
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     //position: "absolute",
     flex: 1,
     justifyContent: "center",
-    //marginBottom: 50,
+    marginBottom: 50,
   },
 });
 
