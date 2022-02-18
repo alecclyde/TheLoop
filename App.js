@@ -23,7 +23,7 @@ import { LogBox } from "react-native";
 //https://github.com/facebook/react-native/issues/12981
 LogBox.ignoreLogs(["Setting a timer"]);
 //github.com/firebase/firebase-js-sdk/issues/1847#:~:text=When%20using%20Firebase%20on%20React,authentication%20session%20across%20app%20restarts.&text=59%20AsyncStorage%20is%20deprecated%20from,%2Dnative%2Dasync%2Dstorage%20.
-https: LogBox.ignoreLogs(["AsyncStorage"]);
+LogBox.ignoreLogs(["AsyncStorage"]);
 
 const firebaseConfig = {
   apiKey: API_KEY,
@@ -38,10 +38,8 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
-  console.log(firebaseConfig.apiKey) // delete
 } else {
   firebase.app(); // if already initialized, use that one
-  console.log(firebaseConfig.apiKey) // delete
 }
 
 export default function App() {

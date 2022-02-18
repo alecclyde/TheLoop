@@ -49,6 +49,7 @@ function LocationPreferencesPage(props) {
     description: "Messiah University",
     geometry: { location: { lat: 40.15974, lng: -76.988419 } },
   };
+  
 
   return (
     <SafeAreaView style={globalStyles.container}>

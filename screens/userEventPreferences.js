@@ -66,7 +66,7 @@ const windowHight = Dimensions.get("window").height;
 //   ]);
 
 const SignUpSchema = yup.object({
-  Checked: yup.boolean().oneOf("True", "Must have at least one box checked."),
+  Checked: yup.boolean().oneOf([true], "Must have at least one box checked."),
 });
 
 export default function UserEventPreferences({ navigation }) {
@@ -81,45 +81,45 @@ export default function UserEventPreferences({ navigation }) {
   const [checkMedia, setCheckMedia] = useState(false);
   const [valid, setValid] = useState(false);
 
-  useEffect(() => {
-    if (
-      checkMedia ||
-      checkAcademic ||
-      checkArts ||
-      checkGame ||
-      checkMusic ||
-      checkOutdoors ||
-      checkSocial ||
-      checkSports ||
-      checkVolunteer
-    ) {
-      // console.log("-------------------------------------")
-      // console.log("MEDIA: " + checkMedia);
-      // console.log("Academic: " + checkAcademic);
-      // console.log("Arts: " + checkArts);
-      // console.log("Game: " + checkGame);
-      // console.log("Music: " + checkMusic);
-      // console.log("Outdoors: " + checkOutdoors);
-      // console.log("Social: " + checkSocial);
-      // console.log("Sports: " + checkSports);
-      // console.log("Volunteer: " + checkVolunteer);
-      // console.log("true");
-      setValid(true);
-    } else {
-      // console.log("-------------------------------------")
-      // console.log("MEDIA: " + checkMedia);
-      // console.log("Academic: " + checkAcademic);
-      // console.log("Arts: " + checkArts);
-      // console.log("Game: " + checkGame);
-      // console.log("Music: " + checkMusic);
-      // console.log("Outdoors: " + checkOutdoors);
-      // console.log("Social: " + checkSocial);
-      // console.log("Sports: " + checkSports);
-      // console.log("Volunteer: " + checkVolunteer);
-      // console.log("false");
-      setValid(false);
-    }
-})
+//   useEffect(() => {
+//     if (
+//       checkMedia ||
+//       checkAcademic ||
+//       checkArts ||
+//       checkGame ||
+//       checkMusic ||
+//       checkOutdoors ||
+//       checkSocial ||
+//       checkSports ||
+//       checkVolunteer
+//     ) {
+//       console.log("-------------------------------------")
+//       console.log("MEDIA: " + checkMedia);
+//       console.log("Academic: " + checkAcademic);
+//       console.log("Arts: " + checkArts);
+//       console.log("Game: " + checkGame);
+//       console.log("Music: " + checkMusic);
+//       console.log("Outdoors: " + checkOutdoors);
+//       console.log("Social: " + checkSocial);
+//       console.log("Sports: " + checkSports);
+//       console.log("Volunteer: " + checkVolunteer);
+//       console.log("true");
+//       setValid(true);
+//     } else {
+//       console.log("-------------------------------------")
+//       console.log("MEDIA: " + checkMedia);
+//       console.log("Academic: " + checkAcademic);
+//       console.log("Arts: " + checkArts);
+//       console.log("Game: " + checkGame);
+//       console.log("Music: " + checkMusic);
+//       console.log("Outdoors: " + checkOutdoors);
+//       console.log("Social: " + checkSocial);
+//       console.log("Sports: " + checkSports);
+//       console.log("Volunteer: " + checkVolunteer);
+//       console.log("false");
+//       setValid(false);
+//     }
+// })
 
   return (
     <SafeAreaView style={globalStyles.container}>
@@ -135,12 +135,22 @@ export default function UserEventPreferences({ navigation }) {
             Outdoors: false,
             Academic: false,
             Media: false,
-            Checked: false,
+            // Checked: false,
           }}
           validationSchema={SignUpSchema}
           //validationSchema={setUserLoopsSchema}
           onSubmit={(joinedLoops) => {
-            console.log(joinedLoops.Checked);
+            // console.log("-------------------------------------")
+            // console.log("MEDIA: " + joinedLoops.Media);
+            // console.log("Academic: " + joinedLoops.Academic);
+            // console.log("Arts: " + joinedLoops.Arts);
+            // console.log("Game: " + joinedLoops.Game);
+            // console.log("Music: " + joinedLoops.Music);
+            // console.log("Outdoors: " + joinedLoops.Outdoors);
+            // console.log("Social: " + joinedLoops.Social);
+            // console.log("Sports: " + joinedLoops.Sports);
+            // console.log("Volunteer: " + joinedLoops.Volunteer);
+            // console.log(joinedLoops.Checked);
             setUserLoops(joinedLoops, navigation);
           }}
         >
@@ -169,7 +179,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckSports(!checkSports);
                         props.setFieldValue("Sports", !checkSports);
-                        props.setFieldValue("Checked", valid);
+                        // props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -188,9 +198,9 @@ export default function UserEventPreferences({ navigation }) {
                       }
                       checked={checkMusic}
                       onPress={() => {
-                        props.setFieldValue("Music", checkMusic);
                         setCheckMusic(!checkMusic);
-                        props.setFieldValue("Checked", valid);
+                        props.setFieldValue("Music", !checkMusic);
+                        // props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -211,7 +221,6 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckVolunteer(!checkVolunteer);
                         props.setFieldValue("Volunteer", !checkVolunteer);
-                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -232,7 +241,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckGame(!checkGame);
                         props.setFieldValue("Game", !checkGame);
-                        props.setFieldValue("Checked", valid);
+                        // props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -253,7 +262,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckSocial(!checkSocial);
                         props.setFieldValue("Social", !checkSocial);
-                        props.setFieldValue("Checked", valid);
+                        // props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -274,7 +283,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckArts(!checkArts);
                         props.setFieldValue("Arts", !checkArts);
-                        props.setFieldValue("Checked", valid);
+                        // props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -295,7 +304,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckOutdoors(!checkOutdoors);
                         props.setFieldValue("Outdoors", !checkOutdoors);
-                        props.setFieldValue("Checked", valid);
+                        // props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -316,7 +325,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckAcademic(!checkAcademic);
                         props.setFieldValue("Academic", !checkAcademic);
-                        props.setFieldValue("Checked", valid);
+                        // props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -337,7 +346,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckMedia(!checkMedia);
                         props.setFieldValue("Media", !checkMedia);
-                        props.setFieldValue("Checked", valid);
+                        // props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
