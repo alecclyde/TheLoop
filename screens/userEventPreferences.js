@@ -22,253 +22,341 @@ const windowHight = Dimensions.get("window").height;
 //   joinedLoops: yup.array.required("Please select at least 1 interest."),
 // });
 
+// const SignUpSchema = yup
+//   .object()
+//   .shape({
+//     Sports: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//     Music: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//     Volunteer: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//     Game: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//     Social: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//     Arts: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//     Outdoors: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//     Academic: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//     Media: yup
+//       .boolean()
+//       .oneOf([true], "Must select at least one area of interest."),
+//   })
+//   .atLeastOneOf([
+//     "Sports",
+//     "Music",
+//     "Volunteer",
+//     "Game",
+//     "Social",
+//     "Arts",
+//     "Outdoors",
+//     "Academic",
+//     "Media",
+//   ]);
+
+const SignUpSchema = yup.object({
+  Checked: yup.boolean().oneOf([true], "Must have at least one box checked."),
+});
+
 export default function UserEventPreferences({ navigation }) {
-  const [checkSports, setCheckSports] = useState(false);
-  const [checkMusic, setCheckMusic] = useState(false);
-  const [checkVolunteer, setCheckVolunteer] = useState(false);
-  const [checkGame, setCheckGame] = useState(false);
-  const [checkSocial, setCheckSocial] = useState(false);
-  const [checkArts, setCheckArts] = useState(false);
-  const [checkOutdoors, setCheckOutdoors] = useState(false);
-  const [checkAcademic, setCheckAcademic] = useState(false);
-  const [checkMedia, setCheckMedia] = useState(false);
+  const [checkSports, setCheckSports] = useState(true);
+  const [checkMusic, setCheckMusic] = useState(true);
+  const [checkVolunteer, setCheckVolunteer] = useState(true);
+  const [checkGame, setCheckGame] = useState(true);
+  const [checkSocial, setCheckSocial] = useState(true);
+  const [checkArts, setCheckArts] = useState(true);
+  const [checkOutdoors, setCheckOutdoors] = useState(true);
+  const [checkAcademic, setCheckAcademic] = useState(true);
+  const [checkMedia, setCheckMedia] = useState(true);
+  const [valid, setValid] = useState(false);
+
+  const Check = () => {
+    if (
+      checkMedia ||
+      checkAcademic ||
+      checkArts ||
+      checkGame ||
+      checkMusic ||
+      checkOutdoors ||
+      checkSocial ||
+      checkSports ||
+      checkVolunteer
+    ) {
+      console.log("Check" + "true");
+      return true;
+    } else {
+      console.log("Check" + "false");
+      return false;
+    }
+  };
 
   return (
-     
-        <SafeAreaView style={globalStyles.container}>
-          <View style={{ alignItems: "center" }}>
-            <Formik
-              initialValues={{
-                Sports: false,
-                Music: false,
-                Volunteer: false,
-                Game: false,
-                Social: false,
-                Arts: false,
-                Outdoors: false,
-                Academic: false,
-                Media: false,
-              }}
-              //validationSchema={setUserLoopsSchema}
-              onSubmit={(joinedLoops) => {
-                setUserLoops(joinedLoops, navigation);
-              }}
-            >
-              {(props) => (
-                <>
-                  <View>
-                    <Text style={globalStyles.titleText}></Text>
-                    <Text style={globalStyles.titleText}>
-                      Please select at least 1 area of interest.
-                    </Text>
-                    <View style={styles.container}>
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Sports{"\n"}
-                            </Text>
-                          }
-                          // title={<Text style={{}}>Sports</Text>}
-                          //textStyle={(size = 30)}
-                          checkedIcon="futbol-o"
-                          uncheckedIcon="futbol-o"
-                          checkedColor="#2B7D9C"
-                          checked={checkSports}
-                          onPress={() => {
-                            setCheckSports(!checkSports);
-                            props.setFieldValue("Sports", !checkSports);
-                          }}
-                        />
-                      </View>
-                      {/* </View>
-                  <View style={styles.container}> */}
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          checkedIcon="music"
-                          uncheckedIcon="music"
-                          checkedColor="#2B7D9C"
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Music{"\n"}
-                            </Text>
-                          }
-                          checked={checkMusic}
-                          onPress={() => {
-                            setCheckMusic(!checkMusic);
-                            props.setFieldValue("Music", !checkMusic);
-                          }}
-                        />
-                      </View>
-                      {/* </View>
-                  <View style={styles.container}> */}
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Volunteer{"\n"}
-                            </Text>
-                          }
-                          checkedColor="#2B7D9C"
-                          checkedIcon="plus"
-                          uncheckedIcon="plus"
-                          checked={checkVolunteer}
-                          onPress={() => {
-                            setCheckVolunteer(!checkVolunteer);
-                            props.setFieldValue("Volunteer", !checkVolunteer);
-                          }}
-                        />
-                      </View>
-                      {/* </View>
-                  <View style={styles.container}> */}
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Game{"\n"}
-                            </Text>
-                          }
-                          checkedIcon="gamepad"
-                          uncheckedIcon="gamepad"
-                          checkedColor="#2B7D9C"
-                          checked={checkGame}
-                          onPress={() => {
-                            setCheckGame(!checkGame);
-                            props.setFieldValue("Game", !checkGame);
-                          }}
-                        />
-                      </View>
-                      {/* </View>
-                  <View style={styles.container}> */}
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Social{"\n"}
-                            </Text>
-                          }
-                          checkedIcon="users"
-                          uncheckedIcon="users"
-                          checkedColor="#2B7D9C"
-                          checked={checkSocial}
-                          onPress={() => {
-                            setCheckSocial(!checkSocial);
-                            props.setFieldValue("Social", !checkSocial);
-                          }}
-                        />
-                      </View>
-                      {/* </View>
-                  <View style={styles.container}> */}
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Arts{"\n"}
-                            </Text>
-                          }
-                          checkedIcon="paint-brush"
-                          uncheckedIcon="paint-brush"
-                          checkedColor="#2B7D9C"
-                          checked={checkArts}
-                          onPress={() => {
-                            setCheckArts(!checkArts);
-                            props.setFieldValue("Arts", !checkArts);
-                          }}
-                        />
-                      </View>
-                      {/* </View>
-                  <View style={styles.container}> */}
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Outdoors{"\n"}
-                            </Text>
-                          }
-                          checkedIcon="pagelines"
-                          uncheckedIcon="pagelines"
-                          checkedColor="#2B7D9C"
-                          checked={checkOutdoors}
-                          onPress={() => {
-                            setCheckOutdoors(!checkOutdoors);
-                            props.setFieldValue("Outdoors", !checkOutdoors);
-                          }}
-                        />
-                      </View>
-                      {/* </View>
-                  <View style={styles.container}> */}
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Academic{"\n"}
-                            </Text>
-                          }
-                          checkedIcon="book"
-                          uncheckedIcon="book"
-                          checkedColor="#2B7D9C"
-                          checked={checkAcademic}
-                          onPress={() => {
-                            setCheckAcademic(!checkAcademic);
-                            props.setFieldValue("Academic", !checkAcademic);
-                          }}
-                        />
-                      </View>
-                      {/* </View>
-                  <View style={styles.container}> */}
-                      <View style={styles.boxContainer}>
-                        <CheckBox
-                          size={40}
-                          title={
-                            <Text style={styles.titleStyle}>
-                              {"\n"}Media{"\n"}
-                            </Text>
-                          }
-                          checkedIcon="camera"
-                          uncheckedIcon="camera"
-                          checkedColor="#2B7D9C"
-                          checked={checkMedia}
-                          onPress={() => {
-                            setCheckMedia(!checkMedia);
-                            props.setFieldValue("Media", !checkMedia);
-                          }}
-                        />
-                      </View>
-                    </View>
-
-                    <Text style={globalStyles.errorText}>
-                      {props.touched.eventLoop && props.errors.eventLoop}
-                    </Text>
-
-                    <View />
-                    <View>
-                      <Button
-                        title="Save Preferences"
-                        titleStyle={{ fontSize: 26, color: "black" }}
-                        buttonStyle={{
-                          borderWidth: 10,
-                          borderWidth: 1,
-                          borderColor: "black",
-                          titleColor: "black",
-                          backgroundColor: "#2B7D9C",
-                        }}
-                        onPress={props.handleSubmit}
-                      />
-                    </View>
+    <SafeAreaView style={globalStyles.container}>
+      <View style={{ alignItems: "center" }}>
+        <Formik
+          initialValues={{
+            Sports: false,
+            Music: false,
+            Volunteer: false,
+            Game: false,
+            Social: false,
+            Arts: false,
+            Outdoors: false,
+            Academic: false,
+            Media: false,
+            Checked: false,
+          }}
+          validationSchema={SignUpSchema}
+          //validationSchema={setUserLoopsSchema}
+          onSubmit={(joinedLoops) => {
+            console.log(joinedLoops.Checked);
+            setUserLoops(joinedLoops, navigation);
+          }}
+        >
+          {(props) => (
+            <>
+              <View>
+                <Text style={globalStyles.titleText}></Text>
+                <Text style={globalStyles.titleText}>
+                  Please select at least 1 area of interest.
+                </Text>
+                <View style={styles.container}>
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Sports{"\n"}
+                        </Text>
+                      }
+                      // title={<Text style={{}}>Sports</Text>}
+                      //textStyle={(size = 30)}
+                      checkedIcon="futbol-o"
+                      uncheckedIcon="futbol-o"
+                      checkedColor="#2B7D9C"
+                      checked={checkSports}
+                      onPress={() => {
+                        setCheckSports(!checkSports);
+                        props.setFieldValue("Sports", !checkSports);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkSports);
+                      }}
+                    />
                   </View>
-                </>
-              )}
-            </Formik>
-          </View>
-        </SafeAreaView>
+                  {/* </View>
+                  <View style={styles.container}> */}
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      checkedIcon="music"
+                      uncheckedIcon="music"
+                      checkedColor="#2B7D9C"
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Music{"\n"}
+                        </Text>
+                      }
+                      checked={checkMusic}
+                      onPress={() => {
+                        setCheckMusic(!checkMusic);
+                        props.setFieldValue("Music", !checkMusic);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkMusic);
+                      }}
+                    />
+                  </View>
+                  {/* </View>
+                  <View style={styles.container}> */}
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Volunteer{"\n"}
+                        </Text>
+                      }
+                      checkedColor="#2B7D9C"
+                      checkedIcon="plus"
+                      uncheckedIcon="plus"
+                      checked={checkVolunteer}
+                      onPress={() => {
+                        setCheckVolunteer(!checkVolunteer);
+                        props.setFieldValue("Volunteer", !checkVolunteer);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkVolunteer);
+                      }}
+                    />
+                  </View>
+                  {/* </View>
+                  <View style={styles.container}> */}
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Game{"\n"}
+                        </Text>
+                      }
+                      checkedIcon="gamepad"
+                      uncheckedIcon="gamepad"
+                      checkedColor="#2B7D9C"
+                      checked={checkGame}
+                      onPress={() => {
+                        setCheckGame(!checkGame);
+                        props.setFieldValue("Game", !checkGame);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkGame);
+                      }}
+                    />
+                  </View>
+                  {/* </View>
+                  <View style={styles.container}> */}
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Social{"\n"}
+                        </Text>
+                      }
+                      checkedIcon="users"
+                      uncheckedIcon="users"
+                      checkedColor="#2B7D9C"
+                      checked={checkSocial}
+                      onPress={() => {
+                        setCheckSocial(!checkSocial);
+                        props.setFieldValue("Social", !checkSocial);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkSocial);
+                      }}
+                    />
+                  </View>
+                  {/* </View>
+                  <View style={styles.container}> */}
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Arts{"\n"}
+                        </Text>
+                      }
+                      checkedIcon="paint-brush"
+                      uncheckedIcon="paint-brush"
+                      checkedColor="#2B7D9C"
+                      checked={checkArts}
+                      onPress={() => {
+                        setCheckArts(!checkArts);
+                        props.setFieldValue("Arts", !checkArts);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkArts);
+                      }}
+                    />
+                  </View>
+                  {/* </View>
+                  <View style={styles.container}> */}
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Outdoors{"\n"}
+                        </Text>
+                      }
+                      checkedIcon="pagelines"
+                      uncheckedIcon="pagelines"
+                      checkedColor="#2B7D9C"
+                      checked={checkOutdoors}
+                      onPress={() => {
+                        setCheckOutdoors(!checkOutdoors);
+                        props.setFieldValue("Outdoors", !checkOutdoors);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkOutdoors);
+                      }}
+                    />
+                  </View>
+                  {/* </View>
+                  <View style={styles.container}> */}
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Academic{"\n"}
+                        </Text>
+                      }
+                      checkedIcon="book"
+                      uncheckedIcon="book"
+                      checkedColor="#2B7D9C"
+                      checked={checkAcademic}
+                      onPress={() => {
+                        setCheckAcademic(!checkAcademic);
+                        props.setFieldValue("Academic", !checkAcademic);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkAcademic);
+                      }}
+                    />
+                  </View>
+                  {/* </View>
+                  <View style={styles.container}> */}
+                  <View style={styles.boxContainer}>
+                    <CheckBox
+                      size={40}
+                      title={
+                        <Text style={styles.titleStyle}>
+                          {"\n"}Media{"\n"}
+                        </Text>
+                      }
+                      checkedIcon="camera"
+                      uncheckedIcon="camera"
+                      checkedColor="#2B7D9C"
+                      checked={checkMedia}
+                      onPress={() => {
+                        setCheckMedia(!checkMedia);
+                        props.setFieldValue("Media", !checkMedia);
+                        props.setFieldValue("Checked", Check());
+                        console.log(checkMedia);
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <Text style={globalStyles.errorText}>
+                  {props.touched.eventLoop && props.errors.eventLoop}
+                </Text>
+
+                <View />
+                <View>
+                  <Button
+                    title="Save Preferences"
+                    titleStyle={{ fontSize: 26, color: "black" }}
+                    buttonStyle={{
+                      borderWidth: 10,
+                      borderWidth: 1,
+                      borderColor: "black",
+                      titleColor: "black",
+                      backgroundColor: "#2B7D9C",
+                    }}
+                    onPress={props.handleSubmit}
+                  />
+                </View>
+              </View>
+            </>
+          )}
+        </Formik>
+      </View>
+    </SafeAreaView>
   );
 }
 
