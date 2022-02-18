@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { CheckBox, Card, Button, Text } from "react-native-elements";
 
@@ -66,22 +66,22 @@ const windowHight = Dimensions.get("window").height;
 //   ]);
 
 const SignUpSchema = yup.object({
-  Checked: yup.boolean().oneOf([true], "Must have at least one box checked."),
+  Checked: yup.boolean().oneOf("True", "Must have at least one box checked."),
 });
 
 export default function UserEventPreferences({ navigation }) {
-  const [checkSports, setCheckSports] = useState(true);
-  const [checkMusic, setCheckMusic] = useState(true);
-  const [checkVolunteer, setCheckVolunteer] = useState(true);
-  const [checkGame, setCheckGame] = useState(true);
-  const [checkSocial, setCheckSocial] = useState(true);
-  const [checkArts, setCheckArts] = useState(true);
-  const [checkOutdoors, setCheckOutdoors] = useState(true);
-  const [checkAcademic, setCheckAcademic] = useState(true);
-  const [checkMedia, setCheckMedia] = useState(true);
+  const [checkSports, setCheckSports] = useState(false);
+  const [checkMusic, setCheckMusic] = useState(false);
+  const [checkVolunteer, setCheckVolunteer] = useState(false);
+  const [checkGame, setCheckGame] = useState(false);
+  const [checkSocial, setCheckSocial] = useState(false);
+  const [checkArts, setCheckArts] = useState(false);
+  const [checkOutdoors, setCheckOutdoors] = useState(false);
+  const [checkAcademic, setCheckAcademic] = useState(false);
+  const [checkMedia, setCheckMedia] = useState(false);
   const [valid, setValid] = useState(false);
 
-  const Check = () => {
+  useEffect(() => {
     if (
       checkMedia ||
       checkAcademic ||
@@ -93,13 +93,33 @@ export default function UserEventPreferences({ navigation }) {
       checkSports ||
       checkVolunteer
     ) {
-      console.log("Check" + "true");
-      return true;
+      // console.log("-------------------------------------")
+      // console.log("MEDIA: " + checkMedia);
+      // console.log("Academic: " + checkAcademic);
+      // console.log("Arts: " + checkArts);
+      // console.log("Game: " + checkGame);
+      // console.log("Music: " + checkMusic);
+      // console.log("Outdoors: " + checkOutdoors);
+      // console.log("Social: " + checkSocial);
+      // console.log("Sports: " + checkSports);
+      // console.log("Volunteer: " + checkVolunteer);
+      // console.log("true");
+      setValid(true);
     } else {
-      console.log("Check" + "false");
-      return false;
+      // console.log("-------------------------------------")
+      // console.log("MEDIA: " + checkMedia);
+      // console.log("Academic: " + checkAcademic);
+      // console.log("Arts: " + checkArts);
+      // console.log("Game: " + checkGame);
+      // console.log("Music: " + checkMusic);
+      // console.log("Outdoors: " + checkOutdoors);
+      // console.log("Social: " + checkSocial);
+      // console.log("Sports: " + checkSports);
+      // console.log("Volunteer: " + checkVolunteer);
+      // console.log("false");
+      setValid(false);
     }
-  };
+})
 
   return (
     <SafeAreaView style={globalStyles.container}>
@@ -149,8 +169,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckSports(!checkSports);
                         props.setFieldValue("Sports", !checkSports);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkSports);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -169,10 +188,9 @@ export default function UserEventPreferences({ navigation }) {
                       }
                       checked={checkMusic}
                       onPress={() => {
+                        props.setFieldValue("Music", checkMusic);
                         setCheckMusic(!checkMusic);
-                        props.setFieldValue("Music", !checkMusic);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkMusic);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -193,8 +211,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckVolunteer(!checkVolunteer);
                         props.setFieldValue("Volunteer", !checkVolunteer);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkVolunteer);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -215,8 +232,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckGame(!checkGame);
                         props.setFieldValue("Game", !checkGame);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkGame);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -237,8 +253,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckSocial(!checkSocial);
                         props.setFieldValue("Social", !checkSocial);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkSocial);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -259,8 +274,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckArts(!checkArts);
                         props.setFieldValue("Arts", !checkArts);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkArts);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -281,8 +295,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckOutdoors(!checkOutdoors);
                         props.setFieldValue("Outdoors", !checkOutdoors);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkOutdoors);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -303,8 +316,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckAcademic(!checkAcademic);
                         props.setFieldValue("Academic", !checkAcademic);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkAcademic);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
@@ -325,8 +337,7 @@ export default function UserEventPreferences({ navigation }) {
                       onPress={() => {
                         setCheckMedia(!checkMedia);
                         props.setFieldValue("Media", !checkMedia);
-                        props.setFieldValue("Checked", Check());
-                        console.log(checkMedia);
+                        props.setFieldValue("Checked", valid);
                       }}
                     />
                   </View>
