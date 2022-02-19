@@ -315,6 +315,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
   events: state.events,
+  user: state.user
 });
 
 const mapDispatchToProps = (dispatch) => ({});
