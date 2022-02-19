@@ -12,6 +12,7 @@ import {
   View,
   FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { globalStyles } from "../styles/global";
@@ -193,6 +194,21 @@ function Search(props, { navigation }) {
         <View style={[styles.container, { flex: 2 }]}>
         {(filteredEvents.length == 0) && (
           <View style={{ alignItems: "center"}}>
+
+          {/* {
+            searchTerm == "" ? (
+              <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
+              Start typing to search for an event!
+              </Text>
+            ) : (
+              <Image
+                source={{uri: "https://i.ibb.co/KqRj666/No-Events.png", width: 220, height: 200}}
+              />
+            )
+          } */}
+
+          {/* uncomment block above and comment out Text below for the funny */}
+
             <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
             {searchTerm == "" ? "Start typing to search for an event!": "No results..."}
             </Text>
