@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   ScrollView,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUserData, getEventData, editPost } from "../shared/firebaseMethods";
@@ -36,6 +37,8 @@ function Home(props, { navigation, route }) {
   const [events, setEvents] = useState([]);
   const [eventIDs, setEventIDs] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+
   const isFocused = useIsFocused();
 
   // Listener to update user data
@@ -46,6 +49,7 @@ function Home(props, { navigation, route }) {
   }
 
   useEffect(() => {
+    // console.log("page loaded")
     const unsubscriber = firebase
       .auth()
       .onAuthStateChanged(AuthStateChangedListener);
@@ -56,12 +60,15 @@ function Home(props, { navigation, route }) {
 
   useEffect(() => {
     if (userID && isFocused) {
+      setLoading(true);
       getUserData(userID).then((user) => {
         // setEmail(user.email);
         // setFirstName(user.firstName);
         // setLastName(user.lastName);
 
         setEvents(user.myEvents);
+        setLoading(false);
+        // console.log("events loaded!")
         // setEventIDs(user.myEvents);
       });
     }
@@ -107,72 +114,105 @@ function Home(props, { navigation, route }) {
       <Text h3 style={styles.titles}>
         Upcoming Events
       </Text>
-
-      <ScrollView
-        persistentScrollbar={true}
-        horizontal={true}
-        style={{ flex: 1 }}
-      >
-        {events // upcoming events
-          .filter((item) => item.startDateTime > moment().unix())
-          .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
-          .map((event) => (
-            <TouchableOpacity
-              style={styles.clickable}
-              key={event.id}
-              onPress={() =>
-                props.navigation.navigate("CardDetails", {
-                  id: event.id,
-                  name: event.name,
-                  loop: event.loop,
-                  creator: event.creator,
-                  startDateTime: event.startDateTime,
-                  address: event.address,
-                })
-              }
+      <View style={{ flex: 1 }}>
+        {events.filter((item) => item.startDateTime > moment().unix()).length ==
+        0 ? ( // if there are currently no events for this category
+          loading ? (
+            // if there are no events in the filter and the events are still loading, put an activity indicator
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
             >
-              <ListItem
-                pad={16}
-                bottomDivide={true}
-                Component={TouchableScale}
-                button
-                friction={90}
-                tension={100} // These props are passed to the parent component (here TouchableScale)
-                activeScale={0.95} //
-                linearGradientProps={{
-                  colors: ["#3B4046", "#3B4046"],
-                  start: { x: 1, y: 0 },
-                  end: { x: 0.2, y: 0 },
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          ) : (
+            // if there are no events in the filter and the events have loaded, show text that says "no events"
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 30,
+                  fontFamily: "Helvetica",
                 }}
-                ViewComponent={LinearGradient}
               >
-                <Avatar
-                  size="large"
-                  //change this to either be icon of loop or that groups profile picture
-                  source={{
-                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                  }}
-                  resizeMode="cover"
-                  //style={{ width: "100%", height: "100%" }}
-                />
-                <ListItem.Content>
-                  <ListItem.Title style={styles.listingItem}>
-                    {event.name}
-                  </ListItem.Title>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
-                    {event.loop}
-                  </ListItem.Subtitle>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
-                    <Icon name="map-marker" size={16} color="white" />
-                    {"  "}
-                    {event.address}
-                  </ListItem.Subtitle>
-                </ListItem.Content>
-                <ListItem.Chevron color="gray" />
-              </ListItem>
-            </TouchableOpacity>
-          ))}
-      </ScrollView>
+                No events
+              </Text>
+            </View>
+          )
+        ) : (
+          // if there are events in the filter, put them in the ScrollView
+          <ScrollView persistentScrollbar={true} horizontal={true}>
+            {events // upcoming events
+              .filter((item) => item.startDateTime > moment().unix())
+              .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
+              .map((event) => (
+                <TouchableOpacity
+                  style={styles.clickable}
+                  key={event.id}
+                  onPress={() =>
+                    props.navigation.navigate("CardDetails", {
+                      id: event.id,
+                      name: event.name,
+                      loop: event.loop,
+                      creator: event.creator,
+                      startDateTime: event.startDateTime,
+                      address: event.address,
+                    })
+                  }
+                >
+                  <ListItem
+                    pad={16}
+                    bottomDivide={true}
+                    Component={TouchableScale}
+                    button
+                    friction={90}
+                    tension={100} // These props are passed to the parent component (here TouchableScale)
+                    activeScale={0.95} //
+                    linearGradientProps={{
+                      colors: ["#3B4046", "#3B4046"],
+                      start: { x: 1, y: 0 },
+                      end: { x: 0.2, y: 0 },
+                    }}
+                    ViewComponent={LinearGradient}
+                  >
+                    <Avatar
+                      size="large"
+                      //change this to either be icon of loop or that groups profile picture
+                      source={{
+                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                      }}
+                      resizeMode="cover"
+                      //style={{ width: "100%", height: "100%" }}
+                    />
+                    <ListItem.Content>
+                      <ListItem.Title style={styles.listingItem}>
+                        {event.name}
+                      </ListItem.Title>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        {event.loop}
+                      </ListItem.Subtitle>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        <Icon name="map-marker" size={16} color="white" />
+                        {"  "}
+                        {event.address}
+                      </ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron color="gray" />
+                  </ListItem>
+                </TouchableOpacity>
+              ))}
+          </ScrollView>
+        )}
+      </View>
 
       <Text h3 style={styles.titles}>
         Recent Events
@@ -245,7 +285,7 @@ function Home(props, { navigation, route }) {
       </ScrollView>
 
       <Text h3 style={styles.titles}>
-        Recommended Events
+        Events You're Hosting
       </Text>
 
       <ScrollView
@@ -254,6 +294,7 @@ function Home(props, { navigation, route }) {
         style={{ flex: 1 }}
       >
         {events // ??? TBA sorted events
+          .filter((item) => item.creator.userID == userID)
           .map((event) => (
             <TouchableOpacity
               style={styles.clickable}
