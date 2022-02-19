@@ -23,6 +23,8 @@ import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { API_KEY } from "@env";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
 
@@ -33,9 +35,15 @@ function Search(props, { navigation }) {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-  const latitude = 41.241489;
-  const longitude = -77.041924;
+  const [latitude, setLatitude] = useState(props.user.location.latitude);
+  const [longitude, setLongitude] = useState(props.user.location.longitude);
   const position = 0;
+  const messiahPlace = {
+    description: "Messiah University",
+    geometry: { location: { lat: 40.15974, lng: -76.988419 } },
+  };
+  console.log(props.user.location)
+  console.log(latitude)
 
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
@@ -73,13 +81,58 @@ function Search(props, { navigation }) {
     >
       <View style={[styles.holder, { flexDirection: "column" }]}>
         <View style={{ flex: 1 }}>
-          <SearchBar
-            placeholder="Type Here..."
-            onChangeText={(text) => {
-              setSearch({ text });
-            }}
-            value={search.text}
-          />
+          <GooglePlacesAutocomplete
+              placeholder="Search"
+              minLength={2} // minimum length of text to search
+              autoFocus={false}
+              returnKeyType={"search"} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+              listViewDisplayed="auto" // true/false/undefined
+              fetchDetails={true}
+              renderDescription={(row) => row.description} // custom description render
+              onPress={(data, details = null) => {
+                setLatitude(details.geometry.location.lat);
+                setLongitude(details.geometry.location.lng);
+                //props.setLocation(latitude, longitude);
+              }}
+              getDefaultValue={() => {
+                return ""; // text input default value
+              }}
+              query={{
+                // available options: https://developers.google.com/places/web-service/autocomplete
+                key: API_KEY,
+                language: "en", // language of the results
+                types: "(cities)", // default: 'geocode'
+              }}
+              styles={{
+                description: {
+                  fontWeight: "bold",
+                },
+                predefinedPlacesDescription: {
+                  color: "#1faadb",
+                },
+              }}
+              currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+              currentLocationLabel="Current location"
+              nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+              GoogleReverseGeocodingQuery={
+                {
+                  // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                }
+              }
+              GooglePlacesSearchQuery={{
+                // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                rankby: "distance",
+                //types: "food",
+              }}
+              filterReverseGeocodingByTypes={[
+                "locality",
+                "administrative_area_level_3",
+              ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+              predefinedPlaces={[messiahPlace]}
+              debounce={200}
+              currentLocation={true}
+              currentLocationLabel="Current location"
+            />
         </View>
         <View style={[styles.container, { flex: 2 }]}>
           <FlatList
@@ -145,16 +198,23 @@ function Search(props, { navigation }) {
         </View>
 
         <View style={[styles.container, { flex: 3 }]}>
-          <MapView
+        <MapView
             style={styles.mapStyle}
             initialRegion={{
               latitude: latitude,
               longitude: longitude,
-              latitudeDelta: 0.04,
-              longitudeDelta: 0.05,
+              latitudeDelta: 0.4,
+              longitudeDelta: 0.04,
+            }}
+            region={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.04,
             }}
             customMapStyle={mapStyle}
             loadingEnabled={true}
+            scrollEnabled={false}
 
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >
@@ -314,6 +374,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
+  user: state.user,
   events: state.events,
 });
 

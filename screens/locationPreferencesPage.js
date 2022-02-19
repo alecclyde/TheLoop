@@ -42,8 +42,8 @@ function LocationPreferencesPage(props) {
   //const [sliding, setSliding] = useState("Inactive");
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-  const [latitude, setLatitude] = useState(40.15974);
-  const [longitude, setLongitude] = useState(-76.988419);
+  const [latitude, setLatitude] = useState(props.user.location.latitude || 40.15974);
+  const [longitude, setLongitude] = useState(props.user.location.longitude|| -76.988419);
   const position = 0;
   const messiahPlace = {
     description: "Messiah University",
