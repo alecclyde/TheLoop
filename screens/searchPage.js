@@ -81,7 +81,7 @@ function Search(props, { navigation }) {
     >
       <View style={[styles.holder, { flexDirection: "column" }]}>
         <View style={{ flex: 1 }}>
-          <GooglePlacesAutocomplete
+          {/* <GooglePlacesAutocomplete
               placeholder="Search"
               minLength={2} // minimum length of text to search
               autoFocus={false}
@@ -132,7 +132,7 @@ function Search(props, { navigation }) {
               debounce={200}
               currentLocation={true}
               currentLocationLabel="Current location"
-            />
+            /> */}
         </View>
         <View style={[styles.container, { flex: 2 }]}>
           <FlatList
