@@ -61,7 +61,7 @@ function LocationPreferencesPage(props) {
       <SafeAreaView style={globalStyles.container}>
         <View style={[styles.holder, { flexDirection: "column" }]}>
           <View style={{ flex: 4 }}>
-            {/* <GooglePlacesAutocomplete
+            <GooglePlacesAutocomplete
               placeholder="Search"
               minLength={2} // minimum length of text to search
               autoFocus={false}
@@ -112,7 +112,7 @@ function LocationPreferencesPage(props) {
               debounce={200}
               currentLocation={true}
               currentLocationLabel="Current location"
-            /> */}
+            />
           </View>
           <View style={[styles.container, { flex: 6 }]}>
             <MapView
