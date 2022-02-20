@@ -114,6 +114,7 @@ function Home(props, { navigation, route }) {
       <Text h3 style={styles.titles}>
         Upcoming Events
       </Text>
+
       <View style={{ flex: 1 }}>
         {events.filter((item) => item.startDateTime > moment().unix()).length ==
         0 ? ( // if there are currently no events for this category
@@ -137,14 +138,15 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
+              <Text style={{fontSize: 45}}>😴</Text>
               <Text
                 style={{
                   color: "white",
-                  fontSize: 30,
-                  fontFamily: "Helvetica",
+                  fontSize: 15,
+                  fontFamily: "Helvetica-Bold",
                 }}
               >
-                No events
+                No events...
               </Text>
             </View>
           )
@@ -218,140 +220,217 @@ function Home(props, { navigation, route }) {
         Recent Events
       </Text>
 
-      <ScrollView
-        persistentScrollbar={true}
-        horizontal={true}
-        style={{ flex: 1 }}
-      >
-        {events // previous events
-          .filter((item) => item.startDateTime <= moment().unix())
-          .sort((item1, item2) => item2.startDateTime - item1.startDateTime)
-          .map((event) => (
-            <TouchableOpacity
-              style={styles.clickable}
-              key={event.id}
-              onPress={() =>
-                props.navigation.navigate("CardDetails", {
-                  id: event.id,
-                  name: event.name,
-                  loop: event.loop,
-                  creator: event.creator,
-                  startDateTime: event.startDateTime,
-                  address: event.address,
-                })
-              }
+      <View style={{ flex: 1 }}>
+        {events.filter((item) => item.startDateTime <= moment().unix())
+          .length == 0 ? ( // if there are currently no events for this category
+          loading ? (
+            // if there are no events in the filter and the events are still loading, put an activity indicator
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
             >
-              <ListItem
-                pad={16}
-                bottomDivide={true}
-                Component={TouchableScale}
-                button
-                friction={90}
-                tension={100} // These props are passed to the parent component (here TouchableScale)
-                activeScale={0.95} //
-                linearGradientProps={{
-                  colors: ["#3B4046", "#3B4046"],
-                  start: { x: 1, y: 0 },
-                  end: { x: 0.2, y: 0 },
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          ) : (
+            // if there are no events in the filter and the events have loaded, show text that says "no events"
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 30,
+                  fontFamily: "Helvetica",
                 }}
-                ViewComponent={LinearGradient}
               >
-                <Avatar
-                  size="large"
-                  //change this to either be icon of loop or that groups profile picture
-                  source={{
-                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                  }}
-                  resizeMode="cover"
-                  //style={{ width: "100%", height: "100%" }}
-                />
-                <ListItem.Content>
-                  <ListItem.Title style={styles.listingItem}>
-                    {event.name}
-                  </ListItem.Title>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
-                    {event.loop}
-                  </ListItem.Subtitle>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
-                    <Icon name="map-marker" size={16} color="white" />
-                    {"  "}
-                    {event.address}
-                  </ListItem.Subtitle>
-                </ListItem.Content>
-                <ListItem.Chevron color="gray" />
-              </ListItem>
-            </TouchableOpacity>
-          ))}
-      </ScrollView>
+                No events
+              </Text>
+            </View>
+          )
+        ) : (
+          // if there are events in the filter, put them in the ScrollView
+          <ScrollView persistentScrollbar={true} horizontal={true}>
+            {events // previous events the user attended
+              .filter((item) => item.startDateTime <= moment().unix())
+              .sort((item1, item2) => item2.startDateTime - item1.startDateTime)
+              .map((event) => (
+                <TouchableOpacity
+                  style={styles.clickable}
+                  key={event.id}
+                  onPress={() =>
+                    props.navigation.navigate("CardDetails", {
+                      id: event.id,
+                      name: event.name,
+                      loop: event.loop,
+                      creator: event.creator,
+                      startDateTime: event.startDateTime,
+                      address: event.address,
+                    })
+                  }
+                >
+                  <ListItem
+                    pad={16}
+                    bottomDivide={true}
+                    Component={TouchableScale}
+                    button
+                    friction={90}
+                    tension={100} // These props are passed to the parent component (here TouchableScale)
+                    activeScale={0.95} //
+                    linearGradientProps={{
+                      colors: ["#3B4046", "#3B4046"],
+                      start: { x: 1, y: 0 },
+                      end: { x: 0.2, y: 0 },
+                    }}
+                    ViewComponent={LinearGradient}
+                  >
+                    <Avatar
+                      size="large"
+                      //change this to either be icon of loop or that groups profile picture
+                      source={{
+                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                      }}
+                      resizeMode="cover"
+                      //style={{ width: "100%", height: "100%" }}
+                    />
+                    <ListItem.Content>
+                      <ListItem.Title style={styles.listingItem}>
+                        {event.name}
+                      </ListItem.Title>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        {event.loop}
+                      </ListItem.Subtitle>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        <Icon name="map-marker" size={16} color="white" />
+                        {"  "}
+                        {event.address}
+                      </ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron color="gray" />
+                  </ListItem>
+                </TouchableOpacity>
+              ))}
+          </ScrollView>
+        )}
+      </View>
 
       <Text h3 style={styles.titles}>
         Events You're Hosting
       </Text>
 
-      <ScrollView
-        persistentScrollbar={true}
-        horizontal={true}
-        style={{ flex: 1 }}
-      >
-        {events // ??? TBA sorted events
-          .filter((item) => item.creator.userID == userID)
-          .map((event) => (
-            <TouchableOpacity
-              style={styles.clickable}
-              key={event.id}
-              onPress={() =>
-                props.navigation.navigate("CardDetails", {
-                  id: event.id,
-                  name: event.name,
-                  loop: event.loop,
-                  creator: event.creator,
-                  startDateTime: event.startDateTime,
-                  address: event.address,
-                })
-              }
+      <View style={{ flex: 1 }}>
+        {events.filter(
+          (item) =>
+            item.creator.userID == userID &&
+            item.startDateTime > moment().unix()
+        ).length == 0 ? ( // if there are currently no events for this category
+          loading ? (
+            // if there are no events in the filter and the events are still loading, put an activity indicator
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
             >
-              <ListItem
-                pad={16}
-                bottomDivide={true}
-                Component={TouchableScale}
-                button
-                friction={90}
-                tension={100} // These props are passed to the parent component (here TouchableScale)
-                activeScale={0.95} //
-                linearGradientProps={{
-                  colors: ["#3B4046", "#3B4046"],
-                  start: { x: 1, y: 0 },
-                  end: { x: 0.2, y: 0 },
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          ) : (
+            // if there are no events in the filter and the events have loaded, show text that says "no events"
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 30,
+                  fontFamily: "Helvetica",
                 }}
-                ViewComponent={LinearGradient}
               >
-                <Avatar
-                  size="large"
-                  //change this to either be icon of loop or that groups profile picture
-                  source={{
-                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                  }}
-                  resizeMode="cover"
-                  //style={{ width: "100%", height: "100%" }}
-                />
-                <ListItem.Content>
-                  <ListItem.Title style={styles.listingItem}>
-                    {event.name}
-                  </ListItem.Title>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
-                    {event.loop}
-                  </ListItem.Subtitle>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
-                    <Icon name="map-marker" size={16} color="white" />
-                    {"  "}
-                    {event.address}
-                  </ListItem.Subtitle>
-                </ListItem.Content>
-                <ListItem.Chevron color="gray" />
-              </ListItem>
-            </TouchableOpacity>
-          ))}
-      </ScrollView>
+                No events
+              </Text>
+            </View>
+          )
+        ) : (
+          // if there are events in the filter, put them in the ScrollView
+          <ScrollView persistentScrollbar={true} horizontal={true}>
+            {events // upcoming events the user is hosting
+              .filter(
+                (item) =>
+                  item.creator.userID == userID &&
+                  item.startDateTime > moment().unix()
+              )
+              .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
+              .map((event) => (
+                <TouchableOpacity
+                  style={styles.clickable}
+                  key={event.id}
+                  onPress={() =>
+                    props.navigation.navigate("CardDetails", {
+                      id: event.id,
+                      name: event.name,
+                      loop: event.loop,
+                      creator: event.creator,
+                      startDateTime: event.startDateTime,
+                      address: event.address,
+                    })
+                  }
+                >
+                  <ListItem
+                    pad={16}
+                    bottomDivide={true}
+                    Component={TouchableScale}
+                    button
+                    friction={90}
+                    tension={100} // These props are passed to the parent component (here TouchableScale)
+                    activeScale={0.95} //
+                    linearGradientProps={{
+                      colors: ["#3B4046", "#3B4046"],
+                      start: { x: 1, y: 0 },
+                      end: { x: 0.2, y: 0 },
+                    }}
+                    ViewComponent={LinearGradient}
+                  >
+                    <Avatar
+                      size="large"
+                      //change this to either be icon of loop or that groups profile picture
+                      source={{
+                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                      }}
+                      resizeMode="cover"
+                      //style={{ width: "100%", height: "100%" }}
+                    />
+                    <ListItem.Content>
+                      <ListItem.Title style={styles.listingItem}>
+                        {event.name}
+                      </ListItem.Title>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        {event.loop}
+                      </ListItem.Subtitle>
+                      <ListItem.Subtitle style={styles.descriptionItem}>
+                        <Icon name="map-marker" size={16} color="white" />
+                        {"  "}
+                        {event.address}
+                      </ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron color="gray" />
+                  </ListItem>
+                </TouchableOpacity>
+              ))}
+          </ScrollView>
+        )}
+      </View>
+
       {/* </View> */}
     </SafeAreaView>
   );

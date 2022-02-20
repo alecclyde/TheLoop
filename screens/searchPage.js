@@ -115,7 +115,7 @@ function Search(props, { navigation }) {
               name="filter"
               color="white"
               size={30}
-              style={{ paddingHorizontal: 5, justifyContent: "center" }}
+              style={{ paddingLeft: 5, paddingRight: 10, justifyContent: "center" }}
               onPress={() => {
                 setShowFilters(!showFilters);
               }}
