@@ -39,10 +39,15 @@ function Home(props, { navigation, route }) {
 
   const [loading, setLoading] = useState(true);
 
+  const [limitUpcoming, setLimitUpcoming] = useState(3);
+  const [limitPrevious, setLimitPrevious] = useState(3);
+  const [limitHosting, setLimitHosting] = useState(3);
+
   const isFocused = useIsFocused();
 
   // Listener to update user data
   function AuthStateChangedListener(user) {
+    setEvents([]);
     if (user) {
       setUserID(user.uid);
     }
@@ -65,6 +70,9 @@ function Home(props, { navigation, route }) {
         // setEmail(user.email);
         // setFirstName(user.firstName);
         // setLastName(user.lastName);
+        setLimitUpcoming(3);
+        setLimitPrevious(3);
+        setLimitHosting(3);
 
         setEvents(user.myEvents);
         setLoading(false);
@@ -138,7 +146,7 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
-              <Text style={{fontSize: 45}}>😴</Text>
+              <Text style={{ fontSize: 45 }}>😴</Text>
               <Text
                 style={{
                   color: "white",
@@ -156,6 +164,7 @@ function Home(props, { navigation, route }) {
             {events // upcoming events
               .filter((item) => item.startDateTime > moment().unix())
               .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
+              .slice(0, limitUpcoming)
               .map((event) => (
                 <TouchableOpacity
                   style={styles.clickable}
@@ -212,12 +221,35 @@ function Home(props, { navigation, route }) {
                   </ListItem>
                 </TouchableOpacity>
               ))}
+            {events.filter((item) => item.startDateTime > moment().unix())
+              .length > limitUpcoming && (
+              <TouchableOpacity
+                style={[styles.clickable, { flex: 1 }]}
+                onPress={() => {
+                  setLimitUpcoming(limitUpcoming + 3);
+                }}
+              >
+                <Text style={styles.listingItem}>
+                  {events.filter((item) => item.startDateTime > moment().unix())
+                    .length - limitUpcoming}{" "}
+                  more event
+                  {/* puts the 's' at the end if the number of remaining events is not 1 */}
+                  {events.filter((item) => item.startDateTime > moment().unix())
+                    .length -
+                    limitUpcoming ==
+                  1
+                    ? ""
+                    : "s"}
+                </Text>
+                <Text style={styles.descriptionItem}>Tap to view</Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         )}
       </View>
 
       <Text h3 style={styles.titles}>
-        Recent Events
+        Previous Events
       </Text>
 
       <View style={{ flex: 1 }}>
@@ -243,14 +275,15 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
+              <Text style={{ fontSize: 45 }}>😴</Text>
               <Text
                 style={{
                   color: "white",
-                  fontSize: 30,
-                  fontFamily: "Helvetica",
+                  fontSize: 15,
+                  fontFamily: "Helvetica-Bold",
                 }}
               >
-                No events
+                No events...
               </Text>
             </View>
           )
@@ -260,6 +293,7 @@ function Home(props, { navigation, route }) {
             {events // previous events the user attended
               .filter((item) => item.startDateTime <= moment().unix())
               .sort((item1, item2) => item2.startDateTime - item1.startDateTime)
+              .slice(0, limitPrevious)
               .map((event) => (
                 <TouchableOpacity
                   style={styles.clickable}
@@ -316,6 +350,31 @@ function Home(props, { navigation, route }) {
                   </ListItem>
                 </TouchableOpacity>
               ))}
+            {events.filter((item) => item.startDateTime <= moment().unix())
+              .length > limitPrevious && (
+              <TouchableOpacity
+                style={[styles.clickable, { flex: 1 }]}
+                onPress={() => {
+                  setLimitPrevious(limitPrevious + 3);
+                }}
+              >
+                <Text style={styles.listingItem}>
+                  {events.filter(
+                    (item) => item.startDateTime <= moment().unix()
+                  ).length - limitPrevious}{" "}
+                  more event
+                  {/* puts the 's' at the end if the number of remaining events is not 1 */}
+                  {events.filter(
+                    (item) => item.startDateTime <= moment().unix()
+                  ).length -
+                    limitPrevious ==
+                  1
+                    ? ""
+                    : "s"}
+                </Text>
+                <Text style={styles.descriptionItem}>Tap to view</Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         )}
       </View>
@@ -350,14 +409,15 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
+              <Text style={{ fontSize: 45 }}>😴</Text>
               <Text
                 style={{
                   color: "white",
-                  fontSize: 30,
-                  fontFamily: "Helvetica",
+                  fontSize: 15,
+                  fontFamily: "Helvetica-Bold",
                 }}
               >
-                No events
+                No events...
               </Text>
             </View>
           )
@@ -371,6 +431,8 @@ function Home(props, { navigation, route }) {
                   item.startDateTime > moment().unix()
               )
               .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
+              .slice(0, limitHosting)
+
               .map((event) => (
                 <TouchableOpacity
                   style={styles.clickable}
@@ -427,6 +489,39 @@ function Home(props, { navigation, route }) {
                   </ListItem>
                 </TouchableOpacity>
               ))}
+
+            {events.filter(
+              (item) =>
+                item.creator.userID == userID &&
+                item.startDateTime > moment().unix()
+            ).length > limitHosting && (
+              <TouchableOpacity
+                style={[styles.clickable, { flex: 1 }]}
+                onPress={() => {
+                  setLimitHosting(limitHosting + 3);
+                }}
+              >
+                <Text style={styles.listingItem}>
+                  {events.filter(
+                    (item) =>
+                      item.creator.userID == userID &&
+                      item.startDateTime > moment().unix()
+                  ).length - limitHosting}{" "}
+                  more event
+                  {/* puts the 's' at the end if the number of remaining events is not 1 */}
+                  {events.filter(
+                    (item) =>
+                      item.creator.userID == userID &&
+                      item.startDateTime > moment().unix()
+                  ).length -
+                  limitHosting ==
+                  1
+                    ? ""
+                    : "s"}
+                </Text>
+                <Text style={styles.descriptionItem}>Tap to view</Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         )}
       </View>
