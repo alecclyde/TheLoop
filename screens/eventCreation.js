@@ -176,7 +176,7 @@ function EventCreation(props) {
                 </Text>
 
                 {/* and touching the time button opens the time picker */}
-
+                
                 <Button
                   titleStyle={{ color: "white", width: 250 }}
                   buttonStyle={{

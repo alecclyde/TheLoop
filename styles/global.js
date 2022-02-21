@@ -31,9 +31,8 @@ export const globalStyles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  
-    padding: 20,
-    backgroundColor: "#D3D3D3",
+    padding: 20
+    
   },
   rowContainer: {
     //flex: 1,

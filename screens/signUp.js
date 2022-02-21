@@ -59,7 +59,14 @@ function SignUp(props, { navigation }) {
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
-    <View>
+    <View  
+    style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          marginTop: 50,
+          marginBottom: 40,
+        }}
+      >
       <View>
         <Formik
           initialValues={{
@@ -86,6 +93,7 @@ function SignUp(props, { navigation }) {
             <Image
                     source={require("../assets/The-Loop-8.png")}
                     style={{
+                      flex: 0,
                       width: 380,
                       height: 170,
                       marginRight: 10,

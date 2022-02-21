@@ -15,6 +15,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { Switch } from "react-native-elements";
 import { Button } from "react-native-elements";
 import { CheckBox } from "react-native-elements";
+import { Linking } from "react-native";
 
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
@@ -23,6 +24,10 @@ import {
   toggleDarkmode,
   toggleNotifications,
 } from "../store/actions/settingsActions";
+import { Dimensions } from "react-native";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHight = Dimensions.get("window").height;
 
 function UserProfileView(props) {
   // const email = route.params?.userData.email ?? 'email';
@@ -179,7 +184,33 @@ function UserProfileView(props) {
                 />
             </View> */}
 
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+        <View
+          style={{ justifyContent: "center", alignItems: "center", margin: 5 }}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              margin: 5,
+            }}
+          >
+            <Button
+              title="Privacy Policy"
+              onPress={() =>
+                Linking.openURL(
+                  "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md"
+                )
+              }
+            ></Button>
+            <Button
+              title="Terms & Conditions"
+              onPress={() =>
+                Linking.openURL(
+                  "https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md"
+                )
+              }
+            ></Button>
+          </View>
           <Button
             title="Sign Out"
             onPress={() => props.signOut(props.navigation)}
@@ -191,8 +222,6 @@ function UserProfileView(props) {
 }
 
 const styles = StyleSheet.create({
-
-
   body: {
     backgroundColor: "#DCDCDC",
     height: 500,
