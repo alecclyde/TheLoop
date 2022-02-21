@@ -130,6 +130,7 @@ function EventCreation(props) {
               eventLoop: "",
               eventDate: "",
               eventTime: "",
+              location: {},
               eventAddress: "",
             }}
             validationSchema={CreateEventSchema}
@@ -140,6 +141,7 @@ function EventCreation(props) {
                   name: values.eventName,
                   loop: values.eventLoop,
                   startDateTime: moment(values.eventDate + " " + values.eventTime).format("x"),
+                  location: values.location,
                   address: values.eventAddress,
                 }
               );
@@ -411,7 +413,8 @@ function EventCreation(props) {
               onPress={(data, details = null) => {
                 setLatitude(details.geometry.location.lat);
                 setLongitude(details.geometry.location.lng);
-                console.log(details);
+                //console.log(details);
+                props.setFieldValue("location", {latitude: latitude, longitude: longitude})
                 //props.setLocation(latitude, longitude);
               }}
               getDefaultValue={() => {

@@ -48,7 +48,7 @@ export function addEvent(newEvent) {
           ],
           newAttendeesNotifID: "0",
           newPostsNotifID: "0",
-          location: new firebase.firestore.GeoPoint(0, 0), // Temporary value, adjust when Alec/Caden finishes geolocation
+          location: new firebase.firestore.GeoPoint(newEvent.location.latitude, newEvent.location.longitude), // Temporary value, adjust when Alec/Caden finishes geolocation
         };
       });
 
