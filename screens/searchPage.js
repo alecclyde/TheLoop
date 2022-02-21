@@ -23,8 +23,6 @@ import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { API_KEY } from "@env";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
 
