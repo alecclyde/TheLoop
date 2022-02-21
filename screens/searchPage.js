@@ -34,9 +34,15 @@ function Search(props, { navigation }) {
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const isFocused = useIsFocused();
-  const latitude = 41.241489;
-  const longitude = -77.041924;
+  const [latitude, setLatitude] = useState(props.user.location.latitude);
+  const [longitude, setLongitude] = useState(props.user.location.longitude);
   const position = 0;
+  const messiahPlace = {
+    description: "Messiah University",
+    geometry: { location: { lat: 40.15974, lng: -76.988419 } },
+  };
+  console.log(props.user.location)
+  console.log(latitude)
 
   const [showFilters, setShowFilters] = useState(false);
 
@@ -278,16 +284,23 @@ function Search(props, { navigation }) {
         </View>
 
         <View style={[styles.container, { flex: 3 }]}>
-          <MapView
+        <MapView
             style={styles.mapStyle}
             initialRegion={{
               latitude: latitude,
               longitude: longitude,
-              latitudeDelta: 0.04,
-              longitudeDelta: 0.05,
+              latitudeDelta: 0.4,
+              longitudeDelta: 0.04,
+            }}
+            region={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.04,
             }}
             customMapStyle={mapStyle}
             loadingEnabled={true}
+            scrollEnabled={false}
 
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >
@@ -447,6 +460,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
+  user: state.user,
   events: state.events,
 });
 
