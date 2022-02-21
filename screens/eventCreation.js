@@ -210,8 +210,7 @@ function EventCreation(props) {
                     // value={date}
                     mode={mode}
                     isVisible={show}
-                    display="spinner"
-                    textColor="black"
+                    display={Platform.OS === "ios" ? "spinner" : "default"}
                     onConfirm={(date) => {
                       onConfirm(date);
                       // updates the date or time field value, depending on which one was selected

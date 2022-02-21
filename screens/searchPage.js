@@ -12,12 +12,13 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  ScrollView
+  Image,
+  ScrollView,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { globalStyles } from "../styles/global";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { SearchBar, withTheme } from "react-native-elements";
+import { SearchBar, withTheme, CheckBox } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
 import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
@@ -31,7 +32,7 @@ import { connect } from "react-redux";
 
 function Search(props, { navigation }) {
   const [events, setEvents] = useState([]);
-  const [search, setSearch] = useState({ text: "" });
+  const [searchTerm, setSearchTerm] = useState("");
   const isFocused = useIsFocused();
   const [latitude, setLatitude] = useState(props.user.location.latitude);
   const [longitude, setLongitude] = useState(props.user.location.longitude);
@@ -43,100 +44,187 @@ function Search(props, { navigation }) {
   console.log(props.user.location)
   console.log(latitude)
 
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [byName, setByName] = useState(true);
+  const [byLocation, setByLocation] = useState(true);
+  const [byLoop, setByLoop] = useState(true);
+
+  const [filteredEvents, setFilteredEvents] = useState([]);
+
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
-    setEvents([]);
-    firebase
-      .firestore()
-      .collection("events")
-      .get()
-      .then((snap) => {
-        snap.docs.forEach((doc) => {
-          if (doc.exists) {
-            setEvents((events) => [
-              ...events,
-              {
-                id: doc.id,
-                loop: doc.data().loop,
-                name: doc.data().name,
-                creator:
-                  // SPRINT7: remove conditional, uncomment actual line
-                  doc.data().creator == undefined
-                    ? { userID: doc.data().creatorID, userName: "" }
-                    : doc.data().creator,
-                //doc.data().creator,
-                address: doc.data().address,
-              },
-            ]);
-          }
+    if (isFocused) {
+      setEvents([]);
+      firebase
+        .firestore()
+        .collection("events")
+        .get()
+        .then((snap) => {
+          snap.docs.forEach((doc) => {
+            if (doc.exists) {
+              setEvents((events) => [
+                ...events,
+                {
+                  id: doc.id,
+                  loop: doc.data().loop,
+                  name: doc.data().name,
+                  creator: doc.data().creator,
+                  address: doc.data().address,
+                },
+              ]);
+            }
+          });
         });
-      });
+    }
   }, [isFocused]);
+
+  // update the list of filtered events
+  useEffect(() => {
+    if (searchTerm == "") {
+      setFilteredEvents([]);
+
+    } else {
+      let filteredEvents = new Set();
+      events.forEach((event) => {
+        if (
+          (byName && event.name.includes(searchTerm)) ||
+          (byLocation && event.address.includes(searchTerm)) ||
+          (byLoop && event.loop.includes(searchTerm))
+        ) {
+          filteredEvents.add(event);
+        }
+      });
+
+      setFilteredEvents([...filteredEvents]);
+    }
+  }, [searchTerm, byName, byLocation, byLoop]);
 
   return (
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
       <View style={[styles.holder, { flexDirection: "column" }]}>
-        <View style={{ flex: 1 }}>
-          {/* <GooglePlacesAutocomplete
-              placeholder="Search"
-              minLength={2} // minimum length of text to search
-              autoFocus={false}
-              returnKeyType={"search"} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-              listViewDisplayed="auto" // true/false/undefined
-              fetchDetails={true}
-              renderDescription={(row) => row.description} // custom description render
-              onPress={(data, details = null) => {
-                setLatitude(details.geometry.location.lat);
-                setLongitude(details.geometry.location.lng);
-                //props.setLocation(latitude, longitude);
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flex: 1 }}>
+            <SearchBar
+              placeholder="Type Here..."
+              onChangeText={(text) => {
+                setSearchTerm(text);
               }}
-              getDefaultValue={() => {
-                return ""; // text input default value
+              containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0 }}
+              value={searchTerm}
+            />
+          </View>
+          <View style={{ flexDirection: "column", backgroundColor: "#393E42" }}>
+            <View style={{ flex: 1 }} />
+            <Icon
+              name="filter"
+              color="white"
+              size={30}
+              style={{ paddingLeft: 5, paddingRight: 10, justifyContent: "center" }}
+              onPress={() => {
+                setShowFilters(!showFilters);
               }}
-              query={{
-                // available options: https://developers.google.com/places/web-service/autocomplete
-                key: API_KEY,
-                language: "en", // language of the results
-                types: "(cities)", // default: 'geocode'
-              }}
-              styles={{
-                description: {
-                  fontWeight: "bold",
-                },
-                predefinedPlacesDescription: {
-                  color: "#1faadb",
-                },
-              }}
-              currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-              currentLocationLabel="Current location"
-              nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-              GoogleReverseGeocodingQuery={
-                {
-                  // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-                }
-              }
-              GooglePlacesSearchQuery={{
-                // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-                rankby: "distance",
-                //types: "food",
-              }}
-              filterReverseGeocodingByTypes={[
-                "locality",
-                "administrative_area_level_3",
-              ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-              predefinedPlaces={[messiahPlace]}
-              debounce={200}
-              currentLocation={true}
-              currentLocationLabel="Current location"
-            /> */}
+            />
+            <View style={{ flex: 1 }} />
+          </View>
         </View>
+        {showFilters && (
+          <View>
+            <View style={{ alignItems: "center", backgroundColor: "#393E42" }}>
+              <Text
+                style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+              >
+                Filter by...
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row", backgroundColor: "#393E42" }}>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Name"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byName}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByName(!byName);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Location"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byLocation}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByLocation(!byLocation);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Loop"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byLoop}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByLoop(!byLoop);
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+
         <View style={[styles.container, { flex: 2 }]}>
+        {(filteredEvents.length == 0) && (
+          <View style={{ alignItems: "center"}}>
+
+          {/* {
+            searchTerm == "" ? (
+              <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
+              Start typing to search for an event!
+              </Text>
+            ) : (
+              <Image
+                source={{uri: "https://i.ibb.co/KqRj666/No-Events.png", width: 220, height: 200}}
+              />
+            )
+          } */}
+
+          {/* uncomment block above and comment out Text below for the funny */}
+
+            <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
+            {searchTerm == "" ? "Start typing to search for an event!": "No results..."}
+            </Text>
+          </View>
+        )}
           <FlatList
             //contentContainerStyle={{ paddingBottom: }}
             persistentScrollbar={true}
-            data={events}
+            data={filteredEvents}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
