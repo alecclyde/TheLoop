@@ -410,10 +410,11 @@ function EventCreation(props) {
               fetchDetails={true}
               renderDescription={(row) => row.description} // custom description render
               onPress={(data, details = null) => {
-                setLatitude(details.geometry.location.lat);
-                setLongitude(details.geometry.location.lng);
-                //console.log(details);
-                props.setFieldValue("location", {latitude: latitude, longitude: longitude})
+                // setLatitude(details.geometry.location.lat);
+                // setLongitude(details.geometry.location.lng);
+                console.log(details.geometry.location.lat);
+                console.log(details.geometry.location.lng);
+                props.setFieldValue("location", {latitude: details.geometry.location.lat, longitude: details.geometry.location.lng})
                 //props.setLocation(latitude, longitude);
               }}
               getDefaultValue={() => {
