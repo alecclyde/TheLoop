@@ -41,8 +41,6 @@ function Search(props, { navigation }) {
     description: "Messiah University",
     geometry: { location: { lat: 40.15974, lng: -76.988419 } },
   };
-  console.log(props.user.location)
-  console.log(latitude)
 
   const [showFilters, setShowFilters] = useState(false);
 
@@ -287,19 +285,19 @@ function Search(props, { navigation }) {
         <MapView
             style={styles.mapStyle}
             initialRegion={{
-              latitude: latitude,
-              longitude: longitude,
+              latitude: props.user.location.latitude,
+              longitude: props.user.location.longitude,
               latitudeDelta: 0.4,
               longitudeDelta: 0.04,
             }}
             region={{
-              latitude: latitude,
-              longitude: longitude,
+              latitude: props.user.location.latitude,
+              longitude: props.user.location.longitude,
               latitudeDelta: 0.05,
               longitudeDelta: 0.04,
             }}
             customMapStyle={mapStyle}
-            loadingEnabled={true}
+            loadingEnabled={false}
             scrollEnabled={false}
 
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
@@ -307,11 +305,11 @@ function Search(props, { navigation }) {
             <Marker
               draggable
               coordinate={{
-                latitude: latitude,
-                longitude: longitude,
+                latitude: props.user.location.longitude,
+                longitude: props.user.location.longitude,
               }}
               onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
-              title={"Messiah University"}
+              title={"Your Location"}
               description={"position"}
             />
           </MapView>
