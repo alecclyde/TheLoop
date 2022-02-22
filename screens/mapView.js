@@ -27,8 +27,8 @@ function mapView(props) {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-  const [latitude, setLatitude] = useState(props.user.location.latitude || 40.15974);
-  const [longitude, setLongitude] = useState( props.user.location.longitude || -76.988419);
+  const [latitude, setLatitude] = useState(props.user.location.latitude);
+  const [longitude, setLongitude] = useState(props.user.location.longitude);
   // const latitude = 41.241489;
   // const longitude = -77.041924;
   const position = 0;
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
   events: state.events,
-  user: state.user
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({});

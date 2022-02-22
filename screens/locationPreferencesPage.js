@@ -19,7 +19,7 @@ import { Button, ListItem, Avatar } from "react-native-elements";
 // import { Dimensions } from "react-native";
 import { connect } from "react-redux";
 import { addDistance, setLocation } from "../store/actions/userActions";
-import { TouchableHighlight } from "react-native-gesture-handler";
+import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import Slider from "@react-native-community/slider";
 import { Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -28,7 +28,7 @@ import { globalStyles } from "../styles/global";
 import { Formik } from "formik";
 import { Constants, Location, Permissions } from "expo";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { PLACES_ID } from "@env";
+import { API_KEY } from "@env";
 
 //navigator.geolocation = require("@react-native-community/geolocation");
 //navigator.geolocation = require("react-native-geolocation-service");
@@ -42,165 +42,156 @@ function LocationPreferencesPage(props) {
   //const [sliding, setSliding] = useState("Inactive");
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-  const [latitude, setLatitude] = useState(40.15974);
-  const [longitude, setLongitude] = useState( -76.988419)
+  const [latitude, setLatitude] = useState(props.user.location.latitude || 40.15974);
+  const [longitude, setLongitude] = useState(props.user.location.longitude|| -76.988419);
   const position = 0;
   const messiahPlace = {
     description: "Messiah University",
     geometry: { location: { lat: 40.15974, lng: -76.988419 } },
   };
+  
 
   return (
-    <ImageBackground
-      source={{
-        uri: "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?size=626&ext=jpg",
-      }}
-      resizeMode="cover"
-      style={{ width: "100%", height: "100%" }}
-    >
-      <SafeAreaView style={globalStyles.container}>
-        <View style={[styles.holder, { flexDirection: "column" }]}>
-          <View style={{ flex: 4 }}>
-            <GooglePlacesAutocomplete
-              placeholder="Search"
-              minLength={2} // minimum length of text to search
-              autoFocus={false}
-              returnKeyType={"search"} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-              listViewDisplayed="auto" // true/false/undefined
-              fetchDetails={true}
-              renderDescription={(row) => row.description} // custom description render
-              onPress={(data, details = null) => {
-                setLatitude(details.geometry.location.lat);
-                setLongitude(details.geometry.location.lng);
-                props.setLocation(latitude, longitude);
-              }}
-              getDefaultValue={() => {
-                return ""; // text input default value
-              }}
-              query={{
-                // available options: https://developers.google.com/places/web-service/autocomplete
-                key: PLACES_ID,
-                language: "en", // language of the results
-                types: "(cities)", // default: 'geocode'
-              }}
-              styles={{
-                description: {
-                  fontWeight: "bold",
-                },
-                predefinedPlacesDescription: {
-                  color: "#1faadb",
-                },
-              }}
-              currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-              currentLocationLabel="Current location"
-              nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-              GoogleReverseGeocodingQuery={
-                {
-                  // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-                }
+    <SafeAreaView style={globalStyles.container}>
+      <View style={[styles.holder, { flexDirection: "column" }]}>
+        <View style={{ flex: 4 }}>
+          <GooglePlacesAutocomplete
+            placeholder="Search"
+            minLength={2} // minimum length of text to search
+            autoFocus={false}
+            returnKeyType={"search"} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+            listViewDisplayed="auto" // true/false/undefined
+            fetchDetails={true}
+            renderDescription={(row) => row.description} // custom description render
+            onPress={(data, details = null) => {
+              setLatitude(details.geometry.location.lat);
+              setLongitude(details.geometry.location.lng);
+              props.setLocation(details.geometry.location.lat, details.geometry.location.lng);
+            }}
+            getDefaultValue={() => {
+              return ""; // text input default value
+            }}
+            query={{
+              // available options: https://developers.google.com/places/web-service/autocomplete
+              key: API_KEY,
+              language: "en", // language of the results
+              types: "(cities)", // default: 'geocode'
+            }}
+            styles={{
+              description: {
+                fontWeight: "bold",
+              },
+              predefinedPlacesDescription: {
+                color: "#1faadb",
+              },
+            }}
+            currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+            currentLocationLabel="Current location"
+            nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+            GoogleReverseGeocodingQuery={
+              {
+                // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
               }
-              GooglePlacesSearchQuery={{
-                // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-                rankby: "distance",
-                //types: "food",
-              }}
-              filterReverseGeocodingByTypes={[
-                "locality",
-                "administrative_area_level_3",
-              ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-              predefinedPlaces={[messiahPlace]}
-              debounce={200}
-              currentLocation={true}
-              currentLocationLabel="Current location"
-            />
-          </View>
-          <View style={[styles.container, { flex: 6 }]}>
-            <MapView
-              style={styles.mapStyle}
-              initialRegion={{
-                latitude: latitude,
-                longitude: longitude,
-                latitudeDelta: 0.4,
-                longitudeDelta: 0.04,
-              }}
-              region={{
-                latitude: latitude,
-                longitude: longitude,
-                latitudeDelta: parseInt(range) * 0.05,
-                longitudeDelta: 0.04,
-              }}
-              customMapStyle={mapStyle}
-              loadingEnabled={true}
-              scrollEnabled={false}
-
-              //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
-            >
-              <Marker
-                draggable
-                coordinate={{
-                  latitude: latitude,
-                  longitude: longitude,
-                }}
-                onDragEnd={(e) =>
-                  alert(JSON.stringify(e.nativeEvent.coordinate))
-                }
-                title={"Messiah University"}
-                description={"position"}
-              />
-              <MapView.Circle
-                center={{ latitude: latitude, longitude: longitude }}
-                radius={parseInt(range) * 1609.34}
-                strokeColor="rgba(43, 125, 156,.85)"
-                fillColor="rgba(170, 218, 255, .3)"
-              />
-            </MapView>
-          </View>
-
-          <View style={[styles.container, { flex: 2 }]}>
-            <Text style={styles.mileText}>{range}</Text>
-            <Slider
-              style={styles.slider}
-              minimumValue={1}
-              maximumValue={50}
-              step={1}
-              value={1}
-              onValueChange={(value) => setRange(parseInt(value) + " miles")}
-              //onSlidingStart={() => setSliding("Sliding")}
-              //onSlidingComplete={() => setSliding("Inactive")}
-              minimumTrackTintColor="#2B7D9C"
-              maximumTrackTintColor="#2B7D9C"
-              thumbTintColor="#2B7D9C"
-            />
-          </View>
-          <View style={[styles.container, { flex: 1 }]}>
-            <Button
-              title="Submit"
-              titleStyle={{ fontSize: 26, color: "#FFFFFF" }}
-              buttonStyle={{
-                borderWidth: 10,
-                borderWidth: 1,
-                width: windowWidth * 0.5,
-                height: windowHight * 0.09,
-                borderColor: "black",
-                titleColor: "black",
-                backgroundColor: "#2B7D9C",
-                borderRadius: 50,
-              }}
-              style={{ padding: 45 }}
-              onPress={() => {
-                props.addDistance(range, props.navigation);
-              }}
-              //onPress={() => {(props).handleSubmit}}
-              // onPress={() => {
-              //   console.log(parseInt(range) + " miles");
-              // }}
-            />
-          </View>
-          {/* </>
-          )} */}
+            }
+            GooglePlacesSearchQuery={{
+              // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+              rankby: "distance",
+              //types: "food",
+            }}
+            filterReverseGeocodingByTypes={[
+              "locality",
+              "administrative_area_level_3",
+            ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+            predefinedPlaces={[messiahPlace]}
+            debounce={200}
+            currentLocation={true}
+            currentLocationLabel="Current location"
+          />
         </View>
-      </SafeAreaView>
-    </ImageBackground>
+        <View style={[styles.container, { flex: 6 }]}>
+          <MapView
+            style={styles.mapStyle}
+            initialRegion={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: 0.4,
+              longitudeDelta: 0.04,
+            }}
+            region={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: parseInt(range) * 0.05,
+              longitudeDelta: 0.04,
+            }}
+            customMapStyle={mapStyle}
+            loadingEnabled={true}
+            scrollEnabled={false}
+
+            //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
+          >
+            <Marker
+              draggable
+              coordinate={{
+                latitude: latitude,
+                longitude: longitude,
+              }}
+              onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
+              title={"Messiah University"}
+              description={"position"}
+            />
+            <MapView.Circle
+              center={{ latitude: latitude, longitude: longitude }}
+              radius={parseInt(range) * 1609.34}
+              strokeColor="rgba(43, 125, 156,.85)"
+              fillColor="rgba(170, 218, 255, .3)"
+            />
+          </MapView>
+        </View>
+
+        <View style={[styles.container, { flex: 2 }]}>
+          <Text style={styles.mileText}>{range}</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={1}
+            maximumValue={50}
+            step={1}
+            value={1}
+            onValueChange={(value) => setRange(parseInt(value) + " miles")}
+            //onSlidingStart={() => setSliding("Sliding")}
+            //onSlidingComplete={() => setSliding("Inactive")}
+            minimumTrackTintColor="#2B7D9C"
+            maximumTrackTintColor="#2B7D9C"
+            thumbTintColor="#2B7D9C"
+          />
+        </View>
+        <View style={[styles.container, { flex: 1 }]}>
+          <Button
+            title="Submit"
+            titleStyle={{ fontSize: 26, color: "#FFFFFF" }}
+            buttonStyle={{
+              borderWidth: 10,
+              borderWidth: 1,
+              width: windowWidth * 0.5,
+              height: windowHight * 0.09,
+              borderColor: "black",
+              titleColor: "black",
+              backgroundColor: "#2B7D9C",
+              borderRadius: 50,
+            }}
+            style={{ padding: 45 }}
+            onPress={() => {
+              props.addDistance(range, props.navigation);
+            }}
+            //onPress={() => {(props).handleSubmit}}
+            // onPress={() => {
+            //   console.log(parseInt(range) + " miles");
+            // }}
+          />
+        </View>
+        {/* </>
+          )} */}
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -345,7 +336,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   addDistance: (range, navigation) => dispatch(addDistance(range, navigation)),
-  setLocation: (latitude, longitude) => dispatch(setLocation(latitude, longitude))
+  setLocation: (latitude, longitude) =>
+    dispatch(setLocation(latitude, longitude)),
 });
 
 export default connect(

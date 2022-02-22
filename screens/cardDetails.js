@@ -50,10 +50,10 @@ const windowHight = Dimensions.get("window").height;
 //Called by favorite and personal when you click on a card to display the content
 function CardDetails(props, { navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
-  const [eventCreator, setEventCreator] = useState(props.route.params?.creator);
+  const [eventCreator, setEventCreator] = useState(props.route.params?.creator || {userID: "", userName: ""});
 
   const [eventID, setEventID] = useState(props.route.params?.id);
-  const [eventName, setEventName] = useState(props.route.params?.name);
+  const [eventName, setEventName] = useState(props.route.params?.name || "");
   const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
   const [eventDateTime, setEventDateTime] = useState(
     props.route.params?.startDateTime || ""
@@ -71,19 +71,6 @@ function CardDetails(props, { navigation, route }) {
 
   const [newPostsNotifID, setNewPostsNotifID] = useState();
   const [newAttendeesNotifID, setNewAttendeesNotifID] = useState();
-
-  var eventAtens = [];
-
-  const sampleUsers = [
-    {
-      id: 1,
-      name: "Alec",
-    },
-    {
-      id: 2,
-      name: "Robbie",
-    },
-  ];
 
   const AuthStateChangedListener = (user) => {
     if (user) {
@@ -105,6 +92,7 @@ function CardDetails(props, { navigation, route }) {
     setEventAddress(eventData.address);
     // SPRINT7: phase out the second half of this
     // setEventCreator(eventData.creator || {id: eventData.creatorID, name: ""});
+    setEventCreator(eventData.creator)
     setNewPostsNotifID(
       eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
     );
@@ -386,14 +374,14 @@ function CardDetails(props, { navigation, route }) {
 
   return (
     <SafeAreaView style={globalStyles.container}>
-      <View style={{ backgroundColor: "#D3D3D3", flex: 1 }}>
+      <View style={{ backgroundColor: "#2B7D9C", flex: 1 }}>
         {/* // Title Area */}
         {/* <ScrollView style={{ flex: 1, backgroundColor: "red" }}> */}
         <View
           style={{
             paddingHorizontal: 20,
             paddingTop: 20,
-            backgroundColor: "#D3D3D3",
+            backgroundColor: "#2B7D9C",
             borderBottomColor: "black",
             borderBottomWidth: 5,
             marginBottom: 15,
@@ -430,12 +418,13 @@ function CardDetails(props, { navigation, route }) {
           style={{ flex: 1 }}
           // the actual posts
           renderItem={({ item }) => (
-            <Card>
+            <Card containerStyle={styles.cardDesign}>
+              <View style={styles.cardDesign}>
               {/* poster name and post creation time */}
               <View style={{ flexDirection: "row" }}>
-                <Text style={{ fontWeight: "bold" }}>{item.posterName}</Text>
+                <Text style={{ fontWeight: "bold", color: 'white' }}>{item.posterName}</Text>
                 <View style={{ flex: 1 }} />
-                <Text style={{ color: "gray" }}>
+                <Text style={{ color: "white" }}>
                   {moment
                     .unix(item.creationTimestamp.seconds)
                     .format("MMM Do, hh:mm A")}
@@ -445,7 +434,7 @@ function CardDetails(props, { navigation, route }) {
               {postEditID != item.id && (
                 <View>
                   {/* post message */}
-                  <Text>{item.message}</Text>
+                  <Text style={{color: 'white'}}>{item.message}</Text>
 
                   {/* 'edited' tag */}
                   {/* literally the only reason I put this <Text> in a view was because it */}
@@ -453,7 +442,7 @@ function CardDetails(props, { navigation, route }) {
 
                   {item.edited && (
                     <View>
-                      <Text style={{ color: "gray" }}>(edited)</Text>
+                      <Text style={{ color: "white" }}>(edited)</Text>
                     </View>
                   )}
                 </View>
@@ -492,17 +481,20 @@ function CardDetails(props, { navigation, route }) {
                           onBlur={() => {
                             props.handleBlur("postText");
                           }}
-                          style={{ maxHeight: 250 }}
+                          style={{ maxHeight: 250, color: 'white' }}
                         />
                         <View style={{ flexDirection: "row" }}>
                           <View style={{ flex: 1, paddingHorizontal: 5 }}>
                             <Button
+                              buttonStyle={styles.buttonDesign}
                               title="Cancel"
                               onPress={() => exitEditMode()}
                             />
                           </View>
                           <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                            <Button title="Edit" onPress={props.handleSubmit} />
+                            <Button
+                             buttonStyle={styles.buttonDesign}
+                             title="Edit" onPress={props.handleSubmit} />
                           </View>
                         </View>
                       </>
@@ -518,7 +510,7 @@ function CardDetails(props, { navigation, route }) {
                   {
                     <Icon
                       name="comment"
-                      color="#517fa4"
+                      color="#2B7D9C"
                       size={22}
                       onPress={() => enterReplyMode(item)}
                     />
@@ -528,7 +520,7 @@ function CardDetails(props, { navigation, route }) {
                   {item.posterID == userID && (
                     <Icon
                       name="pencil"
-                      color="#517fa4"
+                      color="#2B7D9C"
                       size={22}
                       style={{ paddingHorizontal: 5 }}
                       onPress={() => enterEditMode(item)}
@@ -537,7 +529,7 @@ function CardDetails(props, { navigation, route }) {
                   {(item.posterID == userID || isCreator) && (
                     <Icon
                       name="trash"
-                      color="#517fa4"
+                      color="#2B7D9C"
                       size={22}
                       onPress={() => handleDeletePost(item)}
                     />
@@ -577,7 +569,7 @@ function CardDetails(props, { navigation, route }) {
                         exitReplyMode();
                       }
                     }}
-                  >
+                    >
                     {(props) => (
                       <>
                         <Input
@@ -589,17 +581,19 @@ function CardDetails(props, { navigation, route }) {
                           onBlur={() => {
                             props.handleBlur("replyText");
                           }}
-                          style={{ maxHeight: 100 }}
+                          style={{ maxHeight: 100, color: 'white' }}
                         />
                         <View style={{ flexDirection: "row" }}>
                           <View style={{ flex: 1, paddingHorizontal: 5 }}>
                             <Button
+                            buttonStyle={styles.buttonDesign}
                               title="Cancel"
                               onPress={() => exitReplyMode()}
                             />
                           </View>
                           <View style={{ flex: 1, paddingHorizontal: 5 }}>
                             <Button
+                            buttonStyle={styles.buttonDesign}
                               title="Reply"
                               onPress={props.handleSubmit}
                             />
@@ -646,6 +640,7 @@ function CardDetails(props, { navigation, route }) {
                   </View>
                 ))}
               </View>
+              </View>
             </Card>
           )}
           ListHeaderComponent={
@@ -677,12 +672,12 @@ function CardDetails(props, { navigation, route }) {
 
                 {!isCreator && (
                   <Button
-                    titleStyle={{ color: "black" }}
+                    titleStyle={{ color: "white" }}
                     buttonStyle={{
                       borderWidth: 1,
                       borderColor: "black",
                       titleColor: "black",
-                      backgroundColor: "orange",
+                      backgroundColor: "#3B4046",
                     }}
                     title={!isAttending ? "Register" : "Unregister"}
                     onPress={() => {
@@ -728,7 +723,7 @@ function CardDetails(props, { navigation, route }) {
             enabled={!editMode}
           >
             {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
-            <Card>
+            <Card containerStyle={{...styles.cardDesign, marginBottom:10, marginTop:10}}>
               <Formik
                 initialValues={{
                   postText: "",
@@ -771,7 +766,7 @@ function CardDetails(props, { navigation, route }) {
                     actions.resetForm();
                   }
                 }}
-              >
+                >
                 {(props) => (
                   <>
                     <Input
@@ -783,7 +778,7 @@ function CardDetails(props, { navigation, route }) {
                       onBlur={() => {
                         props.handleBlur("postText");
                       }}
-                      style={{ maxHeight: 100 }}
+                      style={{ maxHeight: 100, color:'white' }}
                     />
                     <Button
                       titleStyle={{ color: "white" }}
@@ -791,7 +786,7 @@ function CardDetails(props, { navigation, route }) {
                         borderWidth: 1,
                         borderColor: "black",
                         titleColor: "black",
-                        backgroundColor: "#517fa4",
+                        backgroundColor: "#2B7D9C",
                       }}
                       title="Post"
                       disabled={!isAttending || editMode}
@@ -822,7 +817,7 @@ const styles = StyleSheet.create({
   Title: {
     marginBottom: 5,
     fontSize: 35,
-    color: "#FF5F15",
+    color: "white",
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -831,20 +826,32 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     fontWeight: "bold",
     textAlign: "center",
+    color:'white'
   },
   sub: {
     fontSize: 20,
     textAlign: "center",
     paddingBottom: 10,
+    color:'white'
   },
   subt: {
     fontSize: 18,
     textAlign: "center",
     paddingBottom: 10,
+    color:'white'
   },
   subp: {
     fontSize: 12,
     textAlign: "center",
     paddingBottom: 5,
+    color: 'white'
   },
+  cardDesign: {
+    backgroundColor: '#3B4046', 
+    borderColor: 'black',
+  },
+  buttonDesign: {
+    backgroundColor: '#2B7D9C', 
+    borderColor: 'black',
+  }
 });
