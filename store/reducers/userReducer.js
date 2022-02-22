@@ -19,7 +19,7 @@ const userReducer = (state = initialState, action) => {
     case SET_USER:
       return action.payload;
     case REMOVE_USER:
-      return null;
+      return initialState;
     case SET_LOCATION:
       return {
       ...state,
