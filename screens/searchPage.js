@@ -305,7 +305,7 @@ function Search(props, { navigation }) {
             <Marker
               draggable
               coordinate={{
-                latitude: props.user.location.longitude,
+                latitude: props.user.location.latitude,
                 longitude: props.user.location.longitude,
               }}
               onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
