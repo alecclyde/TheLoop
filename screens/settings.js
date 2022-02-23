@@ -191,36 +191,41 @@ function UserProfileView(props) {
               justifyContent: "center",
               alignItems: "center",
               margin: 5,
+              flexDirection: "row",
             }}
           >
-            <View>
-              <Button
-                title="Privacy Policy"
-                onPress={() =>
-                  Linking.openURL(
-                    "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md")
-                }
-              />
+            <View style={{flex: 1, flexDirection: "column"}}>
+              <View style={{marginBottom: 10, marginRight: 3}}>
+                <Button
+                  title="Privacy Policy"
+                  onPress={() =>
+                    Linking.openURL(
+                      "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md")
+                  }
+                />
+              </View>
+              <View style={{marginBottom: 10,  marginRight: 3}}>
+                <Button
+                  title="Terms & Conditions"
+                  onPress={() =>
+                    Linking.openURL("https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md")
+                  }
+                />
+              </View>
             </View>
-            <View>
-              <Button
-                title="Terms & Conditions"
-                onPress={() =>
-                  Linking.openURL("https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md")
-                }
-              />
-            </View>
-            <View>
-              <Button
-                title="Change Location"
-                onPress={() => props.navigation.navigate("LocationPreferencesPage")}
-              />
-            </View>
-            <View>
-              <Button
-                title="Change Prefered Events"
-                onPress={() => props.navigation.navigate("UserEventPreferences", {settings: true})}
-              />
+            <View style={{flex: 1, flexDirection: "column"}}>
+              <View style={{marginBottom: 10, marginLeft: 3}}>
+                <Button
+                  title="Change Location"
+                  onPress={() => props.navigation.navigate("LocationPreferencesPage")}
+                />
+              </View>
+              <View style={{marginBottom: 10, marginLeft: 3}}>
+                <Button
+                  title="Change Loops"
+                  onPress={() => props.navigation.navigate("UserEventPreferences", {settings: true})}
+                />
+              </View>
             </View>
           </View>
           <Button
