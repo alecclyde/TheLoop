@@ -36,6 +36,16 @@ jobs:
     environment:
       EXPO_RELEASE_CHANNEL: main
     <<: *publish
+  eas_build:
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Trigger build
+          command: npx eas-cli build --platform all --non-interactive
 
 workflows:
   node-test:
@@ -52,4 +62,10 @@ workflows:
           filters:
             branches:
               only: main
+  build_app:
+    jobs:
+      - eas_build:
+          filters:
+            branches:
+              only: google_play_automation
 # Credit to Josiah for his code in Emotive App.
