@@ -17,7 +17,7 @@ export function registration(email, password, lastName, firstName, navigation) {
         lastName: lastName,
         firstName: firstName,
         joinedLoops: [],
-        distanceTolerance: 15,
+        distanceTolerance: 1,
         myEvents: [],
         location: [],
         creationTimestamp: firebase.firestore.Timestamp.now(),

@@ -37,7 +37,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
 
 function LocationPreferencesPage(props) {
-  const [range, setRange] = useState("1 mile");
+  const [range, setRange] = useState(parseInt(props.user.distanceTolerance) + " mile");
   const [searchQuery, setSearchQuery] = React.useState("");
   //const [sliding, setSliding] = useState("Inactive");
   const [search, setSearch] = useState({ text: "" });
@@ -180,6 +180,7 @@ function LocationPreferencesPage(props) {
             }}
             style={{ padding: 45 }}
             onPress={() => {
+              props.setLocation(latitude, longitude);
               props.addDistance(range, props.navigation);
             }}
             //onPress={() => {(props).handleSubmit}}
