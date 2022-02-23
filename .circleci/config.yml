@@ -73,7 +73,7 @@ workflows:
   build_app:
     jobs:
       - eas_build:
-          # filters:
-          #   branches:
-          #     only: google_play_automation
+          filters:
+            branches:
+              only: google_play_automation
 # Credit to Josiah for his code in Emotive App.
