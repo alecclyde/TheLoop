@@ -49,13 +49,13 @@ jobs:
       - checkout
       - run:
           name: Login Expo
-          command: npx expo-cli login -u $EXPO_USERNAME -p $EXPO_PASSWORD
+          command: npm ci
       - run:
           name: Install dependencies
           command: npm ci
       - run:
           name: Trigger build
-          command: npx eas-cli build --platform all --non-interactive
+          command: npx eas-cli build --platform all
 
 workflows:
   node-test:
