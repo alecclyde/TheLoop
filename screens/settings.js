@@ -53,7 +53,6 @@ function UserProfileView(props) {
       setEmail(props.user.email);
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
-      console.log(props.settings.darkMode);
     }
   });
   // Listener to update user data
@@ -105,7 +104,7 @@ function UserProfileView(props) {
       <View style={globalStyles.header}>
         <View style={globalStyles.headerContent}>
           {/* Add this -> https://blog.waldo.io/add-an-image-picker-react-native-app/ */}
-          <TouchableOpacity onPress={() => console.log("bogo")}>
+          <TouchableOpacity onPress={() => console.log("Add some way to change me ")}>
             <Image
               style={globalStyles.avatar}
               source={{
@@ -194,22 +193,35 @@ function UserProfileView(props) {
               margin: 5,
             }}
           >
-            <Button
-              title="Privacy Policy"
-              onPress={() =>
-                Linking.openURL(
-                  "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md"
-                )
-              }
-            ></Button>
-            <Button
-              title="Terms & Conditions"
-              onPress={() =>
-                Linking.openURL(
-                  "https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md"
-                )
-              }
-            ></Button>
+            <View>
+              <Button
+                title="Privacy Policy"
+                onPress={() =>
+                  Linking.openURL(
+                    "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md")
+                }
+              />
+            </View>
+            <View>
+              <Button
+                title="Terms & Conditions"
+                onPress={() =>
+                  Linking.openURL("https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md")
+                }
+              />
+            </View>
+            <View>
+              <Button
+                title="Change Location"
+                onPress={() => props.navigation.navigate("LocationPreferencesPage")}
+              />
+            </View>
+            <View>
+              <Button
+                title="Change Prefered Events"
+                onPress={() => props.navigation.navigate("UserEventPreferences", {settings: true})}
+              />
+            </View>
           </View>
           <Button
             title="Sign Out"

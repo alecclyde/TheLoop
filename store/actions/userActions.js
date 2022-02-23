@@ -3,6 +3,7 @@ import { UPDATE_USER } from "../constants";
 import { REMOVE_USER } from "../constants";
 import { ADD_DISTANCE } from "../constants";
 import { SET_LOCATION } from "../constants";
+import { SET_USER_LOOPS } from "../constants";
 import * as firebase from "firebase";
 import { Alert } from "react-native";
 
@@ -76,7 +77,7 @@ export function signOut(navigation) {
   };
 }
 
-export function setUserLoops(joinedLoops, navigation) {
+export function setUserLoops(joinedLoops) {
   return async function signOutThunk(dispatch, getState) {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
@@ -85,12 +86,8 @@ export function setUserLoops(joinedLoops, navigation) {
       .collection("users")
       .doc(currentUser.uid)
       .update({ joinedLoops: joinedLoops })
-
-      .then(() => {
-        navigation.navigate("RootStack");
-      });
     //console.log(user);
-    dispatch({ type: UPDATE_USER });
+    dispatch({ type: SET_USER_LOOPS , payload: joinedLoops});
     // probably should navigate to event page after this
   };
 }
