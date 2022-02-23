@@ -48,6 +48,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Login Expo
+          command: npx expo-cli login -u $EXPO_USERNAME -p $EXPO_PASSWORD
+      - run:
           name: Install dependencies
           command: npm ci
       - run:
