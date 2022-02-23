@@ -26,6 +26,12 @@ publish: &publish
         environment:
           NODE_OPTIONS: --max_old_space_size=3999
 
+executors:
+  default:
+    docker:
+      - image: cimg/node:lts
+    working_directory: ~/my-app
+
 jobs:
   publish_to_expo_dev:
     environment:
@@ -36,6 +42,7 @@ jobs:
     environment:
       EXPO_RELEASE_CHANNEL: main
     <<: *publish
+
   eas_build:
     executor: default
     steps:
@@ -62,10 +69,11 @@ workflows:
           filters:
             branches:
               only: main
+
   build_app:
     jobs:
       - eas_build:
-          filters:
-            branches:
-              only: google_play_automation
+          # filters:
+          #   branches:
+          #     only: google_play_automation
 # Credit to Josiah for his code in Emotive App.
