@@ -4,7 +4,6 @@ import Profile from '../screens/profile';
 import Settings from '../screens/settings';
 import AboutUs from '../screens/aboutUs';
 import Header from '../shared/header';
-import CardDetails from '../screens/cardDetails';
 import SignUp from '../screens/signUp';
 import LogIn from '../screens/logIn';
 import { Button } from 'react-native-elements';
@@ -75,11 +74,6 @@ export default function ProfileStack({navigation}){
             headerRight: () => <Header navigation={navigation} />
           }
         }}
-      />
-      <Stack.Screen
-        name="CardDetails"
-        component={CardDetails}
-        options={{ headerShown: false}}
       />
 
     </Stack.Navigator>

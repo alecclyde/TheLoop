@@ -37,7 +37,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
 
 function LocationPreferencesPage(props) {
-  const [range, setRange] = useState("1 mile");
+  const [range, setRange] = useState(parseInt(props.user.distanceTolerance) + " mile");
   const [searchQuery, setSearchQuery] = React.useState("");
   //const [sliding, setSliding] = useState("Inactive");
   const [search, setSearch] = useState({ text: "" });
@@ -66,7 +66,6 @@ function LocationPreferencesPage(props) {
             onPress={(data, details = null) => {
               setLatitude(details.geometry.location.lat);
               setLongitude(details.geometry.location.lng);
-              props.setLocation(details.geometry.location.lat, details.geometry.location.lng);
             }}
             getDefaultValue={() => {
               return ""; // text input default value
@@ -85,7 +84,7 @@ function LocationPreferencesPage(props) {
                 color: "#1faadb",
               },
             }}
-            currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+            currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
             currentLocationLabel="Current location"
             nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
             GoogleReverseGeocodingQuery={
@@ -104,8 +103,6 @@ function LocationPreferencesPage(props) {
             ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
             predefinedPlaces={[messiahPlace]}
             debounce={200}
-            currentLocation={true}
-            currentLocationLabel="Current location"
           />
         </View>
         <View style={[styles.container, { flex: 6 }]}>
@@ -180,7 +177,8 @@ function LocationPreferencesPage(props) {
             }}
             style={{ padding: 45 }}
             onPress={() => {
-              props.addDistance(range, props.navigation);
+              props.setLocation(latitude, longitude);
+              props.addDistance(parseInt(range), props.navigation);
             }}
             //onPress={() => {(props).handleSubmit}}
             // onPress={() => {

@@ -410,10 +410,11 @@ function EventCreation(props) {
               fetchDetails={true}
               renderDescription={(row) => row.description} // custom description render
               onPress={(data, details = null) => {
-                setLatitude(details.geometry.location.lat);
-                setLongitude(details.geometry.location.lng);
-                //console.log(details);
-                props.setFieldValue("location", {latitude: latitude, longitude: longitude})
+                // setLatitude(details.geometry.location.lat);
+                // setLongitude(details.geometry.location.lng);
+                console.log(details.geometry.location.lat);
+                console.log(details.geometry.location.lng);
+                props.setFieldValue("location", {latitude: details.geometry.location.lat, longitude: details.geometry.location.lng})
                 //props.setLocation(latitude, longitude);
               }}
               getDefaultValue={() => {
@@ -433,8 +434,8 @@ function EventCreation(props) {
                   color: "#1faadb",
                 },
               }}
-              currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-              currentLocationLabel="Current location"
+              currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
+              // currentLocationLabel="Current location"
               nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
               GoogleReverseGeocodingQuery={
                 {
@@ -452,8 +453,6 @@ function EventCreation(props) {
               ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
               predefinedPlaces={[messiahPlace]}
               debounce={200}
-              currentLocation={true}
-              currentLocationLabel="Current location"
             />
             </View>
             <Input
