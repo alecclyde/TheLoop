@@ -434,8 +434,8 @@ function EventCreation(props) {
                   color: "#1faadb",
                 },
               }}
-              currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-              currentLocationLabel="Current location"
+              currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
+              // currentLocationLabel="Current location"
               nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
               GoogleReverseGeocodingQuery={
                 {
@@ -453,8 +453,6 @@ function EventCreation(props) {
               ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
               predefinedPlaces={[messiahPlace]}
               debounce={200}
-              currentLocation={true}
-              currentLocationLabel="Current location"
             />
             </View>
             <Input
