@@ -109,7 +109,7 @@ export function setLocation(latitude, longitude) {
     await firebase.firestore()
     .collection('users')
     .doc(firebase.auth().currentUser.uid)
-    .update({location: {latitude, longitude}})
+    .update({location: new firebase.firestore.GeoPoint(latitude, longitude)})
 
     dispatch({ type: SET_LOCATION, payload: {latitude, longitude}})
   }

@@ -66,7 +66,6 @@ function LocationPreferencesPage(props) {
             onPress={(data, details = null) => {
               setLatitude(details.geometry.location.lat);
               setLongitude(details.geometry.location.lng);
-              props.setLocation(details.geometry.location.lat, details.geometry.location.lng);
             }}
             getDefaultValue={() => {
               return ""; // text input default value
@@ -181,7 +180,7 @@ function LocationPreferencesPage(props) {
             style={{ padding: 45 }}
             onPress={() => {
               props.setLocation(latitude, longitude);
-              props.addDistance(range, props.navigation);
+              props.addDistance(parseInt(range), props.navigation);
             }}
             //onPress={() => {(props).handleSubmit}}
             // onPress={() => {
