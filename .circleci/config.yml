@@ -55,7 +55,7 @@ jobs:
           command: npm ci
       - run:
           name: Trigger build
-          command: npx eas-cli build --platform android --non-interactive -u alecclyde
+          command: npx eas-cli build --platform android --non-interactive
 
 workflows:
   node-test:
