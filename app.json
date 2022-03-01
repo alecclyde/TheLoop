@@ -19,7 +19,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.TheLoop.TheLoop",
-      "buildNumber": "1.1.0"
+      "buildNumber": "1.1.0",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app accesses your photos to use as profile pictures and event thumbnails",
+        "NSCameraUsageDescription": "This app accesses the camera to create a profile picture or event thumbnail"
+      }
     },
     "android": {
       "permissions": ["ACCESS_COURSE_LOCATION", "ACCESS_FINE_LOCATION"],
