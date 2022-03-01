@@ -53,7 +53,6 @@ function UserProfileView(props) {
       setEmail(props.user.email);
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
-      console.log(props.settings.darkMode);
     }
   });
   // Listener to update user data
