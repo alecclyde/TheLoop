@@ -22,6 +22,7 @@
     "@react-navigation/stack": "^6.0.7",
     "expo": "^43.0.0",
     "expo-app-loading": "~1.2.1",
+    "expo-image-picker": "^11.0.3",
     "expo-linear-gradient": "~10.0.3",
     "expo-location": "~13.0.4",
     "expo-status-bar": "~1.1.0",

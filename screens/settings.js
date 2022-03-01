@@ -104,7 +104,7 @@ function UserProfileView(props) {
       <View style={globalStyles.header}>
         <View style={globalStyles.headerContent}>
           {/* Add this -> https://blog.waldo.io/add-an-image-picker-react-native-app/ */}
-          <TouchableOpacity onPress={() => console.log("bogo")}>
+          <TouchableOpacity onPress={() => props.navigation.navigate("ProfilePic")}>
             <Image
               style={globalStyles.avatar}
               source={{
