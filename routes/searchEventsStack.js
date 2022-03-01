@@ -1,5 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import SearchPage from "../screens/searchPage";
+import CardDetails from "../screens/cardDetails";
 import MapView from "../screens/mapView";
 import React from "react";
 import Header from "../shared/header";
@@ -45,6 +46,11 @@ export default function SearchEventsStack() {
             headerRight: () => <Header navigation={navigation} />,
           };
         }}
+      />
+      <Stack.Screen
+        name="CardDetails"
+        component={CardDetails}
+        options={{ headerShown: false}}
       />
     </Stack.Navigator>
   );
