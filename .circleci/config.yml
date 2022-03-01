@@ -26,6 +26,12 @@ publish: &publish
         environment:
           NODE_OPTIONS: --max_old_space_size=3999
 
+executors:
+  default:
+    docker:
+      - image: cimg/node:lts
+    working_directory: ~/my-app
+
 jobs:
   publish_to_expo_dev:
     environment:
@@ -36,6 +42,20 @@ jobs:
     environment:
       EXPO_RELEASE_CHANNEL: main
     <<: *publish
+
+  eas_build:
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Login Expo
+          command: npx expo-cli login -u $EXPO_USERNAME -p $EXPO_PASSWORD
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Trigger build
+          command: npx eas-cli build --platform android --non-interactive
 
 workflows:
   node-test:
@@ -49,6 +69,13 @@ workflows:
             branches:
               only: production
       - publish_to_expo_prod:
+          filters:
+            branches:
+              only: main
+
+  build_app:
+    jobs:
+      - eas_build:
           filters:
             branches:
               only: main

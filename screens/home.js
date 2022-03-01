@@ -227,19 +227,42 @@ function Home(props, { navigation, route }) {
                   setLimitUpcoming(limitUpcoming + 3);
                 }}
               >
-                <Text style={styles.listingItem}>
-                  {events.filter((item) => item.startDateTime > moment().unix())
-                    .length - limitUpcoming}{" "}
-                  more event
-                  {/* puts the 's' at the end if the number of remaining events is not 1 */}
-                  {events.filter((item) => item.startDateTime > moment().unix())
-                    .length -
-                    limitUpcoming ==
-                  1
-                    ? ""
-                    : "s"}
-                </Text>
-                <Text style={styles.descriptionItem}>Tap to view</Text>
+                <ListItem
+                  pad={16}
+                  bottomDivide={true}
+                  Component={TouchableScale}
+                  button
+                  friction={90}
+                  tension={100} // These props are passed to the parent component (here TouchableScale)
+                  activeScale={0.95} //
+                  linearGradientProps={{
+                    colors: ["#3B4046", "#3B4046"],
+                    start: { x: 1, y: 0 },
+                    end: { x: 0.2, y: 0 },
+                  }}
+                  ViewComponent={LinearGradient}
+                >
+                  <ListItem.Content>
+                    <ListItem.Title style={styles.listingItem}>
+                      {events.filter(
+                        (item) => item.startDateTime > moment().unix()
+                      ).length - limitUpcoming}{" "}
+                      more event
+                      {/* puts the 's' at the end if the number of remaining events is not 1 */}
+                      {events.filter(
+                        (item) => item.startDateTime > moment().unix()
+                      ).length -
+                        limitUpcoming ==
+                      1
+                        ? ""
+                        : "s"}
+                    </ListItem.Title>
+                    <ListItem.Subtitle style={styles.descriptionItem}>
+                      Tap to view
+                    </ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron color="gray" />
+                </ListItem>
               </TouchableOpacity>
             )}
           </ScrollView>
@@ -356,21 +379,42 @@ function Home(props, { navigation, route }) {
                   setLimitPrevious(limitPrevious + 3);
                 }}
               >
-                <Text style={styles.listingItem}>
-                  {events.filter(
-                    (item) => item.startDateTime <= moment().unix()
-                  ).length - limitPrevious}{" "}
-                  more event
-                  {/* puts the 's' at the end if the number of remaining events is not 1 */}
-                  {events.filter(
-                    (item) => item.startDateTime <= moment().unix()
-                  ).length -
-                    limitPrevious ==
-                  1
-                    ? ""
-                    : "s"}
-                </Text>
-                <Text style={styles.descriptionItem}>Tap to view</Text>
+                <ListItem
+                  pad={16}
+                  bottomDivide={true}
+                  Component={TouchableScale}
+                  button
+                  friction={90}
+                  tension={100} // These props are passed to the parent component (here TouchableScale)
+                  activeScale={0.95} //
+                  linearGradientProps={{
+                    colors: ["#3B4046", "#3B4046"],
+                    start: { x: 1, y: 0 },
+                    end: { x: 0.2, y: 0 },
+                  }}
+                  ViewComponent={LinearGradient}
+                >
+                  <ListItem.Content>
+                    <ListItem.Title style={styles.listingItem}>
+                      {events.filter(
+                        (item) => item.startDateTime <= moment().unix()
+                      ).length - limitPrevious}{" "}
+                      more event
+                      {/* puts the 's' at the end if the number of remaining events is not 1 */}
+                      {events.filter(
+                        (item) => item.startDateTime <= moment().unix()
+                      ).length -
+                        limitPrevious ==
+                      1
+                        ? ""
+                        : "s"}
+                    </ListItem.Title>
+                    <ListItem.Subtitle style={styles.descriptionItem}>
+                      Tap to view
+                    </ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron color="gray" />
+                </ListItem>
               </TouchableOpacity>
             )}
           </ScrollView>
@@ -499,25 +543,46 @@ function Home(props, { navigation, route }) {
                   setLimitHosting(limitHosting + 3);
                 }}
               >
-                <Text style={styles.listingItem}>
-                  {events.filter(
-                    (item) =>
-                      item.creator.userID == userID &&
-                      item.startDateTime > moment().unix()
-                  ).length - limitHosting}{" "}
-                  more event
-                  {/* puts the 's' at the end if the number of remaining events is not 1 */}
-                  {events.filter(
-                    (item) =>
-                      item.creator.userID == userID &&
-                      item.startDateTime > moment().unix()
-                  ).length -
-                  limitHosting ==
-                  1
-                    ? ""
-                    : "s"}
-                </Text>
-                <Text style={styles.descriptionItem}>Tap to view</Text>
+                <ListItem
+                  pad={16}
+                  bottomDivide={true}
+                  Component={TouchableScale}
+                  button
+                  friction={90}
+                  tension={100} // These props are passed to the parent component (here TouchableScale)
+                  activeScale={0.95} //
+                  linearGradientProps={{
+                    colors: ["#3B4046", "#3B4046"],
+                    start: { x: 1, y: 0 },
+                    end: { x: 0.2, y: 0 },
+                  }}
+                  ViewComponent={LinearGradient}
+                >
+                  <ListItem.Content>
+                    <ListItem.Title style={styles.listingItem}>
+                      {events.filter(
+                        (item) =>
+                          item.creator.userID == userID &&
+                          item.startDateTime > moment().unix()
+                      ).length - limitHosting}{" "}
+                      more event
+                      {/* puts the 's' at the end if the number of remaining events is not 1 */}
+                      {events.filter(
+                        (item) =>
+                          item.creator.userID == userID &&
+                          item.startDateTime > moment().unix()
+                      ).length -
+                        limitHosting ==
+                      1
+                        ? ""
+                        : "s"}
+                    </ListItem.Title>
+                    <ListItem.Subtitle style={styles.descriptionItem}>
+                      Tap to view
+                    </ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron color="gray" />
+                </ListItem>
               </TouchableOpacity>
             )}
           </ScrollView>

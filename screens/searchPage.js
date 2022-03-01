@@ -503,6 +503,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
   user: state.user,
   events: state.events,
+  user: state.user
 });
 
 const mapDispatchToProps = (dispatch) => ({});
