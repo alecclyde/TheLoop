@@ -2,7 +2,7 @@
   "expo": {
     "name": "TheLoop",
     "slug": "TheLoop",
-    "version": "1.0.4",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/The-Loop-8.png",
     "splash": {
@@ -24,7 +24,7 @@
     "android": {
       "permissions": ["ACCESS_COURSE_LOCATION", "ACCESS_FINE_LOCATION"],
       "package": "com.TheLoop.TheLoop",
-      "versionCode": 5,
+      "versionCode": 6,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
