@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import NotificationPage from '../screens/notificationPage';
+import CardDetails from "../screens/cardDetails";
 import React from 'react';
 import Header from '../shared/header';
 
@@ -37,6 +38,11 @@ export default function NotificationStack(){
             headerRight: () => <Header navigation={navigation} />
           }
         }}
+      />
+      <Stack.Screen
+        name="CardDetails"
+        component={CardDetails}
+        options={{ headerShown: false}}
       />
     </Stack.Navigator>
   )

@@ -30,6 +30,24 @@ import { connect } from "react-redux";
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
 
+function getDistanceFromLatLonInM(lat1,lon1,lat2,lon2) {
+  let R = 3961; // Radius of the earth in M
+  let dLat = deg2rad(lat2-lat1);  // deg2rad below
+  let dLon = deg2rad(lon2-lon1); 
+  let a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  let d = R * c; // Distance in m
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
+
 function Search(props, { navigation }) {
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,6 +87,7 @@ function Search(props, { navigation }) {
                   name: doc.data().name,
                   creator: doc.data().creator,
                   address: doc.data().address,
+                  location: doc.data().location,
                 },
               ]);
             }
@@ -76,6 +95,8 @@ function Search(props, { navigation }) {
         });
     }
   }, [isFocused]);
+
+  
 
   // update the list of filtered events
   useEffect(() => {
@@ -311,6 +332,28 @@ function Search(props, { navigation }) {
               onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
               title={"Your Location"}
               description={"position"}
+            />
+            {/* {
+              events.map((event) => {
+              if(getDistanceFromLatLonInM(props.user.location.latitude, props.user.location.longitude, event.location.latitude, event.location.longitude) < props.user.distanceTolerance){
+                console.log(event);
+                  <Marker
+                  draggable
+                  coordinate={{
+                    latitude: event.location.latitude,
+                    longitude: event.location.longitude,
+                  }}
+                  onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
+                  title={event.title}
+                  description={event.location}
+                />
+              }
+            })} */}
+             <MapView.Circle
+              center={{ latitude: latitude, longitude: longitude }}
+              radius={parseInt(props.user.distanceTolerance) * 1609.34}
+              strokeColor="rgba(43, 125, 156,.85)"
+              fillColor="rgba(170, 218, 255, .3)"
             />
           </MapView>
           <TouchableOpacity

@@ -16,6 +16,7 @@ import { Switch } from "react-native-elements";
 import { Button } from "react-native-elements";
 import { CheckBox } from "react-native-elements";
 import { Linking } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
@@ -53,7 +54,6 @@ function UserProfileView(props) {
       setEmail(props.user.email);
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
-      console.log(props.settings.darkMode);
     }
   });
   // Listener to update user data
@@ -105,7 +105,9 @@ function UserProfileView(props) {
       <View style={globalStyles.header}>
         <View style={globalStyles.headerContent}>
           {/* Add this -> https://blog.waldo.io/add-an-image-picker-react-native-app/ */}
-          <TouchableOpacity onPress={() => console.log("bogo")}>
+          <TouchableOpacity
+            onPress={() => console.log("Add some way to change me ")}
+          >
             <Image
               style={globalStyles.avatar}
               source={{
@@ -121,7 +123,7 @@ function UserProfileView(props) {
       </View>
 
       <View style={styles.body}>
-        <View style={styles.item}>
+        {/* <View style={styles.item}>
           <View style={styles.infoContent}>
             <Text style={styles.info}>Dark Mode</Text>
           </View>
@@ -133,9 +135,9 @@ function UserProfileView(props) {
               value={props.settings.darkMode}
             />
           </View>
-        </View>
+        </View> */}
 
-        <View style={styles.item}>
+        {/* <View style={styles.item}>
           <View style={styles.infoContent}>
             <Text style={styles.info}>Push Notifications</Text>
           </View>
@@ -147,42 +149,7 @@ function UserProfileView(props) {
               value={props.settings.pushNotifications}
             />
           </View>
-        </View>
-        {/* 
-            <View style={styles.item}>
-              <View style={styles.infoContent}>
-                <Text style={styles.info}>Setting Option 2</Text>
-              </View>
-              <CheckBox
-                />
-            </View>
-
-            <View style={styles.item}>
-              <View style={styles.infoContent}>
-                <Text style={styles.info}>Setting Options 3</Text>
-              </View>
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeNumber}
-                value={number}
-                placeholder="useless placeholder"
-                />
-            </View> */}
-
-        {/* <View style={styles.item}>
-              <View style={styles.infoContent}>
-                <Text style={styles.info}>Maybe Button to go to preferences or other like security</Text>
-              </View>
-              <Button
-                title="Solid Button"
-                buttonStyle={{
-                      borderWidth: 1,
-                      borderColor: "black",
-                      titleColor: "black",
-                      backgroundColor: "#FFA500",
-                    }}
-                />
-            </View> */}
+        </View> */}
 
         <View
           style={{ justifyContent: "center", alignItems: "center", margin: 5 }}
@@ -192,29 +159,76 @@ function UserProfileView(props) {
               justifyContent: "center",
               alignItems: "center",
               margin: 5,
+              flexDirection: "row",
             }}
           >
-            <Button
-              title="Privacy Policy"
-              onPress={() =>
-                Linking.openURL(
-                  "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md"
-                )
-              }
-            ></Button>
-            <Button
-              title="Terms & Conditions"
-              onPress={() =>
-                Linking.openURL(
-                  "https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md"
-                )
-              }
-            ></Button>
+            <View style={{ flex: 1, flexDirection: "column" }}>
+              <View style={{ marginBottom: 10, marginRight: 3 }}>
+                <Button
+                  title="  Privacy Policy"
+                  onPress={() =>
+                    Linking.openURL(
+                      "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md"
+                    )
+                  }
+                  icon={<Icon name="user-secret" size={15} color="white" />}
+                />
+              </View>
+              <View style={styles.settingButton}>
+                <Button
+                  title=" Terms&Conditions"
+                  onPress={() =>
+                    Linking.openURL(
+                      "https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md"
+                    )
+                  }
+                  icon={<Icon name="gavel" size={15} color="white" />}
+                />
+              </View>
+            </View>
+            <View style={{ flex: 1, flexDirection: "column" }}>
+              <View style={styles.settingButton}>
+                <Button
+                  title="  Change Location"
+                  onPress={() =>
+                    props.navigation.navigate("LocationPreferencesPage")
+                  }
+                  icon={<Icon name="rocket" size={15} color="white" />}
+                />
+              </View>
+              <View style={styles.settingButton}>
+                <Button
+                  title="  Change Loops"
+                  onPress={() =>
+                    props.navigation.navigate("UserEventPreferences", {
+                      settings: true,
+                    })
+                  }
+                  icon={<Icon name="rocket" size={15} color="white" />}
+                />
+              </View>
+            </View>
           </View>
-          <Button
-            title="Sign Out"
-            onPress={() => props.signOut(props.navigation)}
-          ></Button>
+          <View style={{}}>
+            <View style={styles.settingButton}>
+              <Button
+                title=" Feedback"
+                onPress={() =>
+                  Linking.openURL(
+                    "https://docs.google.com/forms/d/e/1FAIpQLSdwOLeqnDlB1Y3age2MK5EMtCMKINHl1yf53ztW7FFklmkNTQ/viewform?usp=sf_link"
+                  )
+                }
+                icon={<Icon name="pencil-square-o" size={15} color="white" />}
+              />
+            </View>
+            <View style={styles.settingButton}>
+              <Button
+                title=" Sign Out "
+                onPress={() => props.signOut(props.navigation)}
+                icon={<Icon name="sign-out" size={15} color="white" />}
+              ></Button>
+            </View>
+          </View>
         </View>
       </View>
     </View>
@@ -229,6 +243,11 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     paddingBottom: 10,
+  },
+  settingButton: {
+    marginBottom: 10,
+    marginRight: 3,
+    borderRadius: 10,
   },
   infoContent: {
     flex: 1,

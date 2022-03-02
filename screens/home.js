@@ -204,7 +204,7 @@ function Home(props, { navigation, route }) {
                     />
                     <ListItem.Content>
                       <ListItem.Title style={styles.listingItem}>
-                        {event.name}
+                        {event.name.substring(0, 15)}
                       </ListItem.Title>
                       <ListItem.Subtitle style={styles.descriptionItem}>
                         {event.loop}
