@@ -4,7 +4,7 @@ import Profile from '../screens/profile';
 import Settings from '../screens/settings';
 import AboutUs from '../screens/aboutUs';
 import Header from '../shared/header';
-import CardDetails from '../screens/cardDetails';
+import CardDetails from "../screens/cardDetails";
 import SignUp from '../screens/signUp';
 import LogIn from '../screens/logIn';
 import { Button } from 'react-native-elements';

@@ -15,3 +15,5 @@
 expo install react-native-maps
 npm install react-native-google-places-autocomplete --save
 npm install react-native-geolocation-service
+
+https://fontawesome.com/v4/icons/

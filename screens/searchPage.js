@@ -12,12 +12,13 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  ScrollView
+  Image,
+  ScrollView,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { globalStyles } from "../styles/global";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { SearchBar, withTheme } from "react-native-elements";
+import { SearchBar, withTheme, CheckBox } from "react-native-elements";
 import { useIsFocused } from "@react-navigation/native";
 import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
@@ -29,63 +30,220 @@ import { connect } from "react-redux";
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
 
+function getDistanceFromLatLonInM(lat1,lon1,lat2,lon2) {
+  let R = 3961; // Radius of the earth in M
+  let dLat = deg2rad(lat2-lat1);  // deg2rad below
+  let dLon = deg2rad(lon2-lon1); 
+  let a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  let d = R * c; // Distance in m
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
+
 function Search(props, { navigation }) {
   const [events, setEvents] = useState([]);
-  const [search, setSearch] = useState({ text: "" });
+  const [searchTerm, setSearchTerm] = useState("");
   const isFocused = useIsFocused();
-  const latitude = 41.241489;
-  const longitude = -77.041924;
+  const [latitude, setLatitude] = useState(props.user.location.latitude);
+  const [longitude, setLongitude] = useState(props.user.location.longitude);
   const position = 0;
+  const messiahPlace = {
+    description: "Messiah University",
+    geometry: { location: { lat: 40.15974, lng: -76.988419 } },
+  };
+
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [byName, setByName] = useState(true);
+  const [byLocation, setByLocation] = useState(true);
+  const [byLoop, setByLoop] = useState(true);
+
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   //Gets all the events from the database and sets them to the events
   useEffect(() => {
-    setEvents([]);
-    firebase
-      .firestore()
-      .collection("events")
-      .get()
-      .then((snap) => {
-        snap.docs.forEach((doc) => {
-          if (doc.exists) {
-            setEvents((events) => [
-              ...events,
-              {
-                id: doc.id,
-                loop: doc.data().loop,
-                name: doc.data().name,
-                creator:
-                  // SPRINT7: remove conditional, uncomment actual line
-                  doc.data().creator == undefined
-                    ? { userID: doc.data().creatorID, userName: "" }
-                    : doc.data().creator,
-                //doc.data().creator,
-                address: doc.data().address,
-              },
-            ]);
-          }
+    if (isFocused) {
+      setEvents([]);
+      firebase
+        .firestore()
+        .collection("events")
+        .get()
+        .then((snap) => {
+          snap.docs.forEach((doc) => {
+            if (doc.exists) {
+              setEvents((events) => [
+                ...events,
+                {
+                  id: doc.id,
+                  loop: doc.data().loop,
+                  name: doc.data().name,
+                  creator: doc.data().creator,
+                  address: doc.data().address,
+                  location: doc.data().location,
+                },
+              ]);
+            }
+          });
         });
-      });
+    }
   }, [isFocused]);
+
+  
+
+  // update the list of filtered events
+  useEffect(() => {
+    if (searchTerm == "") {
+      setFilteredEvents([]);
+
+    } else {
+      let filteredEvents = new Set();
+      events.forEach((event) => {
+        if (
+          (byName && event.name.includes(searchTerm)) ||
+          (byLocation && event.address.includes(searchTerm)) ||
+          (byLoop && event.loop.includes(searchTerm))
+        ) {
+          filteredEvents.add(event);
+        }
+      });
+
+      setFilteredEvents([...filteredEvents]);
+    }
+  }, [searchTerm, byName, byLocation, byLoop]);
 
   return (
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
       <View style={[styles.holder, { flexDirection: "column" }]}>
-        <View style={{ flex: 1 }}>
-          <SearchBar
-            placeholder="Type Here..."
-            onChangeText={(text) => {
-              setSearch({ text });
-            }}
-            value={search.text}
-          />
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flex: 1 }}>
+            <SearchBar
+              placeholder="Type Here..."
+              onChangeText={(text) => {
+                setSearchTerm(text);
+              }}
+              containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0 }}
+              value={searchTerm}
+            />
+          </View>
+          <View style={{ flexDirection: "column", backgroundColor: "#393E42" }}>
+            <View style={{ flex: 1 }} />
+            <Icon
+              name="filter"
+              color="white"
+              size={30}
+              style={{ paddingLeft: 5, paddingRight: 10, justifyContent: "center" }}
+              onPress={() => {
+                setShowFilters(!showFilters);
+              }}
+            />
+            <View style={{ flex: 1 }} />
+          </View>
         </View>
+        {showFilters && (
+          <View>
+            <View style={{ alignItems: "center", backgroundColor: "#393E42" }}>
+              <Text
+                style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+              >
+                Filter by...
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row", backgroundColor: "#393E42" }}>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Name"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byName}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByName(!byName);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Location"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byLocation}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByLocation(!byLocation);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <CheckBox
+                  center
+                  containerStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    borderWidth: 0,
+                  }}
+                  title="Loop"
+                  textStyle={{
+                    color: "white",
+                  }}
+                  checked={byLoop}
+                  checkedColor="white"
+                  onPress={() => {
+                    setByLoop(!byLoop);
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+
         <View style={[styles.container, { flex: 2 }]}>
+        {(filteredEvents.length == 0) && (
+          <View style={{ alignItems: "center"}}>
+
+          {/* {
+            searchTerm == "" ? (
+              <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
+              Start typing to search for an event!
+              </Text>
+            ) : (
+              <Image
+                source={{uri: "https://i.ibb.co/KqRj666/No-Events.png", width: 220, height: 200}}
+              />
+            )
+          } */}
+
+          {/* uncomment block above and comment out Text below for the funny */}
+
+            <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
+            {searchTerm == "" ? "Start typing to search for an event!": "No results..."}
+            </Text>
+          </View>
+        )}
           <FlatList
             //contentContainerStyle={{ paddingBottom: }}
             persistentScrollbar={true}
-            data={events}
+            data={filteredEvents}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -145,28 +303,57 @@ function Search(props, { navigation }) {
         </View>
 
         <View style={[styles.container, { flex: 3 }]}>
-          <MapView
+        <MapView
             style={styles.mapStyle}
             initialRegion={{
-              latitude: latitude,
-              longitude: longitude,
-              latitudeDelta: 0.04,
-              longitudeDelta: 0.05,
+              latitude: props.user.location.latitude,
+              longitude: props.user.location.longitude,
+              latitudeDelta: 0.4,
+              longitudeDelta: 0.04,
+            }}
+            region={{
+              latitude: props.user.location.latitude,
+              longitude: props.user.location.longitude,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.04,
             }}
             customMapStyle={mapStyle}
-            loadingEnabled={true}
+            loadingEnabled={false}
+            scrollEnabled={false}
 
             //onPoiClick={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
           >
             <Marker
               draggable
               coordinate={{
-                latitude: latitude,
-                longitude: longitude,
+                latitude: props.user.location.latitude,
+                longitude: props.user.location.longitude,
               }}
               onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
-              title={"Messiah University"}
+              title={"Your Location"}
               description={"position"}
+            />
+            {/* {
+              events.map((event) => {
+              if(getDistanceFromLatLonInM(props.user.location.latitude, props.user.location.longitude, event.location.latitude, event.location.longitude) < props.user.distanceTolerance){
+                console.log(event);
+                  <Marker
+                  draggable
+                  coordinate={{
+                    latitude: event.location.latitude,
+                    longitude: event.location.longitude,
+                  }}
+                  onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
+                  title={event.title}
+                  description={event.location}
+                />
+              }
+            })} */}
+             <MapView.Circle
+              center={{ latitude: latitude, longitude: longitude }}
+              radius={parseInt(props.user.distanceTolerance) * 1609.34}
+              strokeColor="rgba(43, 125, 156,.85)"
+              fillColor="rgba(170, 218, 255, .3)"
             />
           </MapView>
           <TouchableOpacity
@@ -314,7 +501,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
+  user: state.user,
   events: state.events,
+  user: state.user
 });
 
 const mapDispatchToProps = (dispatch) => ({});

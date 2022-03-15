@@ -1,4 +1,4 @@
-import { SET_USER } from "../constants";
+import { SET_USER, SET_USER_LOOPS } from "../constants";
 import { REMOVE_USER } from "../constants";
 import { SET_LOCATION } from "../constants";
 import { ADD_DISTANCE } from "../constants";
@@ -19,7 +19,7 @@ const userReducer = (state = initialState, action) => {
     case SET_USER:
       return action.payload;
     case REMOVE_USER:
-      return null;
+      return initialState;
     case SET_LOCATION:
       return {
       ...state,
@@ -30,6 +30,11 @@ const userReducer = (state = initialState, action) => {
         ...state,
         distanceTolerance: action.payload
       };
+    case SET_USER_LOOPS:
+      return {
+        ...state,
+       joinedLoops: action.payload
+      }
     default:
       return state;
   }

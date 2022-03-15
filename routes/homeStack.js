@@ -4,7 +4,9 @@ import CardDetails from "../screens/cardDetails";
 import React from "react";
 import Header from "../shared/header";
 import { withTheme } from "react-native-elements";
-
+import {SafeAreaView} from "react-native";
+import { Platform } from 'react-native';
+import {StyleSheet} from "react-native";
 //Screens in the Home tab
 
 const Stack = createStackNavigator();
@@ -18,9 +20,10 @@ export default function HomeStack() {
         cardStyle: {
           backgroundColor: "#fefefe",
         },
+        paddingTop: 0,
         headerLeft: () => null,
         headerTitleAlign: "center",
-
+        headerTopInsetEnabled: true,
         headerBackTitle: null,
         headerTintColor: "black",
         headerTitleStyle: {
@@ -29,6 +32,9 @@ export default function HomeStack() {
         headerStyle: {
           backgroundColor: "#2C2C2C",
           // height: 100,
+          height: Platform.select({
+    android: 90
+  }),
         },
       }}
     >
@@ -41,11 +47,13 @@ export default function HomeStack() {
           };
         }}
       />
+      
       <Stack.Screen
         name="CardDetails"
         component={CardDetails}
         options={{ headerShown: false}}
       />
     </Stack.Navigator>
+    
   );
 }

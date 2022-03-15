@@ -50,10 +50,10 @@ const windowHight = Dimensions.get("window").height;
 //Called by favorite and personal when you click on a card to display the content
 function CardDetails(props, { navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
-  const [eventCreator, setEventCreator] = useState(props.route.params?.creator);
+  const [eventCreator, setEventCreator] = useState(props.route.params?.creator || {userID: "", userName: ""});
 
   const [eventID, setEventID] = useState(props.route.params?.id);
-  const [eventName, setEventName] = useState(props.route.params?.name);
+  const [eventName, setEventName] = useState(props.route.params?.name || "");
   const [eventLoop, setEventLoop] = useState(props.route.params?.loop || "");
   const [eventDateTime, setEventDateTime] = useState(
     props.route.params?.startDateTime || ""
@@ -71,19 +71,6 @@ function CardDetails(props, { navigation, route }) {
 
   const [newPostsNotifID, setNewPostsNotifID] = useState();
   const [newAttendeesNotifID, setNewAttendeesNotifID] = useState();
-
-  var eventAtens = [];
-
-  const sampleUsers = [
-    {
-      id: 1,
-      name: "Alec",
-    },
-    {
-      id: 2,
-      name: "Robbie",
-    },
-  ];
 
   const AuthStateChangedListener = (user) => {
     if (user) {
@@ -105,6 +92,7 @@ function CardDetails(props, { navigation, route }) {
     setEventAddress(eventData.address);
     // SPRINT7: phase out the second half of this
     // setEventCreator(eventData.creator || {id: eventData.creatorID, name: ""});
+    setEventCreator(eventData.creator)
     setNewPostsNotifID(
       eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
     );

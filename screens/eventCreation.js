@@ -24,7 +24,9 @@ import { Formik } from "formik";
 import moment from "moment";
 import { addEvent } from "../store/actions/eventActions";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { API_KEY } from "@env";
+
 
 // Test to make sure that a selected date and time hasn't happened yet
 function isFutureDate(ref, msg) {
@@ -48,6 +50,11 @@ function isFutureDate(ref, msg) {
   });
 }
 
+const messiahPlace = {
+  description: "Messiah University",
+  geometry: { location: { lat: 40.15974, lng: -76.988419 } },
+};
+
 yup.addMethod(yup.string, "isFutureDate", isFutureDate);
 
 const CreateEventSchema = yup.object({
@@ -69,6 +76,8 @@ function EventCreation(props) {
   const [timeText, setTimeText] = useState();
   const [mode, setMode] = useState("date");
   const [loop, setLoop] = useState();
+  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState();
 
   // from https://github.com/react-native-datetimepicker/datetimepicker
 
@@ -113,6 +122,7 @@ function EventCreation(props) {
 <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
+      <ScrollView keyboardShouldPersistTaps='always' listViewDisplayed={false}>
         <View style={{ alignItems: "center" }}>
           <Formik
             initialValues={{
@@ -120,6 +130,7 @@ function EventCreation(props) {
               eventLoop: "",
               eventDate: "",
               eventTime: "",
+              location: {},
               eventAddress: "",
             }}
             validationSchema={CreateEventSchema}
@@ -130,6 +141,7 @@ function EventCreation(props) {
                   name: values.eventName,
                   loop: values.eventLoop,
                   startDateTime: moment(values.eventDate + " " + values.eventTime).format("x"),
+                  location: values.location,
                   address: values.eventAddress,
                 }
               );
@@ -198,8 +210,7 @@ function EventCreation(props) {
                     // value={date}
                     mode={mode}
                     isVisible={show}
-                    display="spinner"
-                    textColor="black"
+                    display={Platform.OS === "ios" ? "spinner" : "default"}
                     onConfirm={(date) => {
                       onConfirm(date);
                       // updates the date or time field value, depending on which one was selected
@@ -388,9 +399,65 @@ function EventCreation(props) {
                 <Text style={globalStyles.errorText}>
                   {props.touched.eventLoop && props.errors.eventLoop}
                 </Text>
-                <Input
+                <View style={{flex: 1, width: "80%"}}>
+                <Text style={{...globalStyles.titleText, color: "white"}}>Address</Text>
+                <GooglePlacesAutocomplete
+              placeholder="Search"
+              minLength={2} // minimum length of text to search
+              autoFocus={false}
+              returnKeyType={"search"} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+              listViewDisplayed="auto" // true/false/undefined
+              fetchDetails={true}
+              renderDescription={(row) => row.description} // custom description render
+              onPress={(data, details = null) => {
+                // setLatitude(details.geometry.location.lat);
+                // setLongitude(details.geometry.location.lng);
+                console.log(details.geometry.location.lat);
+                console.log(details.geometry.location.lng);
+                props.setFieldValue("location", {latitude: details.geometry.location.lat, longitude: details.geometry.location.lng})
+                //props.setLocation(latitude, longitude);
+              }}
+              getDefaultValue={() => {
+                return ""; // text input default value
+              }}
+              query={{
+                // available options: https://developers.google.com/places/web-service/autocomplete
+                key: API_KEY,
+                language: "en", // language of the results
+                types: "(cities)", // default: 'geocode'
+              }}
+              styles={{
+                description: {
+                  fontWeight: "bold",
+                },
+                predefinedPlacesDescription: {
+                  color: "#1faadb",
+                },
+              }}
+              currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
+              // currentLocationLabel="Current location"
+              nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+              GoogleReverseGeocodingQuery={
+                {
+                  // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                }
+              }
+              GooglePlacesSearchQuery={{
+                // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                rankby: "distance",
+                //types: "food",
+              }}
+              filterReverseGeocodingByTypes={[
+                "locality",
+                "administrative_area_level_3",
+              ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+              predefinedPlaces={[messiahPlace]}
+              debounce={200}
+            />
+            </View>
+            <Input
                   textAlign="center"
-                  placeholder="Address"
+                  placeholder="Location Specifics"
                   value={props.values.eventAddress}
                   onChangeText={props.handleChange("eventAddress")}
                   onBlur={props.handleBlur("eventAddress")}
@@ -421,6 +488,7 @@ function EventCreation(props) {
             )}
           </Formik>
         </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
@@ -439,7 +507,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  events: state.events
+  events: state.events,
+  user: state.user
 });
 
 // const ActionCreators = Object.assign(

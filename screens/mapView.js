@@ -23,12 +23,30 @@ import { connect } from "react-redux";
 // const height = Dimensions.get("window").height * 0.3;
 // const width = Dimensions.get("window").width;
 
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+  let R = 3961; // Radius of the earth in M
+  let dLat = deg2rad(lat2-lat1);  // deg2rad below
+  let dLon = deg2rad(lon2-lon1); 
+  let a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  let d = R * c; // Distance in m
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
+
 function mapView(props) {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState({ text: "" });
   const isFocused = useIsFocused();
-  const [latitude, setLatitude] = useState(props.user.location.latitude || 40.15974);
-  const [longitude, setLongitude] = useState( props.user.location.longitude || -76.988419);
+  const [latitude, setLatitude] = useState(props.user.location.latitude);
+  const [longitude, setLongitude] = useState(props.user.location.longitude);
   // const latitude = 41.241489;
   // const longitude = -77.041924;
   const position = 0;
@@ -81,6 +99,12 @@ function mapView(props) {
             title={"Messiah University"}
             description={"position"}
           />
+           <MapView.Circle
+              center={{ latitude: latitude, longitude: longitude }}
+              radius={parseInt(props.user.distanceTolerance) * 1609.34}
+              strokeColor="rgba(43, 125, 156,.85)"
+              fillColor="rgba(170, 218, 255, .3)"
+            />
         </MapView>
       </View>
     </View>
@@ -213,6 +237,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
   events: state.events,
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({});
