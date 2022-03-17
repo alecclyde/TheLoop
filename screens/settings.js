@@ -19,7 +19,7 @@ import { CheckBox } from "react-native-elements";
 import { Linking } from "react-native";
 
 import { connect } from "react-redux";
-import { signOut } from "../store/actions/userActions";
+import { signOut, updatePfpSource } from "../store/actions/userActions";
 import { Input } from "react-native-elements";
 import {
   toggleDarkmode,
@@ -100,6 +100,10 @@ function UserProfileView(props) {
         // console.log(url)
         firebase.firestore().collection("users").doc(userID).update({
           profilePicSource: url
+        }).then((snap) => {
+          // redux action to update pfp uri
+          console.log(typeof url)
+          props.updatePfpSource(url.toString())
         })
 
       })
@@ -456,6 +460,7 @@ const mapDispatchToProps = (dispatch) => ({
   signOut: (navigation) => dispatch(signOut(navigation)),
   toggleDarkmode: () => dispatch(toggleDarkmode()),
   toggleNotifications: () => dispatch(toggleNotifications()),
+  updatePfpSource: (pfpSource) => dispatch(updatePfpSource(pfpSource)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfileView);

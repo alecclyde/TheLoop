@@ -3,6 +3,7 @@ import { UPDATE_USER } from "../constants";
 import { REMOVE_USER } from "../constants";
 import { ADD_DISTANCE } from "../constants";
 import { SET_LOCATION } from "../constants";
+import { UPDATE_PFP_SOURCE } from "../constants";
 import * as firebase from "firebase";
 import { Alert } from "react-native";
 
@@ -115,5 +116,12 @@ export function setLocation(latitude, longitude) {
     .update({location: {latitude, longitude}})
 
     dispatch({ type: SET_LOCATION, payload: {latitude, longitude}})
+  }
+}
+
+export function updatePfpSource(pfpSource) {
+  return async function updatePfpSourceThunk(dispatch, getState) {
+
+    dispatch({ type: UPDATE_PFP_SOURCE, payload: pfpSource})
   }
 }
