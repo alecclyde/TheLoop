@@ -409,6 +409,7 @@ export async function createReply(postData, userData, replyText) {
       eventName: postData.eventName,
       eventID: postData.eventID,
       replierName: userData.userName,
+      replierID: userData.userID,
     });
   }
   // generate an ID for the document
@@ -488,6 +489,7 @@ export async function createNotification(userID, notifType, notifData) {
           eventName: notifData.eventName,
           eventID: notifData.eventID,
           creatorName: notifData.creatorName,
+          creatorID: notifData.creatorID,
           seen: false,
         });
         return doc;
@@ -503,6 +505,7 @@ export async function createNotification(userID, notifType, notifData) {
           eventName: notifData.eventName,
           eventID: notifData.eventID,
           replierName: notifData.replierName,
+          replierID: notifData.replierID,
           seen: false,
         });
         return doc;
@@ -823,6 +826,30 @@ export async function setNotifSeen(userID, notifID, notifData) {
     Alert.alert("something went wrong!", err.message);
   }
 }
+
+/**
+ * Grabs a single user's profile picture (if they have one set)
+ * @param userID - the id of the user to pull the profile picture from
+ */
+ export async function getUserPfp(userID) {
+  try {
+    
+    firebase.firestore().collection("users").doc(userID).get()
+    .then((doc) => {
+      if (doc.data().profilePicSource) {
+        return doc.data().profilePicSource
+
+      } else {
+        return "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png"
+      }
+    })
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
 
 /**
  * Copy this template for making new firebase functions

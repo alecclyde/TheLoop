@@ -8,7 +8,11 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import { getEventData, grabNotifications } from "../shared/firebaseMethods";
+import {
+  getEventData,
+  grabNotifications,
+  getUserPfp,
+} from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import firebase from "firebase";
 import { makeTimeDifferenceString } from "../shared/commonMethods";
@@ -27,15 +31,19 @@ export default function Notifications({ navigation, route }) {
   const isFocused = useIsFocused();
 
   const [user, setUser] = useState();
+  const [userPfps, setUserPfps] = useState({});
 
   const stylizedMessage = (notifType, notifData) => {
     switch (notifType) {
       case "announcement":
         return (
           <Text style={styles.notifText}>
-            <Text style={{ fontWeight: "bold"}}>{notifData.creatorName}</Text>
-            <Text style={{color: 'white'}}> has made a new announcement in </Text>
-            <Text style={{ fontWeight: "bold"}}>{notifData.eventName}</Text>
+            <Text style={{ fontWeight: "bold" }}>{notifData.creatorName}</Text>
+            <Text style={{ color: "white" }}>
+              {" "}
+              has made a new announcement in{" "}
+            </Text>
+            <Text style={{ fontWeight: "bold" }}>{notifData.eventName}</Text>
             <Text>.</Text>
           </Text>
         );
@@ -200,55 +208,93 @@ export default function Notifications({ navigation, route }) {
         grabNotifications(user.uid).then((data) => {
           setNotifications(data);
         });
-
       }
-      
     }
   }, [user, isFocused]);
 
+  // grab profile pictures of users who appear in notifications
+  useEffect(() => {
+    let userIDs = new Set();
+    notifications.forEach((notif) => {
+      // add userIDs to a set
+
+      switch (notif.type) {
+        case "new-posts":
+          userIDs.add(notif.newPosts[0].userID);
+          break;
+
+        case "announcement":
+          if (notif.creatorID) userIDs.add(notif.creatorID);
+          break;
+
+
+        case "new-reply":
+          // AAAAAAAAAA I FORGOT TO TRACK USERIDS WHEN CREATING REPLY NOTIFICATIONS EVEN THOUGH I SET EVERYTHING UP FOR IT
+          if (notif.replierID) userIDs.add(notif.replierID);
+          break;
+
+        case "new-joins":
+          userIDs.add(notif.newAttendees[0].userID);
+          break;
+      }
+    });
+  }, [notifications]);
+
   return (
     <SafeAreaView
-    style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
-  >
-    <View>
-      <FlatList
-        style={styles.root}
-        data={notifications}
-        ItemSeparatorComponent={() => {
-          return <View style={styles.separator} />;
-        }}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={[styles.container, !item.seen && {backgroundColor: "#EBEBEB"}]}>
-            <Image source={placeholderImage} style={globalStyles.notifavatar} />
-            <View style={styles.content}>
-              <View style={styles.mainContent}>
-                <View style={styles.text}>
-                  {/* <Text style={styles.name}>{item.creatorName}</Text> */}
-                  <TouchableOpacity onPress={() =>{
-                    let event = getEventData(item.eventID);
-                    navigation.navigate("CardDetails", {
-                      id: item.eventID,
-                      name: event.name,
-                      loop: event.loop,
-                      creator: event.creator,
-                      startDateTime: event.startDateTime,
-                      address: event.address,
-                  })}}>
-                  <Text>{stylizedMessage(item.type, item)}</Text>
-                  </TouchableOpacity>
+      style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
+    >
+      <View>
+        <FlatList
+          style={styles.root}
+          data={notifications}
+          ItemSeparatorComponent={() => {
+            return <View style={styles.separator} />;
+          }}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View
+              style={[
+                styles.container,
+                !item.seen && { backgroundColor: "#EBEBEB" },
+              ]}
+            >
+              <Image
+                source={placeholderImage}
+                style={globalStyles.notifavatar}
+              />
+              <View style={styles.content}>
+                <View style={styles.mainContent}>
+                  <View style={styles.text}>
+                    {/* <Text style={styles.name}>{item.creatorName}</Text> */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        let event = getEventData(item.eventID);
+                        navigation.navigate("CardDetails", {
+                          id: item.eventID,
+                          name: event.name,
+                          loop: event.loop,
+                          creator: event.creator,
+                          startDateTime: event.startDateTime,
+                          address: event.address,
+                        });
+                      }}
+                    >
+                      <Text>{stylizedMessage(item.type, item)}</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.timeAgo}>
+                    {makeTimeDifferenceString(item.updatedTimestamp.seconds)}{" "}
+                    ago
+                  </Text>
+                  {/* The time can be imported from the database */}
                 </View>
-                <Text style={styles.timeAgo}>
-                  {makeTimeDifferenceString(item.updatedTimestamp.seconds)} ago
-                </Text>
-                {/* The time can be imported from the database */}
+                <View />
               </View>
-              <View />
             </View>
-          </View>
-        )}
-      />
-    </View>
+          )}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -267,8 +313,8 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 5,
     flexDirection: "row",
-    flexWrap: "wrap",    
-  },                        
+    flexWrap: "wrap",
+  },
   content: {
     flex: 1,
     marginLeft: 16,
@@ -295,6 +341,6 @@ const styles = StyleSheet.create({
     color: "#b37400",
   },
   notifText: {
-    color: 'white'
-  }
+    color: "white",
+  },
 });
