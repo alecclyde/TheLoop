@@ -26,6 +26,8 @@ export default function ProfilePic({ navigation }) {
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
 
+  const [userID, setUserID] = useState();
+
 // from https://docs.expo.dev/versions/v42.0.0/sdk/imagepicker/#using-imagepicker-with-firebase
 
   // solution from here:
@@ -57,7 +59,7 @@ export default function ProfilePic({ navigation }) {
     ref.put(blob).then((snapshot) => {
       storage.ref("profile-pics/test.jpg").getDownloadURL()
       .then((url) => {
-        console.log(url)
+
       })
     })
 
