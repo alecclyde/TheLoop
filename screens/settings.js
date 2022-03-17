@@ -28,9 +28,6 @@ import {
 import { Dimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
-const windowWidth = Dimensions.get("window").width;
-const windowHight = Dimensions.get("window").height;
-
 function UserProfileView(props) {
   // const email = route.params?.userData.email ?? 'email';
   // const firstName = route.params?.userData.firstName ?? 'firstName';
@@ -47,7 +44,7 @@ function UserProfileView(props) {
   const [imageData, setImageData] = useState(null);
 
   const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height * 0.5;
+  const windowHeight = Dimensions.get("window").height;
 
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
@@ -62,6 +59,18 @@ function UserProfileView(props) {
 
   const [text, onChangeText] = React.useState("Useless Text");
   const [number, onChangeNumber] = React.useState(null);
+
+
+
+
+
+  const scaleHeight = (image) => {
+    let actualWidth = windowWidth * 0.75
+    let scale = image.width / actualWidth
+    let actualHeight = image.height / scale
+
+    return actualHeight
+  }
 
   //work around an error when logging out
   useEffect(() => {
@@ -140,10 +149,11 @@ function UserProfileView(props) {
                 style={{
                   // justifyContent: "center",
                   backgroundColor: "white",
-                  width: "75%",
+                  width: "85%",
+                  // height: "80%",
                   borderWidth: "20%",
                   borderColor: "white",
-                  borderRadius: "15%",
+                  borderRadius: "20%",
                 }}
               >
                 {pfpStep == 1 && (
@@ -190,6 +200,36 @@ function UserProfileView(props) {
                         } else {
                           alert("Please allow camera roll permissions.");
                         }
+                      }}
+                    />
+                  </View>
+                )}
+                {pfpStep == 2 && (
+                  <View>
+                    <Button
+                      title="go back"
+                      onPress={() => {
+                        setPfpStep(1);
+                      }}
+                      buttonStyle={{
+                        height: 50,
+                      }}
+                    />
+
+                      <Image
+                        source={{
+                          uri: imageData.uri,
+                          height: Math.min(scaleHeight(imageData), windowHeight * 0.5),
+                        }}
+                        resizeMode="contain"
+                      />
+                    <Button
+                      title="next"
+                      onPress={() => {
+                        console.log("xbox live");
+                      }}
+                      buttonStyle={{
+                        height: 50,
                       }}
                     />
                   </View>
