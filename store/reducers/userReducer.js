@@ -11,7 +11,8 @@ const initialState = {
   distanceTolerance: null,
   location: {},
   myEvents: [],
-  joinedLoops: []
+  joinedLoops: [],
+  profilePicSource: "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png"
 }
 
 const userReducer = (state = initialState, action) => {

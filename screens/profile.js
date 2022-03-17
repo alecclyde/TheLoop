@@ -33,6 +33,7 @@ function Profile(props, { navigation, route }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [userID, setUserID] = useState("");
+  const [pfpSource, setPfpSource] = useState("https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png");
 
   // work around an error when logging out
   useEffect(() => {
@@ -41,6 +42,7 @@ function Profile(props, { navigation, route }) {
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
       setEvents(props.user.myEvents);
+      setPfpSource(props.user.profilePicSource)
       // setEventIDs(props.user.myEvents);
     }
   });
@@ -113,7 +115,7 @@ function Profile(props, { navigation, route }) {
           <Image
             style={globalStyles.avatar}
             source={{
-              uri: "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png",
+              uri: pfpSource,
             }}
           />
 

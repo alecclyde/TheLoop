@@ -7,6 +7,7 @@ import {
   Platform,
   TextInput,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import { loggingOut, getUserData } from "../shared/firebaseMethods";
 import * as firebase from "firebase";
@@ -25,6 +26,7 @@ import {
   toggleNotifications,
 } from "../store/actions/settingsActions";
 import { Dimensions } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
@@ -36,6 +38,20 @@ function UserProfileView(props) {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [pfpSource, setPfpSource] = useState(
+    "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png"
+  );
+  const [modalVisible, setModalVisible] = useState(false);
+  const [pfpStep, setPfpStep] = useState(1);
+
+  const [imageData, setImageData] = useState(null);
+
+  const windowWidth = Dimensions.get("window").width;
+  const windowHeight = Dimensions.get("window").height * 0.5;
+
+  const [imageWidth, setImageWidth] = useState(0);
+  const [imageHeight, setImageHeight] = useState(0);
+
   // const [userID, setUserID] = useState("");
 
   // const [events, setEvents] = useState([]);
@@ -53,6 +69,7 @@ function UserProfileView(props) {
       setEmail(props.user.email);
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
+      setPfpSource(props.user.profilePicSource);
     }
   });
   // Listener to update user data
@@ -101,14 +118,95 @@ function UserProfileView(props) {
   // props.navigation.navigate("LogIn");
   return (
     <View style={styles.container}>
+      <View>
+        {/* modal here */}
+        <Modal visible={modalVisible} animationType="fade" transparent={true}>
+          <TouchableOpacity
+            onPress={() => {
+              if (pfpStep == 1) setModalVisible(false);
+            }}
+            style={{ flex: 1 }}
+            activeOpacity={1}
+          >
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.4)",
+              }}
+            >
+              <View
+                style={{
+                  // justifyContent: "center",
+                  backgroundColor: "white",
+                  width: "75%",
+                  borderWidth: "20%",
+                  borderColor: "white",
+                  borderRadius: "15%",
+                }}
+              >
+                {pfpStep == 1 && (
+                  <View>
+                    <Button
+                      title="Open Camera"
+                      buttonStyle={{
+                        height: 50,
+                        marginBottom: 10,
+                      }}
+                      onPress={async () => {
+                        const { status } =
+                          await ImagePicker.requestCameraPermissionsAsync();
+                        if (status == "granted") {
+                          const image = await ImagePicker.launchCameraAsync({
+                            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                          });
+                          if (!image.cancelled) {
+                            setImageData(image);
+                            setPfpStep(2);
+                          }
+                        } else {
+                          alert("Please allow camera roll permissions.");
+                        }
+                      }}
+                    />
+                    <Button
+                      title="Choose from Photos"
+                      buttonStyle={{
+                        height: 50,
+                      }}
+                      onPress={async () => {
+                        const { status } =
+                          await ImagePicker.requestMediaLibraryPermissionsAsync();
+                        if (status == "granted") {
+                          const image =
+                            await ImagePicker.launchImageLibraryAsync({
+                              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                            });
+                          if (!image.cancelled) {
+                            setImageData(image);
+                            setPfpStep(2);
+                          }
+                        } else {
+                          alert("Please allow camera roll permissions.");
+                        }
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </View>
       <View style={globalStyles.header}>
         <View style={globalStyles.headerContent}>
           {/* Add this -> https://blog.waldo.io/add-an-image-picker-react-native-app/ */}
-          <TouchableOpacity onPress={() => props.navigation.navigate("ProfilePic")}>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Image
               style={globalStyles.avatar}
               source={{
-                uri: "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png",
+                uri: pfpSource,
               }}
             />
           </TouchableOpacity>
