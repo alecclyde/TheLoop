@@ -38,6 +38,7 @@ function UserProfileView(props) {
   const [pfpSource, setPfpSource] = useState(
     "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png"
   );
+  const [userID, setUserID] = useState("")
   const [modalVisible, setModalVisible] = useState(false);
   const [pfpStep, setPfpStep] = useState(1);
 
@@ -60,16 +61,51 @@ function UserProfileView(props) {
   const [text, onChangeText] = React.useState("Useless Text");
   const [number, onChangeNumber] = React.useState(null);
 
-
-
-
-
   const scaleHeight = (image) => {
     let actualWidth = windowWidth * 0.75
     let scale = image.width / actualWidth
     let actualHeight = image.height / scale
 
-    return actualHeight
+    return actualHeight;
+  }
+
+  // from https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
+  async function uploadImageAsync(uri) {
+
+    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.onload = function () {
+        resolve(xhr.response)
+      };
+
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network Request Failed!"))
+      };
+
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    })
+
+    const imageLocation = "profile-pics/" + userID + ".jpg"
+    const storage = firebase.storage()
+    const ref = storage.ref(imageLocation)
+
+    ref.put(blob).then((snapshot) => {
+      storage.ref(imageLocation).getDownloadURL()
+      .then((url) => { // should probably move this into firebase methods
+        // console.log(url)
+        firebase.firestore().collection("users").doc(userID).update({
+          profilePicSource: url
+        })
+
+      })
+    })
+
+    // blob.close();
   }
 
   //work around an error when logging out
@@ -81,6 +117,14 @@ function UserProfileView(props) {
       setPfpSource(props.user.profilePicSource);
     }
   });
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user) {
+        setUserID(user.uid)
+      }
+    })
+  }, [])
   // Listener to update user data
   // function AuthStateChangedListener(user) {
   //   if (user) {
@@ -224,9 +268,11 @@ function UserProfileView(props) {
                         resizeMode="contain"
                       />
                     <Button
-                      title="next"
-                      onPress={() => {
-                        console.log("xbox live");
+                      title="Set as profile picture"
+                      onPress={async () => {
+                        await uploadImageAsync(imageData.uri)
+                        setModalVisible(false)
+                        setPfpStep(1)
                       }}
                       buttonStyle={{
                         height: 50,

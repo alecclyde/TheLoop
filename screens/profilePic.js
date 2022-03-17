@@ -1,3 +1,16 @@
+/**
+ *      ___
+ *     /   \
+ *    /  |  \
+ *   /   |   \
+ *  /    |    \
+ * /     o     \
+ * \___________/
+ * 
+ * This page is probably inaccessible on the app, it was a page I made for testing image picker and uploading files to firebase storage
+ * 
+ * (I hope you liked my ASCII art - Robbie)
+ */
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
