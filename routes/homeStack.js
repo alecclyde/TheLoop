@@ -49,7 +49,6 @@ export default function HomeStack() {
       />
       
       <Stack.Screen
-
         name="CardDetails"
         component={CardDetails}
         options={{ headerShown: false}}

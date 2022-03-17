@@ -126,21 +126,31 @@ function Profile(props, { navigation, route }) {
         </View>
       </View>
 
-      <View style={styles.statusBar}>
+      <View style={{...styles.statusBar, height: 125}}>
         <View style={styles.statusBarText}>
           <View style={styles.statusBarTextLine}>
             <Text style={styles.statusBarTextLine}>Followers</Text>
           </View>
+          <View style={styles.statusBarTextLine}>
+            <Text style={styles.statusBarTextLine}>0</Text>
+          </View>
+        </View>
+        <View style={styles.statusBarText}>
+          <View style={styles.statusBarTextLine}>
+            <Text style={styles.statusBarTextLine}>Following</Text>
+          </View>
+          <View style={styles.statusBarTextLine}>
+            <Text style={styles.statusBarTextLine}>0</Text>
+          </View>
         </View>
 
-        <View style={styles.verticleLine}></View>
         <View style={styles.statusBarText}>
-          <Text style={styles.statusBarTextLine}>Following</Text>
-        </View>
-        <View style={styles.verticleLine}></View>
-
-        <View style={styles.statusBarText}>
-          <Text style={styles.statusBarTextLine}>Loops</Text>
+          <View style={styles.statusBarTextLine}>
+            <Text style={styles.statusBarTextLine}>Loops</Text>
+          </View>
+          <View style={styles.statusBarTextLine}>
+            <Text style={styles.statusBarTextLine}>2</Text>
+          </View>
         </View>
       </View>
 
@@ -151,7 +161,6 @@ function Profile(props, { navigation, route }) {
       <ScrollView
         persistentScrollbar={true}
         horizontal={true}
-        style={{ flex: 1 }}
       >
         {events //upcoming events
           .filter((item) => item.startDateTime > moment().unix())
@@ -313,7 +322,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#3B4046",
     borderRadius: 10,
     margin: 5,
-    paddingVertical: 37,
+    paddingVertical: 20,
     shadowOffset: { width: 1, height: 0.1 },
     shadowOpacity: 0.8,
     shadowColor: "black",
@@ -331,7 +340,7 @@ const styles = StyleSheet.create({
   statusBarText: {
     margin: 5,
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     fontSize: 12,
   },

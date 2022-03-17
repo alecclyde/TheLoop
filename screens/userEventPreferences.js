@@ -12,9 +12,11 @@ import { CheckBox, Card, Button, Text } from "react-native-elements";
 import { globalStyles } from "../styles/global";
 import * as yup from "yup";
 import { Formik } from "formik";
-import { setUserLoops } from "../shared/firebaseMethods";
+//import { setUserLoops } from "../shared/firebaseMethods";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Dimensions } from "react-native";
+import { setUserLoops } from "../store/actions/userActions";
+import { connect } from "react-redux";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
@@ -65,11 +67,12 @@ const windowHight = Dimensions.get("window").height;
 //     "Media",
 //   ]);
 
+
 const SignUpSchema = yup.object({
   Checked: yup.boolean().oneOf([true], "Must have at least one box checked."),
 });
 
-export default function UserEventPreferences({ navigation }) {
+function UserEventPreferences(props) {
   const [checkSports, setCheckSports] = useState(false);
   const [checkMusic, setCheckMusic] = useState(false);
   const [checkVolunteer, setCheckVolunteer] = useState(false);
@@ -80,7 +83,7 @@ export default function UserEventPreferences({ navigation }) {
   const [checkAcademic, setCheckAcademic] = useState(false);
   const [checkMedia, setCheckMedia] = useState(false);
   const [valid, setValid] = useState(false);
-
+  console.log(Object.keys(props.user.joinedLoops).length)
 //   useEffect(() => {
 //     if (
 //       checkMedia ||
@@ -151,7 +154,14 @@ export default function UserEventPreferences({ navigation }) {
             // console.log("Sports: " + joinedLoops.Sports);
             // console.log("Volunteer: " + joinedLoops.Volunteer);
             // console.log(joinedLoops.Checked);
-            setUserLoops(joinedLoops, navigation);
+            
+            if(Object.keys(props.user.joinedLoops).length === 0){
+              props.setUserLoops(joinedLoops);
+              props.navigation.navigate("LocationPreferencesPage");
+            }else{
+              props.setUserLoops(joinedLoops);
+              props.navigation.navigate("RootStack");
+            }
           }}
         >
           {(props) => (
@@ -421,4 +431,16 @@ const styles = StyleSheet.create({
   },
 });
 
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setUserLoops: (loops) => dispatch(setUserLoops(loops)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UserEventPreferences);
 //Credit to Robbie for his eventCreation.js code.

@@ -4,6 +4,7 @@ import { REMOVE_USER } from "../constants";
 import { ADD_DISTANCE } from "../constants";
 import { SET_LOCATION } from "../constants";
 import { UPDATE_PFP_SOURCE } from "../constants";
+import { SET_USER_LOOPS } from "../constants";
 import * as firebase from "firebase";
 import { Alert } from "react-native";
 
@@ -17,7 +18,7 @@ export function registration(email, password, lastName, firstName, navigation) {
         lastName: lastName,
         firstName: firstName,
         joinedLoops: [],
-        distanceTolerance: 15,
+        distanceTolerance: 1,
         myEvents: [],
         location: [],
         creationTimestamp: firebase.firestore.Timestamp.now(),
@@ -77,7 +78,7 @@ export function signOut(navigation) {
   };
 }
 
-export function setUserLoops(joinedLoops, navigation) {
+export function setUserLoops(joinedLoops) {
   return async function signOutThunk(dispatch, getState) {
     const currentUser = firebase.auth().currentUser;
     const db = firebase.firestore();
@@ -86,12 +87,8 @@ export function setUserLoops(joinedLoops, navigation) {
       .collection("users")
       .doc(currentUser.uid)
       .update({ joinedLoops: joinedLoops })
-
-      .then(() => {
-        navigation.navigate("RootStack");
-      });
     //console.log(user);
-    dispatch({ type: UPDATE_USER });
+    dispatch({ type: SET_USER_LOOPS , payload: joinedLoops});
     // probably should navigate to event page after this
   };
 }
@@ -113,7 +110,7 @@ export function setLocation(latitude, longitude) {
     await firebase.firestore()
     .collection('users')
     .doc(firebase.auth().currentUser.uid)
-    .update({location: {latitude, longitude}})
+    .update({location: new firebase.firestore.GeoPoint(latitude, longitude)})
 
     dispatch({ type: SET_LOCATION, payload: {latitude, longitude}})
   }
