@@ -616,17 +616,19 @@ function CardDetails(props, { navigation, route }) {
                     />
 
                     <View style={{ flexDirection: "row" }}>
-                      <Text style={{ fontWeight: "bold" }}>
+                      <Text style={{ fontWeight: "bold", color: "white" }}>
                         {reply.replierName}
                       </Text>
 
                       <View style={{ flex: 1 }} />
+
                       <Text style={{ color: "gray" }}>
                         {makeTimeDifferenceString(
                           reply.creationTimestamp.seconds
                         )}{" "}
                         ago
                       </Text>
+
                       {(reply.replierID == userID || isCreator) && (
                         <Icon
                           name="trash"
@@ -637,7 +639,8 @@ function CardDetails(props, { navigation, route }) {
                         />
                       )}
                     </View>
-                    <Text>{reply.message}</Text>
+                    <Text style={{ color: "white" }}>
+                    {reply.message}</Text>
                   </View>
                 ))}
               </View>

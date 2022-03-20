@@ -337,7 +337,7 @@ function UserProfileView(props) {
           </View>
         </View> */}
 
-        <View
+        {/* <View
           style={{ justifyContent: "center", alignItems: "center", margin: 5 }}
         >
           <View
@@ -351,6 +351,7 @@ function UserProfileView(props) {
             <View style={{ flex: 1, flexDirection: "column" }}>
               <View style={{ marginBottom: 10, marginRight: 3 }}>
                 <Button
+                  buttonStyle={styles.Button}
                   title="  Privacy Policy"
                   onPress={() =>
                     Linking.openURL(
@@ -362,6 +363,7 @@ function UserProfileView(props) {
               </View>
               <View style={styles.settingButton}>
                 <Button
+                  buttonStyle={styles.Button}
                   title=" Terms&Conditions"
                   onPress={() =>
                     Linking.openURL(
@@ -375,6 +377,7 @@ function UserProfileView(props) {
             <View style={{ flex: 1, flexDirection: "column" }}>
               <View style={styles.settingButton}>
                 <Button
+                  buttonStyle={styles.Button}
                   title="  Change Location"
                   onPress={() =>
                     props.navigation.navigate("LocationPreferencesPage")
@@ -384,6 +387,7 @@ function UserProfileView(props) {
               </View>
               <View style={styles.settingButton}>
                 <Button
+                  buttonStyle={styles.Button}
                   title="  Change Loops"
                   onPress={() =>
                     props.navigation.navigate("UserEventPreferences", {
@@ -397,7 +401,8 @@ function UserProfileView(props) {
           </View>
           <View style={{}}>
             <View style={styles.settingButton}>
-              <Button
+              <Button 
+                buttonStyle={styles.Button}
                 title=" Feedback"
                 onPress={() =>
                   Linking.openURL(
@@ -409,13 +414,73 @@ function UserProfileView(props) {
             </View>
             <View style={styles.settingButton}>
               <Button
+                buttonStyle={styles.Button}
                 title=" Sign Out "
                 onPress={() => props.signOut(props.navigation)}
                 icon={<Icon name="sign-out" size={15} color="white" />}
               ></Button>
             </View>
           </View>
-        </View>
+        </View> */}
+
+        <Button
+                  buttonStyle={styles.Button}
+                  title="  Privacy Policy"
+                  onPress={() =>
+                    Linking.openURL(
+                      "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md"
+                    )
+                  }
+                  icon={<Icon name="user-secret" size={15} color="white" />}
+                />
+        
+        <Button
+                  buttonStyle={styles.Button}
+                  title=" Terms&Conditions"
+                  onPress={() =>
+                    Linking.openURL(
+                      "https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md"
+                    )
+                  }
+                  icon={<Icon name="gavel" size={15} color="white" />}
+                />
+          <Button
+                  buttonStyle={styles.Button}
+                  title="  Change Location"
+                  onPress={() =>
+                    props.navigation.navigate("LocationPreferencesPage")
+                  }
+                  icon={<Icon name="rocket" size={15} color="white" />}
+                />
+            <Button
+                  buttonStyle={styles.Button}
+                  title="  Change Loops"
+                  onPress={() =>
+                    props.navigation.navigate("UserEventPreferences", {
+                      settings: true,
+                    })
+                  }
+                  icon={<Icon name="rocket" size={15} color="white" />}
+                />
+              <Button 
+                buttonStyle={styles.Button}
+                title=" Feedback"
+                onPress={() =>
+                  Linking.openURL(
+                    "https://docs.google.com/forms/d/e/1FAIpQLSdwOLeqnDlB1Y3age2MK5EMtCMKINHl1yf53ztW7FFklmkNTQ/viewform?usp=sf_link"
+                  )
+                }
+                icon={<Icon name="pencil-square-o" size={15} color="white" />}
+              />
+              <Button
+                buttonStyle={styles.Button}
+                title=" Sign Out "
+                onPress={() => props.signOut(props.navigation)}
+                icon={<Icon name="sign-out" size={15} color="white" />}
+              ></Button>
+
+
+
       </View>
     </View>
   );
@@ -425,6 +490,7 @@ const styles = StyleSheet.create({
   body: {
     backgroundColor: "#DCDCDC",
     height: 500,
+    padding: 5,
   },
   item: {
     flexDirection: "row",
@@ -467,6 +533,11 @@ const styles = StyleSheet.create({
     marginTop: 15,
     color: "#000000",
   },
+  Button: {
+    backgroundColor: '#2B7D9C',
+    height: 45,
+    marginVertical: 12,
+  }
 });
 
 const mapStateToProps = (state) => ({

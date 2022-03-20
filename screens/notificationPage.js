@@ -33,6 +33,7 @@ export default function Notifications({ navigation, route }) {
 
   const [user, setUser] = useState();
   const [userPfps, setUserPfps] = useState({});
+  const [refresh, setRefresh] = useState(false);
 
   const stylizedMessage = (notifType, notifData) => {
     switch (notifType) {
@@ -185,9 +186,9 @@ export default function Notifications({ navigation, route }) {
   };
 
   const [notifications, setNotifications] = useState([]);
-  const [rawNotifs, setRawNotifs] = useState([])
+  const [rawNotifs, setRawNotifs] = useState([]);
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   const getHighlightedUserID = (notif) => {
     // console.log(notif.id + ": " + notif.type)
@@ -197,17 +198,17 @@ export default function Notifications({ navigation, route }) {
 
       case "announcement":
         if (notif.creatorID) return notif.creatorID;
-        return false
+        return false;
 
       case "new-reply":
         // AAAAAAAAAA I FORGOT TO TRACK USERIDS WHEN CREATING REPLY NOTIFICATIONS EVEN THOUGH I SET EVERYTHING UP FOR IT
         if (notif.replierID) return notif.replierID;
-        return false
+        return false;
 
       case "new-joins":
         // console.log(notif.type)
         if (notif.newAttendees[0]) return notif.newAttendees[0].userID;
-        return false
+        return false;
 
       default:
         return false;
@@ -241,7 +242,7 @@ export default function Notifications({ navigation, route }) {
       if (isFocused == true) {
         grabNotifications(user.uid).then((data) => {
           // let notifs = [...data];
-
+          setRefresh(false);
           // let userIDs = new Set();
           // notifications.forEach((notif) => {
           //   // add userIDs to a set
@@ -256,13 +257,13 @@ export default function Notifications({ navigation, route }) {
           //     pfps[userID] = url
           //   });
           // }).then((snap) => {
-            
+
           // });
           setRawNotifs(data);
         });
       }
     }
-  }, [user, isFocused]);
+  }, [user, isFocused, refresh]);
 
   // grab profile pictures of users who appear in notifications
 
@@ -270,15 +271,16 @@ export default function Notifications({ navigation, route }) {
     let userIDSet = new Set();
     rawNotifs.forEach((notif) => {
       // add userIDs to a set
-      if (getHighlightedUserID(notif)) userIDSet.add(getHighlightedUserID(notif));
+      if (getHighlightedUserID(notif))
+        userIDSet.add(getHighlightedUserID(notif));
     });
 
-    let userIDs = []
-    userIDSet.forEach((userID => {
-      userIDs.push(userID)
-    }))
+    let userIDs = [];
+    userIDSet.forEach((userID) => {
+      userIDs.push(userID);
+    });
 
-    let notifs = [...rawNotifs]
+    let notifs = [...rawNotifs];
 
     // console.log(userIDs)
 
@@ -287,15 +289,12 @@ export default function Notifications({ navigation, route }) {
 
       notifs.forEach((notif) => {
         if (getHighlightedUserID(notif)) {
-
-          notif.uri = pfps[getHighlightedUserID(notif)]
+          notif.uri = pfps[getHighlightedUserID(notif)];
         }
-      })
+      });
 
-      setNotifications(notifs)
-    })
-
-
+      setNotifications(notifs);
+    });
 
     // userIDs.forEach(async (userID) => {
     //   getUserPfp(userID).then((url) => {
@@ -311,6 +310,8 @@ export default function Notifications({ navigation, route }) {
     >
       <View>
         <FlatList
+          onRefresh={() => setRefresh(true)}
+          refreshing={refresh}
           style={styles.root}
           data={notifications}
           ItemSeparatorComponent={() => {
@@ -322,8 +323,7 @@ export default function Notifications({ navigation, route }) {
             <View
               style={[
                 styles.container,
-                !item.seen && { backgroundColor: "#61666b" }
-                
+                !item.seen && { backgroundColor: "#61666b" },
               ]}
             >
               <Image
@@ -332,7 +332,7 @@ export default function Notifications({ navigation, route }) {
                   //   ? debug(userPfps[getHighlightedUserID(item)])
                   //   : placeholderImage.uri,
                   // key: userPfps[getHighlightedUserID(item)],
-                  uri: item.uri
+                  uri: item.uri,
                 }}
                 style={globalStyles.notifavatar}
               />
