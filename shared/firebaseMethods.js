@@ -857,7 +857,7 @@ export async function setNotifSeen(userID, notifID, notifData) {
     let profilePics = {}
 
     await Promise.all(userIDs.map(async (userID) => {
-      console.log("userID: " + userID)
+      // console.log("userID: " + userID)
       let url = await getUserPfp(userID)
 
       profilePics[userID] = url

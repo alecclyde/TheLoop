@@ -283,7 +283,7 @@ export default function Notifications({ navigation, route }) {
     // console.log(userIDs)
 
     getMultiplePfps(userIDs).then((pfps) => {
-      console.log(pfps)
+      // console.log(pfps)
 
       notifs.forEach((notif) => {
         if (getHighlightedUserID(notif)) {
@@ -318,11 +318,12 @@ export default function Notifications({ navigation, route }) {
           }}
           keyExtractor={(item) => item.id}
           extraData={userPfps}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <View
               style={[
                 styles.container,
-                !item.seen && { backgroundColor: "#EBEBEB" },
+                !item.seen && { backgroundColor: "#61666b" }
+                
               ]}
             >
               <Image
