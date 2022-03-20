@@ -305,6 +305,7 @@ function CardDetails(props, { navigation, route }) {
   const handleNotifyAllUsers = (notifType) => {
     var notifData = {
       creatorName: eventCreator.userName,
+      creatorID: eventCreator.userID,
       eventName: eventName,
       eventID: eventID,
     };
