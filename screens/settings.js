@@ -200,9 +200,9 @@ function UserProfileView(props) {
                   backgroundColor: "white",
                   width: "85%",
                   // height: "80%",
-                  borderWidth: "20%",
+                  borderWidth: windowWidth * 0.05, // used to be percents in quotes, but android did android things
                   borderColor: "white",
-                  borderRadius: "20%",
+                  borderRadius: windowWidth * 0.05,
                 }}
               >
                 {pfpStep == 1 && (

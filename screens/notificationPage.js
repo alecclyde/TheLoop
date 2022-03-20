@@ -190,7 +190,7 @@ export default function Notifications({ navigation, route }) {
   const [loading, setLoading] = useState(true)
 
   const getHighlightedUserID = (notif) => {
-    console.log(notif.id)
+    // console.log(notif.id + ": " + notif.type)
     switch (notif.type) {
       case "new-posts":
         return notif.newPosts[0].userID;
@@ -202,7 +202,7 @@ export default function Notifications({ navigation, route }) {
       case "new-reply":
         // AAAAAAAAAA I FORGOT TO TRACK USERIDS WHEN CREATING REPLY NOTIFICATIONS EVEN THOUGH I SET EVERYTHING UP FOR IT
         if (notif.replierID) return notif.replierID;
-        // return false
+        return false
 
       case "new-joins":
         // console.log(notif.type)
@@ -270,7 +270,7 @@ export default function Notifications({ navigation, route }) {
     let userIDSet = new Set();
     rawNotifs.forEach((notif) => {
       // add userIDs to a set
-      userIDSet.add(getHighlightedUserID(notif));
+      if (getHighlightedUserID(notif)) userIDSet.add(getHighlightedUserID(notif));
     });
 
     let userIDs = []
@@ -292,7 +292,7 @@ export default function Notifications({ navigation, route }) {
         }
       })
 
-    //   setNotifications(notifs)
+      setNotifications(notifs)
     })
 
 
