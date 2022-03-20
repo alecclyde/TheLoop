@@ -9,8 +9,5 @@ export const TOGGLE_DARKMODE = "TOGGLE_DARKMODE";
 export const TOGGLE_NOTIFICATIONS = "TOGGLE_NOTIFICATIONS";
 export const ADD_DISTANCE = "ADD_DISTANCE";
 export const SET_LOCATION = "SET_LOCATION";
-<<<<<<< HEAD
 export const UPDATE_PFP_SOURCE = "UPDATE_PFP_SOURCE";
-=======
 export const SET_USER_LOOPS = "SET_USER_LOOPS";
->>>>>>> production

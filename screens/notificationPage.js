@@ -12,6 +12,7 @@ import {
   getEventData,
   grabNotifications,
   getUserPfp,
+  getMultiplePfps,
 } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import firebase from "firebase";
@@ -184,6 +185,39 @@ export default function Notifications({ navigation, route }) {
   };
 
   const [notifications, setNotifications] = useState([]);
+  const [rawNotifs, setRawNotifs] = useState([])
+
+  const [loading, setLoading] = useState(true)
+
+  const getHighlightedUserID = (notif) => {
+    console.log(notif.id)
+    switch (notif.type) {
+      case "new-posts":
+        return notif.newPosts[0].userID;
+
+      case "announcement":
+        if (notif.creatorID) return notif.creatorID;
+        return false
+
+      case "new-reply":
+        // AAAAAAAAAA I FORGOT TO TRACK USERIDS WHEN CREATING REPLY NOTIFICATIONS EVEN THOUGH I SET EVERYTHING UP FOR IT
+        if (notif.replierID) return notif.replierID;
+        // return false
+
+      case "new-joins":
+        // console.log(notif.type)
+        if (notif.newAttendees[0]) return notif.newAttendees[0].userID;
+        return false
+
+      default:
+        return false;
+    }
+  };
+
+  const debug = (string) => {
+    // console.log(string);
+    return string;
+  };
 
   const AuthStateChangedListener = (user) => {
     if (user) {
@@ -206,39 +240,70 @@ export default function Notifications({ navigation, route }) {
     if (user) {
       if (isFocused == true) {
         grabNotifications(user.uid).then((data) => {
-          setNotifications(data);
+          // let notifs = [...data];
+
+          // let userIDs = new Set();
+          // notifications.forEach((notif) => {
+          //   // add userIDs to a set
+          //   userIDs.add(getHighlightedUserID(notif));
+          // });
+
+          // let pfps = {}
+
+          // userIDs.forEach(async (userID) => {
+          //   getUserPfp(userID).then((url) => {
+          //     // set pfps object to pair uid's to pfp urls
+          //     pfps[userID] = url
+          //   });
+          // }).then((snap) => {
+            
+          // });
+          setRawNotifs(data);
         });
       }
     }
   }, [user, isFocused]);
 
   // grab profile pictures of users who appear in notifications
+
   useEffect(() => {
-    let userIDs = new Set();
-    notifications.forEach((notif) => {
+    let userIDSet = new Set();
+    rawNotifs.forEach((notif) => {
       // add userIDs to a set
-
-      switch (notif.type) {
-        case "new-posts":
-          userIDs.add(notif.newPosts[0].userID);
-          break;
-
-        case "announcement":
-          if (notif.creatorID) userIDs.add(notif.creatorID);
-          break;
-
-
-        case "new-reply":
-          // AAAAAAAAAA I FORGOT TO TRACK USERIDS WHEN CREATING REPLY NOTIFICATIONS EVEN THOUGH I SET EVERYTHING UP FOR IT
-          if (notif.replierID) userIDs.add(notif.replierID);
-          break;
-
-        case "new-joins":
-          userIDs.add(notif.newAttendees[0].userID);
-          break;
-      }
+      userIDSet.add(getHighlightedUserID(notif));
     });
-  }, [notifications]);
+
+    let userIDs = []
+    userIDSet.forEach((userID => {
+      userIDs.push(userID)
+    }))
+
+    let notifs = [...rawNotifs]
+
+    // console.log(userIDs)
+
+    getMultiplePfps(userIDs).then((pfps) => {
+      console.log(pfps)
+
+      notifs.forEach((notif) => {
+        if (getHighlightedUserID(notif)) {
+
+          notif.uri = pfps[getHighlightedUserID(notif)]
+        }
+      })
+
+    //   setNotifications(notifs)
+    })
+
+
+
+    // userIDs.forEach(async (userID) => {
+    //   getUserPfp(userID).then((url) => {
+
+    //     setUserPfps({ ...userPfps, [userID]: url });
+    //   });
+    // });
+  }, [rawNotifs]);
 
   return (
     <SafeAreaView
@@ -252,6 +317,7 @@ export default function Notifications({ navigation, route }) {
             return <View style={styles.separator} />;
           }}
           keyExtractor={(item) => item.id}
+          extraData={userPfps}
           renderItem={({ item }) => (
             <View
               style={[
@@ -260,7 +326,13 @@ export default function Notifications({ navigation, route }) {
               ]}
             >
               <Image
-                source={placeholderImage}
+                source={{
+                  // uri: getHighlightedUserID(item)
+                  //   ? debug(userPfps[getHighlightedUserID(item)])
+                  //   : placeholderImage.uri,
+                  // key: userPfps[getHighlightedUserID(item)],
+                  uri: item.uri
+                }}
                 style={globalStyles.notifavatar}
               />
               <View style={styles.content}>
