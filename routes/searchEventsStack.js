@@ -17,7 +17,6 @@ export default function SearchEventsStack() {
         cardStyle: {
           backgroundColor: "#fefefe",
         },
-        headerLeft: () => null,
         headerTitleAlign: "center",
         headerBackTitle: null,
         headerTintColor: "black",
@@ -30,11 +29,12 @@ export default function SearchEventsStack() {
       }}
     >
       <Stack.Screen
-        name="Map"
+        name="Search Page"
         component={SearchPage}
         options={({ navigation }) => {
           return {
             headerRight: () => <Header navigation={navigation} />,
+            headerLeft: () => null,
           };
         }}
       />
@@ -44,6 +44,10 @@ export default function SearchEventsStack() {
         options={({ navigation }) => {
           return {
             headerRight: () => <Header navigation={navigation} />,
+            headerBackTitleStyle: {
+              color: "white",
+            },
+            headerTintColor: {color: "white"}
           };
         }}
       />

@@ -27,6 +27,7 @@ export default function Notifications({ navigation, route }) {
   const isFocused = useIsFocused();
 
   const [user, setUser] = useState();
+  const [refresh, setRefresh] = useState(false);
 
   const stylizedMessage = (notifType, notifData) => {
     switch (notifType) {
@@ -199,12 +200,13 @@ export default function Notifications({ navigation, route }) {
       if (isFocused == true) {
         grabNotifications(user.uid).then((data) => {
           setNotifications(data);
+          setRefresh(false);
         });
 
       }
       
     }
-  }, [user, isFocused]);
+  }, [user, isFocused, refresh]);
 
   return (
     <SafeAreaView
@@ -212,6 +214,8 @@ export default function Notifications({ navigation, route }) {
   >
     <View>
       <FlatList
+        onRefresh={() => setRefresh(true)}
+        refreshing={refresh}
         style={styles.root}
         data={notifications}
         ItemSeparatorComponent={() => {
