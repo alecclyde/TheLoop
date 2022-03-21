@@ -186,7 +186,7 @@ function Home(props, { navigation, route }) {
                     source={{
                       uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
                     }}
-                    style={{ height: "100%", width: 200 }}
+                    style={{ height: "100%", width: "auto", minWidth: 200 }}
                     imageStyle={{ borderRadius: 10 }}
                     resizeMode="cover"
                     overflow="hidden"
@@ -202,7 +202,7 @@ function Home(props, { navigation, route }) {
                         style={{flex: 1, justifyContent: "flex-end", padding: 10}}
                       >
                         <Text style={styles.listingItem}>
-                          {event.name.substring(0, 20)}
+                          {event.name.substring(0, 25)}
                         </Text>
                         <Text style={styles.descriptionItem}>{event.loop}</Text>
                         <Text style={styles.descriptionItem}>
