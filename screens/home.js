@@ -150,7 +150,7 @@ function Home(props, { navigation, route }) {
                   color: "white",
                   fontSize: 15,
                   fontFamily: "Helvetica",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
                 }}
               >
                 Join an Event on the Search Page!
@@ -166,7 +166,7 @@ function Home(props, { navigation, route }) {
               .slice(0, limitUpcoming)
               .map((event) => (
                 <TouchableOpacity
-                  style={styles.clickable}
+                  style={[styles.clickable, { flex: 1, paddingVertical: 0 }]}
                   key={event.id}
                   onPress={() =>
                     props.navigation.navigate("CardDetails", {
@@ -179,48 +179,40 @@ function Home(props, { navigation, route }) {
                     })
                   }
                   onLongPress={() => {
-                    console.log(event.id)
+                    console.log(event.id);
                   }}
                 >
-                  <ListItem
-                    pad={16}
-                    bottomDivide={true}
-                    Component={TouchableScale}
-                    button
-                    friction={90}
-                    tension={100} // These props are passed to the parent component (here TouchableScale)
-                    activeScale={0.95} //
-                    linearGradientProps={{
-                      colors: ["#3B4046", "#3B4046"],
-                      start: { x: 1, y: 0 },
-                      end: { x: 0.2, y: 0 },
+                  <ImageBackground
+                    source={{
+                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
                     }}
-                    ViewComponent={LinearGradient}
+                    style={{ height: "100%", width: 200 }}
+                    imageStyle={{ borderRadius: 10 }}
+                    resizeMode="cover"
+                    overflow="hidden"
                   >
-                    <Avatar
-                      size="large"
-                      //change this to either be icon of loop or that groups profile picture
-                      source={{
-                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                      }}
-                      resizeMode="cover"
-                      //style={{ width: "100%", height: "100%" }}
-                    />
-                    <ListItem.Content>
-                      <ListItem.Title style={styles.listingItem}>
-                        {event.name.substring(0, 15)}
-                      </ListItem.Title>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        {event.loop}
-                      </ListItem.Subtitle>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        <Icon name="map-marker" size={16} color="white" />
-                        {"  "}
-                        {event.address}
-                      </ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron color="gray" />
-                  </ListItem>
+                    <ImageBackground
+                      source={require("../assets/thumbnail_gradient.png")}
+                      style={{ flex: 1 }}
+                      imageStyle={{ borderRadius: 10 }}
+                      resizeMode="stretch"
+                      overflow="hidden"
+                    >
+                      <View
+                        style={{flex: 1, justifyContent: "flex-end", padding: 10}}
+                      >
+                        <Text style={styles.listingItem}>
+                          {event.name.substring(0, 20)}
+                        </Text>
+                        <Text style={styles.descriptionItem}>{event.loop}</Text>
+                        <Text style={styles.descriptionItem}>
+                          <Icon name="map-marker" size={16} color="white" />
+                          {"  "}
+                          {event.address}
+                        </Text>
+                      </View>
+                    </ImageBackground>
+                  </ImageBackground>
                 </TouchableOpacity>
               ))}
             {events.filter((item) => item.startDateTime > moment().unix())
@@ -335,7 +327,7 @@ function Home(props, { navigation, route }) {
                     })
                   }
                   onLongPress={() => {
-                    console.log(event.id)
+                    console.log(event.id);
                   }}
                 >
                   <ListItem
@@ -465,7 +457,7 @@ function Home(props, { navigation, route }) {
                   color: "white",
                   fontSize: 15,
                   fontFamily: "Helvetica",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
                 }}
               >
                 Use the Event Creation Page to Plan a Banger!
@@ -499,7 +491,7 @@ function Home(props, { navigation, route }) {
                     })
                   }
                   onLongPress={() => {
-                    console.log(event.id)
+                    console.log(event.id);
                   }}
                 >
                   <ListItem
