@@ -16,7 +16,7 @@ export default function ProfileStack() {
   return (
     <Stack.Navigator
       initialRouteName="LogIn"
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: false, gestureEnabled: false }}
     >
       <Stack.Screen name="LogIn" component={LogIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
