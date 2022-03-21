@@ -144,15 +144,16 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
-              <Text style={{ fontSize: 45 }}>😴</Text>
+              <Text style={{ fontSize: 45 }}>😎</Text>
               <Text
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold"
                 }}
               >
-                No events...
+                Join an Event on the Search Page!
               </Text>
             </View>
           )
@@ -177,6 +178,9 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id)
+                  }}
                 >
                   <ListItem
                     pad={16}
@@ -296,15 +300,16 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
-              <Text style={{ fontSize: 45 }}>😴</Text>
+              <Text style={{ fontSize: 45 }}>🥳</Text>
               <Text
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold",
                 }}
               >
-                No events...
+                Attend Some Events and Create Memories!
               </Text>
             </View>
           )
@@ -329,6 +334,9 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id)
+                  }}
                 >
                   <ListItem
                     pad={16}
@@ -451,15 +459,16 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
-              <Text style={{ fontSize: 45 }}>😴</Text>
+              <Text style={{ fontSize: 45 }}>😤</Text>
               <Text
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold"
                 }}
               >
-                No events...
+                Use the Event Creation Page to Plan a Banger!
               </Text>
             </View>
           )
@@ -489,6 +498,9 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id)
+                  }}
                 >
                   <ListItem
                     pad={16}
@@ -608,8 +620,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#3B4046",
     borderRadius: 10,
-    margin: 5,
-    paddingVertical: 37,
+    margin: 10,
+    paddingVertical: 25,
     shadowOffset: { width: 1, height: 0.1 },
     shadowOpacity: 0.8,
     shadowColor: "black",
@@ -619,7 +631,9 @@ const styles = StyleSheet.create({
     textAlign: "left",
     color: "white",
     marginLeft: 10,
-    fontFamily: "Helvetica-Bold",
+    paddingVertical: 5,
+    fontFamily: "Helvetica",
+    fontWeight: "bold",
   },
 });
 

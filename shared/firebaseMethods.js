@@ -403,6 +403,7 @@ export async function createReply(postData, userData, replyText) {
       eventName: postData.eventName,
       eventID: postData.eventID,
       replierName: userData.userName,
+      replierID: userData.userID,
     });
   }
   // generate an ID for the document
@@ -482,6 +483,7 @@ export async function createNotification(userID, notifType, notifData) {
           eventName: notifData.eventName,
           eventID: notifData.eventID,
           creatorName: notifData.creatorName,
+          creatorID: notifData.creatorID,
           seen: false,
         });
         return doc;
@@ -497,6 +499,7 @@ export async function createNotification(userID, notifType, notifData) {
           eventName: notifData.eventName,
           eventID: notifData.eventID,
           replierName: notifData.replierName,
+          replierID: notifData.replierID,
           seen: false,
         });
         return doc;
@@ -817,6 +820,64 @@ export async function setNotifSeen(userID, notifID, notifData) {
     Alert.alert("something went wrong!", err.message);
   }
 }
+
+/**
+ * Grabs a single user's profile picture (if they have one set)
+ * @param userID - the id of the user to pull the profile picture from
+ */
+ export async function getUserPfp(userID) {
+  try {
+    
+    const user = await firebase.firestore().collection("users").doc(userID).get()
+      if (user.data().profilePicSource) {
+        // console.log("source found for " + doc.data().firstName + doc.data().lastName)
+        // console.log(doc.data().profilePicSource)
+        return user.data().profilePicSource
+
+      } else {
+        // console.log("no source found for " + doc.data().firstName + doc.data().lastName)
+
+        return "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png"
+      }
+    
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+/**
+ * Gets a group of user profile pictures given an iterable object of userIDs
+ * @param userIDs - the userIDs to get profile pictures of
+ * @returns - an object pairing a userID to a url
+ */
+ export async function getMultiplePfps(userIDs) {
+  try {
+    let profilePics = {}
+
+    await Promise.all(userIDs.map(async (userID) => {
+      // console.log("userID: " + userID)
+      let url = await getUserPfp(userID)
+
+      profilePics[userID] = url
+    }))
+    
+    // userIDs.forEach((userID) => {
+    //   let url = getUserPfp(userID).then(() => {
+    //     profilePics[userID] = url
+    //   })
+    // })
+
+    return profilePics;
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
+
 
 /**
  * Copy this template for making new firebase functions

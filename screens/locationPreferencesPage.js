@@ -52,9 +52,11 @@ function LocationPreferencesPage(props) {
   
 
   return (
-    <SafeAreaView style={globalStyles.container}>
+    <SafeAreaView
+    style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
+  >
       <View style={[styles.holder, { flexDirection: "column" }]}>
-        <View style={{ flex: 4 }}>
+        <View style={{ flex: 3}}>
           <GooglePlacesAutocomplete
             placeholder="Search"
             minLength={2} // minimum length of text to search
@@ -77,8 +79,16 @@ function LocationPreferencesPage(props) {
               types: "(cities)", // default: 'geocode'
             }}
             styles={{
+              textInput: {
+              height: 38,
+              color: 'black',
+              fontSize: 16,
+              },
               description: {
                 fontWeight: "bold",
+                borderColor: "black",
+                titleColor: "black",
+                borderRadius: 40,
               },
               predefinedPlacesDescription: {
                 color: "#1faadb",
@@ -145,7 +155,7 @@ function LocationPreferencesPage(props) {
           </MapView>
         </View>
 
-        <View style={[styles.container, { flex: 2 }]}>
+        <View style={[styles.container, { flex: 3 }]}>
           <Text style={styles.mileText}>{range}</Text>
           <Slider
             style={styles.slider}
@@ -156,12 +166,12 @@ function LocationPreferencesPage(props) {
             onValueChange={(value) => setRange(parseInt(value) + " miles")}
             //onSlidingStart={() => setSliding("Sliding")}
             //onSlidingComplete={() => setSliding("Inactive")}
-            minimumTrackTintColor="#2B7D9C"
-            maximumTrackTintColor="#2B7D9C"
-            thumbTintColor="#2B7D9C"
+            minimumTrackTintColor="#3B4046"
+            maximumTrackTintColor="#3B4046"
+            thumbTintColor="#3B4046"
           />
         </View>
-        <View style={[styles.container, { flex: 1 }]}>
+        <View style={[styles.container, { flex: 3 }]}>
           <Button
             title="Submit"
             titleStyle={{ fontSize: 26, color: "#FFFFFF" }}
@@ -169,13 +179,13 @@ function LocationPreferencesPage(props) {
               borderWidth: 10,
               borderWidth: 1,
               width: windowWidth * 0.5,
-              height: windowHight * 0.09,
+              height: windowHight * 0.08,
               borderColor: "black",
               titleColor: "black",
-              backgroundColor: "#2B7D9C",
-              borderRadius: 50,
+              backgroundColor: "#3B4046",
+              borderRadius: 40,
             }}
-            style={{ padding: 45 }}
+            style={{ padding: 0 }}
             onPress={() => {
               props.setLocation(latitude, longitude);
               props.addDistance(parseInt(range), props.navigation);
@@ -319,7 +329,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   slider: {
-    width: windowWidth,
+    width: windowWidth - 50,
     height: 40,
   },
   mileText: {
