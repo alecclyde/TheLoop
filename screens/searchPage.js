@@ -24,28 +24,29 @@ import * as firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableScale } from "react-native-touchable-scale";
 import { Button, ListItem, Avatar } from "react-native-elements";
-// import { Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 import { connect } from "react-redux";
 
-// const height = Dimensions.get("window").height * 0.3;
-// const width = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
+const windowWidth = Dimensions.get("window").width;
 
-function getDistanceFromLatLonInM(lat1,lon1,lat2,lon2) {
+function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
   let R = 3961; // Radius of the earth in M
-  let dLat = deg2rad(lat2-lat1);  // deg2rad below
-  let dLon = deg2rad(lon2-lon1); 
-  let a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-    ; 
-  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  let dLat = deg2rad(lat2 - lat1); // deg2rad below
+  let dLon = deg2rad(lon2 - lon1);
+  let a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   let d = R * c; // Distance in m
   return d;
 }
 
 function deg2rad(deg) {
-  return deg * (Math.PI/180)
+  return deg * (Math.PI / 180);
 }
 
 function Search(props, { navigation }) {
@@ -96,13 +97,10 @@ function Search(props, { navigation }) {
     }
   }, [isFocused]);
 
-  
-
   // update the list of filtered events
   useEffect(() => {
     if (searchTerm == "") {
       setFilteredEvents([]);
-
     } else {
       let filteredEvents = new Set();
       events.forEach((event) => {
@@ -141,7 +139,11 @@ function Search(props, { navigation }) {
               name="filter"
               color="white"
               size={30}
-              style={{ paddingLeft: 5, paddingRight: 10, justifyContent: "center" }}
+              style={{
+                paddingLeft: 5,
+                paddingRight: 10,
+                justifyContent: "center",
+              }}
               onPress={() => {
                 setShowFilters(!showFilters);
               }}
@@ -218,10 +220,9 @@ function Search(props, { navigation }) {
         )}
 
         <View style={[styles.container, { flex: 2 }]}>
-        {(filteredEvents.length == 0) && (
-          <View style={{ alignItems: "center"}}>
-
-          {/* {
+          {filteredEvents.length == 0 && (
+            <View style={{ alignItems: "center" }}>
+              {/* {
             searchTerm == "" ? (
               <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
               Start typing to search for an event!
@@ -233,13 +234,15 @@ function Search(props, { navigation }) {
             )
           } */}
 
-          {/* uncomment block above and comment out Text below for the funny */}
+              {/* uncomment block above and comment out Text below for the funny */}
 
-            <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24}}>
-            {searchTerm == "" ? "Start typing to search for an event!": "No results..."}
-            </Text>
-          </View>
-        )}
+              <Text style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: 24 }}>
+                {searchTerm == ""
+                  ? "Start typing to search for an event!"
+                  : "No results..."}
+              </Text>
+            </View>
+          )}
           <FlatList
             //contentContainerStyle={{ paddingBottom: }}
             persistentScrollbar={true}
@@ -303,7 +306,7 @@ function Search(props, { navigation }) {
         </View>
 
         <View style={[styles.container, { flex: 3 }]}>
-        <MapView
+          <MapView
             style={styles.mapStyle}
             initialRegion={{
               latitude: props.user.location.latitude,
@@ -349,7 +352,7 @@ function Search(props, { navigation }) {
                 />
               }
             })} */}
-             <MapView.Circle
+            <MapView.Circle
               center={{ latitude: latitude, longitude: longitude }}
               radius={parseInt(props.user.distanceTolerance) * 1609.34}
               strokeColor="rgba(43, 125, 156,.85)"
@@ -472,7 +475,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     borderRadius: 75,
     backgroundColor: "#696969",
-    left: 315,
+    left: windowWidth * 0.7,
   },
   mapStyle: {
     position: "absolute",
@@ -503,7 +506,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
   user: state.user,
   events: state.events,
-  user: state.user
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({});
