@@ -149,7 +149,8 @@ function Home(props, { navigation, route }) {
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold"
                 }}
               >
                 Join an Event on the Search Page!
@@ -177,6 +178,9 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id)
+                  }}
                 >
                   <ListItem
                     pad={16}
@@ -301,7 +305,8 @@ function Home(props, { navigation, route }) {
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold",
                 }}
               >
                 Attend Some Events and Create Memories!
@@ -329,6 +334,9 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id)
+                  }}
                 >
                   <ListItem
                     pad={16}
@@ -456,7 +464,8 @@ function Home(props, { navigation, route }) {
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold"
                 }}
               >
                 Use the Event Creation Page to Plan a Banger!
@@ -489,6 +498,9 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id)
+                  }}
                 >
                   <ListItem
                     pad={16}
@@ -620,7 +632,8 @@ const styles = StyleSheet.create({
     color: "white",
     marginLeft: 10,
     paddingVertical: 5,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "Helvetica",
+    fontWeight: "bold",
   },
 });
 

@@ -7,11 +7,11 @@ import {
   SafeAreaView,
   Image,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import {
   getEventData,
   grabNotifications,
-  getUserPfp,
   getMultiplePfps,
 } from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
@@ -32,8 +32,12 @@ export default function Notifications({ navigation, route }) {
   const isFocused = useIsFocused();
 
   const [user, setUser] = useState();
-  const [userPfps, setUserPfps] = useState({});
   const [refresh, setRefresh] = useState(false);
+
+  const [notifications, setNotifications] = useState([]);
+  const [rawNotifs, setRawNotifs] = useState([]);
+
+  const [loading, setLoading] = useState(true);
 
   const stylizedMessage = (notifType, notifData) => {
     switch (notifType) {
@@ -185,11 +189,6 @@ export default function Notifications({ navigation, route }) {
     }
   };
 
-  const [notifications, setNotifications] = useState([]);
-  const [rawNotifs, setRawNotifs] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
   const getHighlightedUserID = (notif) => {
     // console.log(notif.id + ": " + notif.type)
     switch (notif.type) {
@@ -240,25 +239,13 @@ export default function Notifications({ navigation, route }) {
   useEffect(() => {
     if (user) {
       if (isFocused == true) {
+        if (refresh || rawNotifs.length == 0) {
+          // weird refresh workaround
+        }
+        setLoading(true);
         grabNotifications(user.uid).then((data) => {
-          // let notifs = [...data];
           setRefresh(false);
-          // let userIDs = new Set();
-          // notifications.forEach((notif) => {
-          //   // add userIDs to a set
-          //   userIDs.add(getHighlightedUserID(notif));
-          // });
 
-          // let pfps = {}
-
-          // userIDs.forEach(async (userID) => {
-          //   getUserPfp(userID).then((url) => {
-          //     // set pfps object to pair uid's to pfp urls
-          //     pfps[userID] = url
-          //   });
-          // }).then((snap) => {
-
-          // });
           setRawNotifs(data);
         });
       }
@@ -294,79 +281,111 @@ export default function Notifications({ navigation, route }) {
       });
 
       setNotifications(notifs);
+      setLoading(false);
     });
-
-    // userIDs.forEach(async (userID) => {
-    //   getUserPfp(userID).then((url) => {
-
-    //     setUserPfps({ ...userPfps, [userID]: url });
-    //   });
-    // });
   }, [rawNotifs]);
 
   return (
     <SafeAreaView
       style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
     >
-      <View>
-        <FlatList
-          onRefresh={() => setRefresh(true)}
-          refreshing={refresh}
-          style={styles.root}
-          data={notifications}
-          ItemSeparatorComponent={() => {
-            return <View style={styles.separator} />;
-          }}
-          keyExtractor={(item) => item.id}
-          extraData={userPfps}
-          renderItem={({ item, index }) => (
+      <View style={{ flex: 1 }}>
+        {notifications.length == 0 ? ( // are there any notifications currently?
+          loading ? ( // are the notifications loading?
             <View
-              style={[
-                styles.container,
-                !item.seen && { backgroundColor: "#61666b" },
-              ]}
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
             >
-              <Image
-                source={{
-                  // uri: getHighlightedUserID(item)
-                  //   ? debug(userPfps[getHighlightedUserID(item)])
-                  //   : placeholderImage.uri,
-                  // key: userPfps[getHighlightedUserID(item)],
-                  uri: item.uri,
-                }}
-                style={globalStyles.notifavatar}
-              />
-              <View style={styles.content}>
-                <View style={styles.mainContent}>
-                  <View style={styles.text}>
-                    {/* <Text style={styles.name}>{item.creatorName}</Text> */}
-                    <TouchableOpacity
-                      onPress={() => {
-                        let event = getEventData(item.eventID);
-                        navigation.navigate("CardDetails", {
-                          id: item.eventID,
-                          name: event.name,
-                          loop: event.loop,
-                          creator: event.creator,
-                          startDateTime: event.startDateTime,
-                          address: event.address,
-                        });
-                      }}
-                    >
-                      <Text>{stylizedMessage(item.type, item)}</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <Text style={styles.timeAgo}>
-                    {makeTimeDifferenceString(item.updatedTimestamp.seconds)}{" "}
-                    ago
-                  </Text>
-                  {/* The time can be imported from the database */}
-                </View>
-                <View />
-              </View>
+              <ActivityIndicator size="large" color="white" />
             </View>
-          )}
-        />
+          ) : (
+            // we're not loading and there's no notifications
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <Text style={{ fontSize: 45 }}>😴</Text>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 15,
+                }}
+              >
+                No notifications.
+              </Text>
+            </View>
+          )
+        ) : (
+          // otherwise, put them in the flatlist
+
+          <FlatList
+            onRefresh={() => setRefresh(true)}
+            refreshing={refresh}
+            style={styles.root}
+            data={notifications}
+            ItemSeparatorComponent={() => {
+              return <View style={styles.separator} />;
+            }}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  if (item.eventID) {
+                    let event = getEventData(item.eventID);
+                    navigation.navigate("CardDetails", {
+                      id: item.eventID,
+                      name: event.name,
+                      loop: event.loop,
+                      creator: event.creator,
+                      startDateTime: event.startDateTime,
+                      address: event.address,
+                    });
+                  }
+                }}
+                onLongPress={() => {
+                  console.log(item.id)
+                }}
+              >
+                <View
+                  style={[
+                    styles.container,
+                    !item.seen && { backgroundColor: "#61666b" },
+                  ]}
+                >
+                  <Image
+                    source={{
+                      uri: item.uri,
+                    }}
+                    style={globalStyles.notifavatar}
+                  />
+                  <View style={styles.content}>
+                    <View style={styles.mainContent}>
+                      <View style={styles.text}>
+                        {/* <Text style={styles.name}>{item.creatorName}</Text> */}
+
+                        <Text>{stylizedMessage(item.type, item)}</Text>
+                      </View>
+                      <Text style={styles.timeAgo}>
+                        {makeTimeDifferenceString(
+                          item.updatedTimestamp.seconds
+                        )}{" "}
+                        ago
+                      </Text>
+                      {/* The time can be imported from the database */}
+                    </View>
+                    <View />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
