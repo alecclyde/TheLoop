@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
+  ScrollView,
 } from "react-native";
 import { loggingOut, getUserData } from "../shared/firebaseMethods";
 import * as firebase from "firebase";
@@ -39,7 +40,7 @@ function UserProfileView(props) {
   const [pfpSource, setPfpSource] = useState(
     "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png"
   );
-  const [userID, setUserID] = useState("")
+  const [userID, setUserID] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [pfpStep, setPfpStep] = useState(1);
 
@@ -63,52 +64,58 @@ function UserProfileView(props) {
   const [number, onChangeNumber] = React.useState(null);
 
   const scaleHeight = (image) => {
-    let actualWidth = windowWidth * 0.75
-    let scale = image.width / actualWidth
-    let actualHeight = image.height / scale
+    let actualWidth = windowWidth * 0.75;
+    let scale = image.width / actualWidth;
+    let actualHeight = image.height / scale;
 
     return actualHeight;
-  }
+  };
 
   // from https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
   async function uploadImageAsync(uri) {
-
     // https://github.com/expo/expo/issues/2402#issuecomment-443726662
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
       xhr.onload = function () {
-        resolve(xhr.response)
+        resolve(xhr.response);
       };
 
       xhr.onerror = function (e) {
         console.log(e);
-        reject(new TypeError("Network Request Failed!"))
+        reject(new TypeError("Network Request Failed!"));
       };
 
       xhr.responseType = "blob";
       xhr.open("GET", uri, true);
       xhr.send(null);
-    })
+    });
 
-    const imageLocation = "profile-pics/" + userID + ".jpg"
-    const storage = firebase.storage()
-    const ref = storage.ref(imageLocation)
+    const imageLocation = "profile-pics/" + userID + ".jpg";
+    const storage = firebase.storage();
+    const ref = storage.ref(imageLocation);
 
     ref.put(blob).then((snapshot) => {
-      storage.ref(imageLocation).getDownloadURL()
-      .then((url) => { // should probably move this into firebase methods
-        // console.log(url)
-        firebase.firestore().collection("users").doc(userID).update({
-          profilePicSource: url
-        }).then((snap) => {
-          // redux action to update pfp uri
-          console.log(typeof url)
-          props.updatePfpSource(url.toString())
-        })
-
-      })
-    })
+      storage
+        .ref(imageLocation)
+        .getDownloadURL()
+        .then((url) => {
+          // should probably move this into firebase methods
+          // console.log(url)
+          firebase
+            .firestore()
+            .collection("users")
+            .doc(userID)
+            .update({
+              profilePicSource: url,
+            })
+            .then((snap) => {
+              // redux action to update pfp uri
+              console.log(typeof url);
+              props.updatePfpSource(url.toString());
+            });
+        });
+    });
 
     // blob.close();
   }
@@ -125,11 +132,11 @@ function UserProfileView(props) {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      if(user) {
-        setUserID(user.uid)
+      if (user) {
+        setUserID(user.uid);
       }
-    })
-  }, [])
+    });
+  }, []);
   // Listener to update user data
   // function AuthStateChangedListener(user) {
   //   if (user) {
@@ -265,19 +272,22 @@ function UserProfileView(props) {
                       }}
                     />
 
-                      <Image
-                        source={{
-                          uri: imageData.uri,
-                          height: Math.min(scaleHeight(imageData), windowHeight * 0.5),
-                        }}
-                        resizeMode="contain"
-                      />
+                    <Image
+                      source={{
+                        uri: imageData.uri,
+                        height: Math.min(
+                          scaleHeight(imageData),
+                          windowHeight * 0.5
+                        ),
+                      }}
+                      resizeMode="contain"
+                    />
                     <Button
                       title="Set as profile picture"
                       onPress={async () => {
-                        await uploadImageAsync(imageData.uri)
-                        setModalVisible(false)
-                        setPfpStep(1)
+                        await uploadImageAsync(imageData.uri);
+                        setModalVisible(false);
+                        setPfpStep(1);
                       }}
                       buttonStyle={{
                         height: 50,
@@ -422,65 +432,61 @@ function UserProfileView(props) {
             </View>
           </View>
         </View> */}
-
-        <Button
-                  buttonStyle={styles.Button}
-                  title="  Privacy Policy"
-                  onPress={() =>
-                    Linking.openURL(
-                      "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md"
-                    )
-                  }
-                  icon={<Icon name="user-secret" size={15} color="white" />}
-                />
-        
-        <Button
-                  buttonStyle={styles.Button}
-                  title=" Terms&Conditions"
-                  onPress={() =>
-                    Linking.openURL(
-                      "https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md"
-                    )
-                  }
-                  icon={<Icon name="gavel" size={15} color="white" />}
-                />
+        <ScrollView>
           <Button
-                  buttonStyle={styles.Button}
-                  title="  Change Location"
-                  onPress={() =>
-                    props.navigation.navigate("LocationPreferencesPage")
-                  }
-                  icon={<Icon name="rocket" size={15} color="white" />}
-                />
-            <Button
-                  buttonStyle={styles.Button}
-                  title="  Change Loops"
-                  onPress={() =>
-                    props.navigation.navigate("UserEventPreferences", {
-                      settings: true,
-                    })
-                  }
-                  icon={<Icon name="rocket" size={15} color="white" />}
-                />
-              <Button 
-                buttonStyle={styles.Button}
-                title=" Feedback"
-                onPress={() =>
-                  Linking.openURL(
-                    "https://docs.google.com/forms/d/e/1FAIpQLSdwOLeqnDlB1Y3age2MK5EMtCMKINHl1yf53ztW7FFklmkNTQ/viewform?usp=sf_link"
-                  )
-                }
-                icon={<Icon name="pencil-square-o" size={15} color="white" />}
-              />
-              <Button
-                buttonStyle={styles.Button}
-                title=" Sign Out "
-                onPress={() => props.signOut(props.navigation)}
-                icon={<Icon name="sign-out" size={15} color="white" />}
-              ></Button>
+            buttonStyle={styles.Button}
+            title="  Privacy Policy"
+            onPress={() =>
+              Linking.openURL(
+                "https://github.com/alecclyde/TheLoop/blob/main/Privacy-Policy.md"
+              )
+            }
+            icon={<Icon name="user-secret" size={15} color="white" />}
+          />
 
-
-
+          <Button
+            buttonStyle={styles.Button}
+            title=" Terms&Conditions"
+            onPress={() =>
+              Linking.openURL(
+                "https://github.com/alecclyde/TheLoop/blob/main/Terms%26Conditions.md"
+              )
+            }
+            icon={<Icon name="gavel" size={15} color="white" />}
+          />
+          <Button
+            buttonStyle={styles.Button}
+            title="  Change Location"
+            onPress={() => props.navigation.navigate("LocationPreferencesPage")}
+            icon={<Icon name="rocket" size={15} color="white" />}
+          />
+          <Button
+            buttonStyle={styles.Button}
+            title="  Change Loops"
+            onPress={() =>
+              props.navigation.navigate("UserEventPreferences", {
+                settings: true,
+              })
+            }
+            icon={<Icon name="rocket" size={15} color="white" />}
+          />
+          <Button
+            buttonStyle={styles.Button}
+            title=" Feedback"
+            onPress={() =>
+              Linking.openURL(
+                "https://docs.google.com/forms/d/e/1FAIpQLSdwOLeqnDlB1Y3age2MK5EMtCMKINHl1yf53ztW7FFklmkNTQ/viewform?usp=sf_link"
+              )
+            }
+            icon={<Icon name="pencil-square-o" size={15} color="white" />}
+          />
+          <Button
+            buttonStyle={styles.Button}
+            title=" Sign Out "
+            onPress={() => props.signOut(props.navigation)}
+            icon={<Icon name="sign-out" size={15} color="white" />}
+          ></Button>
+        </ScrollView>
       </View>
     </View>
   );
@@ -534,10 +540,10 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   Button: {
-    backgroundColor: '#2B7D9C',
+    backgroundColor: "#2B7D9C",
     height: 45,
-    marginVertical: 12,
-  }
+    marginVertical: 10,
+  },
 });
 
 const mapStateToProps = (state) => ({
