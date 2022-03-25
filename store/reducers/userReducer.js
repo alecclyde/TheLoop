@@ -44,7 +44,7 @@ const userReducer = (state = initialState, action) => {
     case SET_USER_LOOPS:
       return {
         ...state,
-       joinedLoops: action.payload
+       joinedLoops: action.payload,
       }
     default:
       return state;
