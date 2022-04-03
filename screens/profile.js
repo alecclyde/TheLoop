@@ -124,33 +124,31 @@ function Profile(props, { navigation, route }) {
         </View>
       </View>
 
-      <View style={{...styles.statusBar, height: 125}}>
-        <View style={styles.statusBarText}>
+      {/* <View style={{...styles.statusBar, height: 50}}> */}
+        {/* <View style={styles.statusBarText}>
           <View style={styles.statusBarTextLine}>
             <Text style={styles.statusBarTextLine}>Followers</Text>
           </View>
           <View style={styles.statusBarTextLine}>
             <Text style={styles.statusBarTextLine}>0</Text>
           </View>
-        </View>
-        <View style={styles.statusBarText}>
+        </View> */}
+        {/* <View style={styles.statusBarText}>
           <View style={styles.statusBarTextLine}>
             <Text style={styles.statusBarTextLine}>Following</Text>
           </View>
           <View style={styles.statusBarTextLine}>
             <Text style={styles.statusBarTextLine}>0</Text>
           </View>
-        </View>
+        </View> */}
 
-        <View style={styles.statusBarText}>
-          <View style={styles.statusBarTextLine}>
-            <Text style={styles.statusBarTextLine}>Loops</Text>
+        {/* <View style={styles.statusBarText}> */}
+          <View style={styles.loopview}>
+            <Text style={styles.looptitle}>Loops</Text>
           </View>
-          <View style={styles.statusBarTextLine}>
-            <Text style={styles.statusBarTextLine}>2</Text>
-          </View>
-        </View>
-      </View>
+         
+        {/* </View> */}
+      {/* </View> */}
 
       <Text h3 style={styles.titles}>
         Upcoming Events
@@ -333,6 +331,22 @@ const styles = StyleSheet.create({
     color: "white",
     marginLeft: 10,
     fontFamily: "Helvetica-Bold",
+  },
+
+  looptitle: {
+    color: "#3B4046",
+    fontSize: 35,
+    fontWeight: "bold",
+    textAlignVertical: "center",
+    textAlign: 'center'
+  },
+
+  loopview: {
+    
+    justifyContent: "center",
+    paddingVertical: 10,
+    borderBottomColor: '#3B4046',
+    borderBottomWidth: 3,
   },
 
   statusBarText: {
