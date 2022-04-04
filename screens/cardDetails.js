@@ -547,7 +547,7 @@ function CardDetails(props, { navigation, route }) {
                       replyText: "",
                     }}
                     onSubmit={(values, actions) => {
-                      if (values.postText === "") {
+                      if (values.replyText === "") {
                         Alert.alert(
                           "Error",
                           "Cannot create a reply with no text"
