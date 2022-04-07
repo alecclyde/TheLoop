@@ -54,7 +54,7 @@ export default function ProfileStack({navigation}){
           color: "white",
         },
         headerStyle: {
-          backgroundColor: '#2C2C2C',
+          backgroundColor: '#3B4046',
         }
           }
         }}
@@ -64,7 +64,12 @@ export default function ProfileStack({navigation}){
         component={Settings}
         options={({ navigation }) => {
           return {
+            headerTitleStyle: {
+          color: "white",
+        },
+            headerStyle:{backgroundColor: '#3B4046',},
             headerRight: () => <Header navigation={navigation} />
+            
           }
         }}
       />

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {Platform, StyleSheet } from 'react-native';
 
 export const globalStyles = StyleSheet.create({
   titleText: {
@@ -31,8 +31,7 @@ export const globalStyles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20
-    
+    padding: 20,
   },
   rowContainer: {
     //flex: 1,
@@ -102,12 +101,12 @@ export const globalStyles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    color: "#000000",
+    color: "white",
     fontWeight: "600",
   },
   userInfo: {
     fontSize: 16,
-    color: "#000000",
+    color: "white",
     fontWeight: "600",
   },
   header: {
