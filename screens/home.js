@@ -35,7 +35,9 @@ function Home(props, { navigation, route }) {
   const [userID, setUserID] = useState("");
 
   const [events, setEvents] = useState([]);
+  const [allEvents,setAllEvents] = useState([]);
   const [eventIDs, setEventIDs] = useState([]);
+  const [loops, setLoops] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -44,6 +46,232 @@ function Home(props, { navigation, route }) {
   const [limitHosting, setLimitHosting] = useState(3);
 
   const isFocused = useIsFocused();
+
+  const eventLoopIconName = (eventLoop) => {
+    switch (eventLoop) {
+      case "Sports":
+        return "futbol-o";
+      case "Music":
+        return "music";
+      case "Volunteer":
+        return "plus";
+      case "Game":
+        return "gamepad";
+      case "Social":
+        return "users";
+      case "Arts":
+        return "paint-brush";
+      case "Outdoors":
+        return "pagelines";
+      case "Academic":
+        return "book";
+      case "Media":
+        return "camera";
+    }
+  };
+
+  const eventListType = {
+    upcoming: {
+      emoji: "😎",
+      text: "Join an Event on the Search Page!",
+      limit: () => {
+        return limitUpcoming;
+      },
+      updateLimit: () => {
+        setLimitUpcoming(limitUpcoming + 3);
+      },
+    },
+    previous: {
+      emoji: "🥳",
+      text: "Attend Some Events and Create Memories!",
+      limit: () => {
+        return limitPrevious;
+      },
+      updateLimit: () => {
+        setLimitPrevious(limitPrevious + 3);
+      },
+    },
+    hosting: {
+      emoji: "😤",
+      text: "Use the Event Creation Page to Plan a Banger!",
+      limit: () => {
+        return limitHosting;
+      },
+      updateLimit: () => {
+        setLimitHosting(limitHosting + 3);
+      },
+    },
+  };
+
+  /**
+   * A list of sylized event cards. Should take a data prop that contains
+   * a pre-filtered, pre-sorted array of data. Also the type of event, which
+   * should correspond to one of the three "call to action" types.
+   * data: the filtered, sorted array of data
+   * type: extra data for fill out the list (from eventListType)
+   */
+
+  // maybe one day...
+  const EventList = (listProps) => {
+    return (
+      <View style={{ flex: 1 }}>
+        {listProps.data.length == 0 ? ( // if there are currently no events for this category
+          loading ? (
+            // if there are no events in the filter and the events are still loading, put an activity indicator
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          ) : (
+            // if there are no events in the filter and the events have loaded, show text that says "no events"
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <Text style={{ fontSize: 45 }}>{listProps.type.emoji}</Text>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 15,
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold",
+                }}
+              >
+                {listProps.type.text}
+              </Text>
+            </View>
+          )
+        ) : (
+          // if there are events in the filter, put them in the ScrollView
+          <ScrollView persistentScrollbar={true} horizontal={true}>
+            {listProps.data.slice(0, listProps.type.limit()).map((event) => (
+              <TouchableOpacity
+                style={[styles.clickable, { flex: 1, paddingVertical: 0 }]}
+                key={event.id}
+                onPress={() =>
+                  props.navigation.navigate("CardDetails", {
+                    id: event.id,
+                    name: event.name,
+                    loop: event.loop,
+                    creator: event.creator,
+                    startDateTime: event.startDateTime,
+                    address: event.address,
+                  })
+                }
+                onLongPress={() => {
+                  console.log(event.id);
+                }}
+              >
+                <ImageBackground
+                  source={{
+                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                  }}
+                  style={{ height: "100%", width: "auto", minWidth: 200 }}
+                  imageStyle={{ borderRadius: 10 }}
+                  resizeMode="cover"
+                  overflow="hidden"
+                >
+                  <LinearGradient
+                    colors={["transparent", "#3B4046"]}
+                    style={{ flex: 1, borderRadius: 10 }}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "flex-end",
+                        padding: 10,
+                      }}
+                    >
+                      <Text style={styles.listingItem}>
+                        {event.name.substring(0, 25)}
+                        {event.name.length > 25 && "..."}
+                      </Text>
+                      <View style={{ flexDirection: "row" }}>
+                        <View
+                          style={{
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Icon
+                            name={eventLoopIconName(event.loop)}
+                            size={16}
+                            color="white"
+                          />
+                          <Icon name="map-marker" size={16} color="white" />
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "column",
+                            paddingLeft: 3,
+                          }}
+                        >
+                          <Text style={styles.descriptionItem}>
+                            {event.loop}
+                          </Text>
+                          <Text style={styles.descriptionItem}>
+                            {event.address.substring(0, 30)}
+                            {event.address.length > 30 && "..."}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </LinearGradient>
+                </ImageBackground>
+              </TouchableOpacity>
+            ))}
+            {listProps.data.length > listProps.type.limit() && (
+              <TouchableOpacity
+                style={[styles.clickable, { flex: 1 }]}
+                onPress={() => {
+                  listProps.type.updateLimit();
+                }}
+              >
+                <ListItem
+                  pad={16}
+                  bottomDivide={true}
+                  Component={TouchableScale}
+                  button
+                  friction={90}
+                  tension={100} // These props are passed to the parent component (here TouchableScale)
+                  activeScale={0.95} //
+                  linearGradientProps={{
+                    colors: ["#3B4046", "#3B4046"],
+                    start: { x: 1, y: 0 },
+                    end: { x: 0.2, y: 0 },
+                  }}
+                  ViewComponent={LinearGradient}
+                >
+                  <ListItem.Content>
+                    <ListItem.Title style={styles.listingItem}>
+                      {listProps.data.length - listProps.type.limit()} more
+                      event
+                      {/* puts the 's' at the end if the number of remaining events is not 1 */}
+                      {listProps.data.length - listProps.type.limit() == 1
+                        ? ""
+                        : "s"}
+                    </ListItem.Title>
+                    <ListItem.Subtitle style={styles.descriptionItem}>
+                      Tap to view
+                    </ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron color="gray" />
+                </ListItem>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
+        )}
+      </View>
+    );
+  };
 
   // Listener to update user data
   function AuthStateChangedListener(user) {
@@ -75,43 +303,53 @@ function Home(props, { navigation, route }) {
         setLimitHosting(3);
 
         setEvents(user.myEvents);
+
         setLoading(false);
         // console.log("events loaded!")
         // setEventIDs(user.myEvents);
       });
+      
     }
   }, [userID, isFocused]);
-  //console.log(props.user);
 
-  // useEffect(() => {
-  //   setEvents([]);
+  //sets the loops the user is in to an array
+  useEffect(() => {
+    if(isFocused){
+      const identifier = Object.keys(props.user.joinedLoops);
+      const active = identifier.filter(function(id){
+        return props.user.joinedLoops[id];
+      });
+      setLoops(active);
+    }
+    //console.log(props.user.joinedLoops);
+  },[isFocused]);
 
-  //   if (userID) {
-  //     eventIDs.forEach((eventID) => {
-  //       getEventData(eventID).then((event) => {
-  //         let creator;
-
-  //         // SPRINT7: collapse this to just use event.creator
-  //         if (event.creator == undefined) {
-  //           creator = { userID: event.creatorID, userName: "" };
-  //         } else {
-  //           creator = event.creator;
-  //         }
-  //         setEvents((events) => [
-  //           ...events,
-  //           {
-  //             id: eventID,
-  //             name: event.name,
-  //             loop: event.loop,
-  //             startDateTime: event.startDateTime,
-  //             creator: creator,
-  //             address: event.address,
-  //           },
-  //         ]);
-  //       });
-  //     });
-  //   }
-  // }, [eventIDs]);
+  useEffect(() => {
+    if (isFocused) {
+      setAllEvents([]);
+      firebase
+        .firestore()
+        .collection("events")
+        .get()
+        .then((snap) => {
+          snap.docs.forEach((doc) => {
+            if (doc.exists) {
+              setAllEvents((events) => [
+                ...events,
+                {
+                  id: doc.id,
+                  loop: doc.data().loop,
+                  name: doc.data().name,
+                  creator: doc.data().creator,
+                  address: doc.data().address,
+                  location: doc.data().location,
+                },
+              ]);
+            }
+          });
+        });
+    }
+  }, [isFocused]);
 
   return (
     <SafeAreaView
@@ -144,28 +382,29 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
-              <Text style={{ fontSize: 45 }}>😴</Text>
+              <Text style={{ fontSize: 45 }}>😎</Text>
               <Text
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold",
                 }}
               >
-                No events...
+                Join an Event on the Search Page!
               </Text>
             </View>
           )
         ) : (
           // if there are events in the filter, put them in the ScrollView
           <ScrollView persistentScrollbar={true} horizontal={true}>
-            {events // upcoming events
+            {events
               .filter((item) => item.startDateTime > moment().unix())
               .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
               .slice(0, limitUpcoming)
               .map((event) => (
                 <TouchableOpacity
-                  style={styles.clickable}
+                  style={[styles.clickable, { flex: 1, paddingVertical: 0 }]}
                   key={event.id}
                   onPress={() =>
                     props.navigation.navigate("CardDetails", {
@@ -177,46 +416,57 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id);
+                  }}
                 >
-                  <ListItem
-                    pad={16}
-                    bottomDivide={true}
-                    Component={TouchableScale}
-                    button
-                    friction={90}
-                    tension={100} // These props are passed to the parent component (here TouchableScale)
-                    activeScale={0.95} //
-                    linearGradientProps={{
-                      colors: ["#3B4046", "#3B4046"],
-                      start: { x: 1, y: 0 },
-                      end: { x: 0.2, y: 0 },
+                  <ImageBackground
+                    source={{
+                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
                     }}
-                    ViewComponent={LinearGradient}
+                    style={{ height: "100%", width: "auto", minWidth: 200 }}
+                    imageStyle={{ borderRadius: 10 }}
+                    resizeMode="cover"
+                    overflow="hidden"
                   >
-                    <Avatar
-                      size="large"
-                      //change this to either be icon of loop or that groups profile picture
-                      source={{
-                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                      }}
-                      resizeMode="cover"
-                      //style={{ width: "100%", height: "100%" }}
-                    />
-                    <ListItem.Content>
-                      <ListItem.Title style={styles.listingItem}>
-                        {event.name.substring(0, 15)}
-                      </ListItem.Title>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        {event.loop}
-                      </ListItem.Subtitle>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        <Icon name="map-marker" size={16} color="white" />
-                        {"  "}
-                        {event.address}
-                      </ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron color="gray" />
-                  </ListItem>
+                    <LinearGradient
+                      colors={["transparent", "#3B4046"]}
+                      style={{ flex: 1, borderRadius: 10 }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "flex-end",
+                          padding: 10,
+                        }}
+                      >
+                        <Text style={styles.listingItem}>
+                          {event.name.substring(0, 25)}
+                          {event.name.length > 25 && "..."}
+                        </Text>
+
+                        <Text style={styles.descriptionItem}>
+                          <View style={{ width: 20, alignItems: "center" }}>
+                            <Icon
+                              name={eventLoopIconName(event.loop)}
+                              size={16}
+                              color="white"
+                            />
+                          </View>
+
+                          {event.loop}
+                        </Text>
+                        <Text style={styles.descriptionItem}>
+                          <View style={{ width: 20, alignItems: "center" }}>
+                            <Icon name={"map-marker"} size={16} color="white" />
+                          </View>
+
+                          {event.address.substring(0, 30)}
+                          {event.address.length > 30 && "..."}
+                        </Text>
+                      </View>
+                    </LinearGradient>
+                  </ImageBackground>
                 </TouchableOpacity>
               ))}
             {events.filter((item) => item.startDateTime > moment().unix())
@@ -270,11 +520,12 @@ function Home(props, { navigation, route }) {
       </View>
 
       <Text h3 style={styles.titles}>
-        Previous Events
+        Events in your loops
       </Text>
 
       <View style={{ flex: 1 }}>
-        {events.filter((item) => item.startDateTime <= moment().unix())
+        {/* {events.filter((item) => item.startDateTime <= moment().unix()) */}
+        {allEvents.filter((item) => JSON.stringify(loops).includes(item.loop))
           .length == 0 ? ( // if there are currently no events for this category
           loading ? (
             // if there are no events in the filter and the events are still loading, put an activity indicator
@@ -296,28 +547,29 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
-              <Text style={{ fontSize: 45 }}>😴</Text>
+              <Text style={{ fontSize: 45 }}>🥳</Text>
               <Text
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold",
                 }}
               >
-                No events...
+                Attend Some Events and Create Memories!
               </Text>
             </View>
           )
         ) : (
           // if there are events in the filter, put them in the ScrollView
           <ScrollView persistentScrollbar={true} horizontal={true}>
-            {events // previous events the user attended
-              .filter((item) => item.startDateTime <= moment().unix())
+            {allEvents
+              .filter((item) => JSON.stringify(loops).includes(item.loop))
               .sort((item1, item2) => item2.startDateTime - item1.startDateTime)
               .slice(0, limitPrevious)
               .map((event) => (
                 <TouchableOpacity
-                  style={styles.clickable}
+                  style={[styles.clickable, { flex: 1, paddingVertical: 0 }]}
                   key={event.id}
                   onPress={() =>
                     props.navigation.navigate("CardDetails", {
@@ -329,49 +581,60 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id);
+                  }}
                 >
-                  <ListItem
-                    pad={16}
-                    bottomDivide={true}
-                    Component={TouchableScale}
-                    button
-                    friction={90}
-                    tension={100} // These props are passed to the parent component (here TouchableScale)
-                    activeScale={0.95} //
-                    linearGradientProps={{
-                      colors: ["#3B4046", "#3B4046"],
-                      start: { x: 1, y: 0 },
-                      end: { x: 0.2, y: 0 },
+                  <ImageBackground
+                    source={{
+                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
                     }}
-                    ViewComponent={LinearGradient}
+                    style={{ height: "100%", width: "auto", minWidth: 200 }}
+                    imageStyle={{ borderRadius: 10 }}
+                    resizeMode="cover"
+                    overflow="hidden"
                   >
-                    <Avatar
-                      size="large"
-                      //change this to either be icon of loop or that groups profile picture
-                      source={{
-                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                      }}
-                      resizeMode="cover"
-                      //style={{ width: "100%", height: "100%" }}
-                    />
-                    <ListItem.Content>
-                      <ListItem.Title style={styles.listingItem}>
-                        {event.name}
-                      </ListItem.Title>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        {event.loop}
-                      </ListItem.Subtitle>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        <Icon name="map-marker" size={16} color="white" />
-                        {"  "}
-                        {event.address}
-                      </ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron color="gray" />
-                  </ListItem>
+                    <LinearGradient
+                      colors={["transparent", "#3B4046"]}
+                      style={{ flex: 1, borderRadius: 10 }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "flex-end",
+                          padding: 10,
+                        }}
+                      >
+                        <Text style={styles.listingItem}>
+                          {event.name.substring(0, 25)}
+                          {event.name.length > 25 && "..."}
+                        </Text>
+
+                        <Text style={styles.descriptionItem}>
+                          <View style={{ width: 20, alignItems: "center" }}>
+                            <Icon
+                              name={eventLoopIconName(event.loop)}
+                              size={16}
+                              color="white"
+                            />
+                          </View>
+
+                          {event.loop}
+                        </Text>
+                        <Text style={styles.descriptionItem}>
+                          <View style={{ width: 20, alignItems: "center" }}>
+                            <Icon name={"map-marker"} size={16} color="white" />
+                          </View>
+
+                          {event.address.substring(0, 30)}
+                          {event.address.length > 30 && "..."}
+                        </Text>
+                      </View>
+                    </LinearGradient>
+                  </ImageBackground>
                 </TouchableOpacity>
               ))}
-            {events.filter((item) => item.startDateTime <= moment().unix())
+            {allEvents.filter((item) => JSON.stringify(loops).includes(item.loop))
               .length > limitPrevious && (
               <TouchableOpacity
                 style={[styles.clickable, { flex: 1 }]}
@@ -396,13 +659,13 @@ function Home(props, { navigation, route }) {
                 >
                   <ListItem.Content>
                     <ListItem.Title style={styles.listingItem}>
-                      {events.filter(
-                        (item) => item.startDateTime <= moment().unix()
+                      {allEvents.filter(
+                        (item) => JSON.stringify(loops).includes(item.loop)
                       ).length - limitPrevious}{" "}
                       more event
                       {/* puts the 's' at the end if the number of remaining events is not 1 */}
-                      {events.filter(
-                        (item) => item.startDateTime <= moment().unix()
+                      {allEvents.filter(
+                        (item) => JSON.stringify(loops).includes(item.loop)
                       ).length -
                         limitPrevious ==
                       1
@@ -451,22 +714,23 @@ function Home(props, { navigation, route }) {
                 flex: 1,
               }}
             >
-              <Text style={{ fontSize: 45 }}>😴</Text>
+              <Text style={{ fontSize: 45 }}>😤</Text>
               <Text
                 style={{
                   color: "white",
                   fontSize: 15,
-                  fontFamily: "Helvetica-Bold",
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold",
                 }}
               >
-                No events...
+                Use the Event Creation Page to Plan a Banger!
               </Text>
             </View>
           )
         ) : (
           // if there are events in the filter, put them in the ScrollView
           <ScrollView persistentScrollbar={true} horizontal={true}>
-            {events // upcoming events the user is hosting
+            {events
               .filter(
                 (item) =>
                   item.creator.userID == userID &&
@@ -474,10 +738,9 @@ function Home(props, { navigation, route }) {
               )
               .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
               .slice(0, limitHosting)
-
               .map((event) => (
                 <TouchableOpacity
-                  style={styles.clickable}
+                  style={[styles.clickable, { flex: 1, paddingVertical: 0 }]}
                   key={event.id}
                   onPress={() =>
                     props.navigation.navigate("CardDetails", {
@@ -489,49 +752,59 @@ function Home(props, { navigation, route }) {
                       address: event.address,
                     })
                   }
+                  onLongPress={() => {
+                    console.log(event.id);
+                  }}
                 >
-                  <ListItem
-                    pad={16}
-                    bottomDivide={true}
-                    Component={TouchableScale}
-                    button
-                    friction={90}
-                    tension={100} // These props are passed to the parent component (here TouchableScale)
-                    activeScale={0.95} //
-                    linearGradientProps={{
-                      colors: ["#3B4046", "#3B4046"],
-                      start: { x: 1, y: 0 },
-                      end: { x: 0.2, y: 0 },
+                  <ImageBackground
+                    source={{
+                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
                     }}
-                    ViewComponent={LinearGradient}
+                    style={{ height: "100%", width: "auto", minWidth: 200 }}
+                    imageStyle={{ borderRadius: 10 }}
+                    resizeMode="cover"
+                    overflow="hidden"
                   >
-                    <Avatar
-                      size="large"
-                      //change this to either be icon of loop or that groups profile picture
-                      source={{
-                        uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
-                      }}
-                      resizeMode="cover"
-                      //style={{ width: "100%", height: "100%" }}
-                    />
-                    <ListItem.Content>
-                      <ListItem.Title style={styles.listingItem}>
-                        {event.name}
-                      </ListItem.Title>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        {event.loop}
-                      </ListItem.Subtitle>
-                      <ListItem.Subtitle style={styles.descriptionItem}>
-                        <Icon name="map-marker" size={16} color="white" />
-                        {"  "}
-                        {event.address}
-                      </ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron color="gray" />
-                  </ListItem>
+                    <LinearGradient
+                      colors={["transparent", "#3B4046"]}
+                      style={{ flex: 1, borderRadius: 10 }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "flex-end",
+                          padding: 10,
+                        }}
+                      >
+                        <Text style={styles.listingItem}>
+                          {event.name.substring(0, 25)}
+                          {event.name.length > 25 && "..."}
+                        </Text>
+
+                        <Text style={styles.descriptionItem}>
+                          <View style={{ width: 20, alignItems: "center" }}>
+                            <Icon
+                              name={eventLoopIconName(event.loop)}
+                              size={16}
+                              color="white"
+                            />
+                          </View>
+
+                          {event.loop}
+                        </Text>
+                        <Text style={styles.descriptionItem}>
+                          <View style={{ width: 20, alignItems: "center" }}>
+                            <Icon name={"map-marker"} size={16} color="white" />
+                          </View>
+
+                          {event.address.substring(0, 30)}
+                          {event.address.length > 30 && "..."}
+                        </Text>
+                      </View>
+                    </LinearGradient>
+                  </ImageBackground>
                 </TouchableOpacity>
               ))}
-
             {events.filter(
               (item) =>
                 item.creator.userID == userID &&
@@ -588,8 +861,6 @@ function Home(props, { navigation, route }) {
           </ScrollView>
         )}
       </View>
-
-      {/* </View> */}
     </SafeAreaView>
   );
 }
@@ -608,8 +879,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#3B4046",
     borderRadius: 10,
-    margin: 5,
-    paddingVertical: 37,
+    margin: 10,
+    paddingVertical: 25,
     shadowOffset: { width: 1, height: 0.1 },
     shadowOpacity: 0.8,
     shadowColor: "black",
@@ -619,7 +890,9 @@ const styles = StyleSheet.create({
     textAlign: "left",
     color: "white",
     marginLeft: 10,
-    fontFamily: "Helvetica-Bold",
+    paddingVertical: 5,
+    fontFamily: "Helvetica",
+    fontWeight: "bold",
   },
 });
 

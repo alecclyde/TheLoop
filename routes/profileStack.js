@@ -7,6 +7,7 @@ import Header from '../shared/header';
 import CardDetails from "../screens/cardDetails";
 import SignUp from '../screens/signUp';
 import LogIn from '../screens/logIn';
+import ProfilePic from '../screens/profilePic';
 import { Button } from 'react-native-elements';
 import  Icon  from 'react-native-vector-icons/FontAwesome';
 
@@ -70,6 +71,15 @@ export default function ProfileStack({navigation}){
        <Stack.Screen 
         name='AboutUs'
         component={AboutUs}
+        options={({ navigation }) => {
+          return {
+            headerRight: () => <Header navigation={navigation} />
+          }
+        }}
+      />
+      <Stack.Screen 
+        name='ProfilePic'
+        component={ProfilePic}
         options={({ navigation }) => {
           return {
             headerRight: () => <Header navigation={navigation} />

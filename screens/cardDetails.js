@@ -305,6 +305,7 @@ function CardDetails(props, { navigation, route }) {
   const handleNotifyAllUsers = (notifType) => {
     var notifData = {
       creatorName: eventCreator.userName,
+      creatorID: eventCreator.userID,
       eventName: eventName,
       eventID: eventID,
     };
@@ -385,6 +386,7 @@ function CardDetails(props, { navigation, route }) {
             borderBottomColor: "black",
             borderBottomWidth: 5,
             marginBottom: 15,
+            paddingVertical: 7,
           }}
         >
           <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
@@ -420,10 +422,10 @@ function CardDetails(props, { navigation, route }) {
           renderItem={({ item }) => (
             <Card containerStyle={styles.cardDesign}>
               <View style={styles.cardDesign}>
-              {/* poster name and post creation time */}
+              {/* poster name and post creation time npms */}
               <View style={{ flexDirection: "row" }}>
                 <Text style={{ fontWeight: "bold", color: 'white' }}>{item.posterName}</Text>
-                <View style={{ flex: 1 }} />
+                <View style={{ flex: 1, paddingVertical: 10 }} />
                 <Text style={{ color: "white" }}>
                   {moment
                     .unix(item.creationTimestamp.seconds)
@@ -506,12 +508,12 @@ function CardDetails(props, { navigation, route }) {
               {/* pencil and trashcan icons */}
               {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
               {!editMode && (
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", paddingTop: 3 }}>
                   {
                     <Icon
                       name="comment"
                       color="#2B7D9C"
-                      size={22}
+                      size={21}
                       onPress={() => enterReplyMode(item)}
                     />
                   }
@@ -521,8 +523,8 @@ function CardDetails(props, { navigation, route }) {
                     <Icon
                       name="pencil"
                       color="#2B7D9C"
-                      size={22}
-                      style={{ paddingHorizontal: 5 }}
+                      size={21}
+                      style={{ paddingHorizontal: 10 }}
                       onPress={() => enterEditMode(item)}
                     />
                   )}
@@ -530,7 +532,7 @@ function CardDetails(props, { navigation, route }) {
                     <Icon
                       name="trash"
                       color="#2B7D9C"
-                      size={22}
+                      size={21}
                       onPress={() => handleDeletePost(item)}
                     />
                   )}
@@ -539,13 +541,13 @@ function CardDetails(props, { navigation, route }) {
 
               {/* form that appears when replying to a post */}
               {postReplyID == item.id && (
-                <View>
+                <View style={{paddingVertical: 10 }}>
                   <Formik
                     initialValues={{
                       replyText: "",
                     }}
                     onSubmit={(values, actions) => {
-                      if (values.postText === "") {
+                      if (values.replyText === "") {
                         Alert.alert(
                           "Error",
                           "Cannot create a reply with no text"
@@ -611,17 +613,17 @@ function CardDetails(props, { navigation, route }) {
                   <View key={reply.id}>
                     <Divider
                       orientation="horizontal"
-                      style={{ paddingVertical: 5 }}
+                      style={{ paddingVertical: 6 }}
                     />
 
                     <View style={{ flexDirection: "row" }}>
-                      <Text style={{ fontWeight: "bold", color: "white" }}>
+                      <Text style={{ fontWeight: "bold", color: "white", paddingVertical: 7 }}>
                         {reply.replierName}
                       </Text>
 
                       <View style={{ flex: 1 }} />
 
-                      <Text style={{ color: "gray" }}>
+                      <Text style={{ color: "gray", paddingVertical: 7 }}>
                         {makeTimeDifferenceString(
                           reply.creationTimestamp.seconds
                         )}{" "}
@@ -632,8 +634,8 @@ function CardDetails(props, { navigation, route }) {
                         <Icon
                           name="trash"
                           color="#517fa4"
-                          size={22}
-                          style={{ paddingLeft: 5, alignContent: "center" }}
+                          size={21}
+                          style={{ paddingLeft: 5, alignContent: "center", paddingVertical: 4 }}
                           onPress={() => handleDeleteReply(item.id, reply)}
                         />
                       )}
@@ -823,6 +825,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
+    paddingTop: 30,
+    paddingVertical: 1,
   },
   titlesub: {
     fontSize: 25,
@@ -852,6 +856,7 @@ const styles = StyleSheet.create({
   cardDesign: {
     backgroundColor: '#3B4046', 
     borderColor: 'black',
+    padding: 7,
   },
   buttonDesign: {
     backgroundColor: '#2B7D9C', 
