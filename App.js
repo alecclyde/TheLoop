@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   API_KEY,
@@ -12,7 +12,9 @@ import {
   PLACES_ID,
 } from "@env";
 import * as firebase from "firebase";
+import RootStack from "./routes/tabNavigator";
 import LoginStack from "./routes/loginStack";
+import AppLoading from 'expo-app-loading';
 import * as Location from "expo-location";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/lib/integration/react";
@@ -42,14 +44,44 @@ if (!firebase.apps.length) {
   firebase.app(); // if already initialized, use that one
 }
 
+
 export default function App() {
-  return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <PersistGate persistor={persistor}>
-          <LoginStack />
-        </PersistGate>
-      </NavigationContainer>
-    </Provider>
-  );
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      setIsSignedIn(true);
+      setLoading(false);
+    } else {
+      setIsSignedIn(false);
+      setLoading(false);
+    }
+  });
+
+  if(!isLoading){
+    if(!isSignedIn){
+      <Provider store={store}>
+        <NavigationContainer>
+          <PersistGate persistor={persistor}>
+            <LoginStack/>
+          </PersistGate>
+        </NavigationContainer>
+      </Provider>
+    }else{
+      return (
+        <Provider store={store}>
+          <NavigationContainer>
+            <PersistGate persistor={persistor}>
+              <RootStack/>
+            </PersistGate>
+          </NavigationContainer>
+        </Provider>
+      )
+    }
+  }else{
+    return(
+      <AppLoading/>
+    );
+  }  
 }

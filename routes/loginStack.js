@@ -12,7 +12,7 @@ import LocationPreferencesPage from "../screens/locationPreferencesPage";
 
 const Stack = createStackNavigator();
 
-export default function ProfileStack() {
+export default function LoginStack() {
   return (
     <Stack.Navigator
       initialRouteName="LogIn"

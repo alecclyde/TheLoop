@@ -52,7 +52,8 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.0",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "undefined": "firebase/auth"
   },
   "devDependencies": {
     "babel-preset-expo": "8.5.1",
