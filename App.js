@@ -46,10 +46,11 @@ if (!firebase.apps.length) {
 
 
 export default function App() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState();
   const [isLoading, setLoading] = useState(true);
 
   firebase.auth().onAuthStateChanged(function(user) {
+    //setLoading(true);
     if (user) {
       setIsSignedIn(true);
       setLoading(false);
@@ -59,29 +60,17 @@ export default function App() {
     }
   });
 
-  if(!isLoading){
-    if(!isSignedIn){
-      <Provider store={store}>
-        <NavigationContainer>
-          <PersistGate persistor={persistor}>
-            <LoginStack/>
-          </PersistGate>
-        </NavigationContainer>
-      </Provider>
-    }else{
-      return (
-        <Provider store={store}>
-          <NavigationContainer>
-            <PersistGate persistor={persistor}>
-              <RootStack/>
-            </PersistGate>
-          </NavigationContainer>
-        </Provider>
-      )
-    }
-  }else{
-    return(
-      <AppLoading/>
-    );
-  }  
+  if(isLoading){
+    return(<AppLoading />);
+  }
+
+  return(
+    <Provider store={store}>
+      <NavigationContainer>
+        <PersistGate persistor={persistor}>
+          { isSignedIn ? (<RootStack />) : (<LoginStack />) }
+        </PersistGate>
+      </NavigationContainer>
+    </Provider>
+  )
 }

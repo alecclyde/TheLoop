@@ -433,6 +433,12 @@ function UserProfileView(props) {
           </View>
         </View> */}
         <ScrollView>
+        <Button
+            buttonStyle={styles.Button}
+            title=" Sign Out "
+            onPress={() => props.signOut(props.navigation)}
+            icon={<Icon name="sign-out" size={15} color="white" />}
+          ></Button>
           <Button
             buttonStyle={styles.Button}
             title="  Privacy Policy"
@@ -480,12 +486,6 @@ function UserProfileView(props) {
             }
             icon={<Icon name="pencil-square-o" size={15} color="white" />}
           />
-          <Button
-            buttonStyle={styles.Button}
-            title=" Sign Out "
-            onPress={() => props.signOut(props.navigation)}
-            icon={<Icon name="sign-out" size={15} color="white" />}
-          ></Button>
         </ScrollView>
       </View>
     </View>

@@ -69,7 +69,7 @@ export function signOut(navigation) {
   return async function signOutThunk(dispatch, getState) {
     try {
       await firebase.auth().signOut();
-      navigation.navigate("LogIn");
+      //navigation.navigate("LogIn");
       dispatch({ type: REMOVE_USER });
     } catch (err) {
       console.log(err);
