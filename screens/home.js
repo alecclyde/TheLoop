@@ -93,7 +93,7 @@ function Home(props, { navigation, route }) {
     },
     hosting: {
       emoji: "😤",
-      text: "Use the Event Creation Page to Plan a Banger!",
+      text: "Use the Event Creation Page to Plan an Event!",
       limit: () => {
         return limitHosting;
       },
