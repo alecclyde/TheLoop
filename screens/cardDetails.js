@@ -79,6 +79,8 @@ function CardDetails(props, { navigation, route }) {
   const [newPostsNotifID, setNewPostsNotifID] = useState();
   const [newAttendeesNotifID, setNewAttendeesNotifID] = useState();
 
+  var loaded = false
+
   const AuthStateChangedListener = (user) => {
     if (user) {
       getUserData(user.uid).then((userData) => {
@@ -110,13 +112,19 @@ function CardDetails(props, { navigation, route }) {
       );
 
       setEventAttendees(eventData.attendees);
+      loaded = true
 
-    } else {// event cannot be found or doesn't exist
-      Alert.alert("Event Not Found", "That event could not be loaded. It may have been deleted.")
-      props.navigation.dispatch(StackActions.pop(1))
+    } else {
+      // event cannot be found or doesn't exist
+      if (!loaded) {
+        Alert.alert(
+          "Event Not Found",
+          "That event could not be loaded. It may have been deleted."
+        );
+      }
+      
+      props.navigation.dispatch(StackActions.pop(1));
     }
-
-    
   };
 
   const reducer = (state, action) => {
@@ -368,14 +376,44 @@ function CardDetails(props, { navigation, route }) {
           <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
             <View>
               <Text style={styles.Title}>{eventName} </Text>
-              <View style={{flexDirection: "row"}}>
-                <Text style={[styles.subt, {flex: 1}]}> By: {eventCreator.userName} </Text>
-                <Icon
-                        name="trash"
-                        color="white"
-                        size={30}
-                        style={{ position: "absolute", right: 0 }}
-                      />
+              <View style={{ flexDirection: "row" }}>
+                <Text style={[styles.subt, { flex: 1 }]}>
+                  {" "}
+                  By: {eventCreator.userName}{" "}
+                </Text>
+                {eventCreator.userID == userID && (
+                  <Icon
+                    name="trash"
+                    color="white"
+                    size={30}
+                    style={{ position: "absolute", right: 0 }}
+                    onPress={() => {
+                      Alert.alert(
+                        "Really Delete?",
+                        "Are you sure you want to delete your event? This cannot be undone.",
+                        [
+                          {
+                            text: "No",
+                          },
+                          {
+                            text: "Yes",
+                            onPress: () => {
+                              safeDeleteEvent(eventID, eventAttendees, {
+                                address: eventAddress,
+                                creator: eventCreator,
+                                id: eventID,
+                                loop: eventLoop,
+                                name: eventName,
+                                startDateTime: eventDateTime
+                              })
+                              // props.navigation.dispatch(StackActions.pop(1));
+                            },
+                          },
+                        ]
+                      );
+                    }}
+                  />
+                )}
               </View>
 
               {/* <Text style={{ position: "absolute", right: 0.1 }}> */}
@@ -408,16 +446,16 @@ function CardDetails(props, { navigation, route }) {
               <View style={styles.cardDesign}>
                 {/* poster name and post creation time */}
                 <View style={{ flexDirection: "row" }}>
-                {profilePics[item.posterID] && 
-                  <Image
-                    source={{
-                      uri: profilePics[item.posterID]
-                    }}
-                    style={{width: 40, height: 40, borderRadius: 20}}
-                  />
-                }
+                  {profilePics[item.posterID] && (
+                    <Image
+                      source={{
+                        uri: profilePics[item.posterID],
+                      }}
+                      style={{ width: 40, height: 40, borderRadius: 20 }}
+                    />
+                  )}
 
-                  <View style={{ flexDirection: "Column", paddingLeft: 5}}>
+                  <View style={{ flexDirection: "Column", paddingLeft: 5 }}>
                     <Text style={{ fontWeight: "bold", color: "white" }}>
                       {item.posterName}
                     </Text>

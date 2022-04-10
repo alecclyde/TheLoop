@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUserData, getEventData } from "../shared/firebaseMethods";
@@ -24,6 +25,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
 import { color } from "react-native-elements/dist/helpers";
+import { eventLoopIconName } from "../shared/commonMethods";
 
 function Profile(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
@@ -33,7 +35,11 @@ function Profile(props, { navigation, route }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [userID, setUserID] = useState("");
-  const [pfpSource, setPfpSource] = useState("https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png");
+  const [pfpSource, setPfpSource] = useState(
+    "https://p.kindpng.com/picc/s/678-6789790_user-domain-general-user-avatar-profile-svg-hd.png"
+  );
+
+  const [limitHosting, setLimitHosting] = useState(3);
 
   // work around an error when logging out
   useEffect(() => {
@@ -42,7 +48,8 @@ function Profile(props, { navigation, route }) {
       setFirstName(props.user.firstName);
       setLastName(props.user.LastName);
       setEvents(props.user.myEvents);
-      setPfpSource(props.user.profilePicSource)
+      setPfpSource(props.user.profilePicSource);
+      setUserID(props.user.uid);
       // setEventIDs(props.user.myEvents);
     }
   });
@@ -51,6 +58,7 @@ function Profile(props, { navigation, route }) {
   const [events, setEvents] = useState([]);
 
   const isFocused = useIsFocused();
+  const loading = false;
 
   // Listener to update user data
   // function AuthStateChangedListener(user) {
@@ -126,7 +134,7 @@ function Profile(props, { navigation, route }) {
         </View>
       </View>
 
-      <View style={{...styles.statusBar, height: 125}}>
+      <View style={{ ...styles.statusBar, height: 125 }}>
         <View style={styles.statusBarText}>
           <View style={styles.statusBarTextLine}>
             <Text style={styles.statusBarTextLine}>Followers</Text>
@@ -155,73 +163,183 @@ function Profile(props, { navigation, route }) {
       </View>
 
       <Text h3 style={styles.titles}>
-        Upcoming Events
+        Events You're Hosting
       </Text>
 
-      <ScrollView
-        persistentScrollbar={true}
-        horizontal={true}
-      >
-        {events //upcoming events
-          .filter((item) => item.startDateTime > moment().unix())
-          .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
-          .map((event) => (
-            <TouchableOpacity
-              style={styles.clickable}
-              key={event.id}
-              onPress={() =>
-                props.navigation.navigate("CardDetails", {
-                  id: event.id,
-                  name: event.name,
-                  loop: event.loop,
-                  creator: event.creator,
-                  startDateTime: event.startDateTime,
-                  address: event.address,
-                })
-              }
+      <View style={{ height: (Dimensions.get("window").height / 5) }}>
+        {events.filter(
+          (item) =>
+            item.creator.userID == userID &&
+            item.startDateTime > moment().unix()
+        ).length == 0 ? ( // if there are currently no events for this category
+          loading ? (
+            // if there are no events in the filter and the events are still loading, put an activity indicator
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+                height: 100,
+              }}
             >
-              <ListItem
-                pad={16}
-                bottomDivide={true}
-                Component={TouchableScale}
-                button
-                friction={90}
-                tension={100} // These props are passed to the parent component (here TouchableScale)
-                activeScale={0.95} //
-                linearGradientProps={{
-                  colors: ["#3B4046", "#3B4046"],
-                  start: { x: 1, y: 0 },
-                  end: { x: 0.2, y: 0 },
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          ) : (
+            // if there are no events in the filter and the events have loaded, show text that says "no events"
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <Text style={{ fontSize: 45 }}>😤</Text>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 15,
+                  fontFamily: "Helvetica",
+                  fontWeight: "bold",
                 }}
-                ViewComponent={LinearGradient}
               >
-                <Avatar
-                  size="large"
-                  //change this to either be icon of loop or that groups profile picture
-                  source={{
-                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                Use the Event Creation Page to Plan a Banger!
+              </Text>
+            </View>
+          )
+        ) : (
+          // if there are events in the filter, put them in the ScrollView
+          <ScrollView persistentScrollbar={true} horizontal={true}>
+            {events
+              .filter(
+                (item) =>
+                  item.creator.userID == userID &&
+                  item.startDateTime > moment().unix()
+              )
+              .sort((item1, item2) => item1.startDateTime - item2.startDateTime)
+              .slice(0, limitHosting)
+              .map((event) => (
+                <TouchableOpacity
+                  style={[styles.clickable, { flex: 1, paddingVertical: 0 }]}
+                  key={event.id}
+                  onPress={() =>
+                    props.navigation.navigate("CardDetails", {
+                      id: event.id,
+                      name: event.name,
+                      loop: event.loop,
+                      creator: event.creator,
+                      startDateTime: event.startDateTime,
+                      address: event.address,
+                    })
+                  }
+                  onLongPress={() => {
+                    console.log(event.id);
                   }}
-                  resizeMode="cover"
-                  //style={{ width: "100%", height: "100%" }}
-                />
-                <ListItem.Content>
-                  <ListItem.Title style={styles.listingItem}>
-                    {event.name}
-                  </ListItem.Title>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
-                    {event.loop}
-                  </ListItem.Subtitle>
-                  <ListItem.Subtitle style={styles.descriptionItem}>
-                    <Icon name="map-marker" size={16} color="white" />
-                    {"  "}
-                    {event.address}
-                  </ListItem.Subtitle>
-                </ListItem.Content>
-                <ListItem.Chevron color="gray" />
-              </ListItem>
-            </TouchableOpacity>
-          ))}
-      </ScrollView>
+                >
+                  <ImageBackground
+                    source={{
+                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                    }}
+                    style={{ height: "100%", width: "auto", minWidth: 200 }}
+                    imageStyle={{ borderRadius: 10 }}
+                    resizeMode="cover"
+                    overflow="hidden"
+                  >
+                    <LinearGradient
+                      colors={["transparent", "#3B4046"]}
+                      style={{ flex: 1, borderRadius: 10 }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "flex-end",
+                          padding: 10,
+                        }}
+                      >
+                        <Text style={styles.listingItem}>
+                          {event.name.substring(0, 25)}
+                          {event.name.length > 25 && "..."}
+                        </Text>
+
+                        <Text style={styles.descriptionItem}>
+                          <View style={{ width: 20, alignItems: "center" }}>
+                            <Icon
+                              name={eventLoopIconName(event.loop)}
+                              size={16}
+                              color="white"
+                            />
+                          </View>
+
+                          {event.loop}
+                        </Text>
+                        <Text style={styles.descriptionItem}>
+                          <View style={{ width: 20, alignItems: "center" }}>
+                            <Icon name={"map-marker"} size={16} color="white" />
+                          </View>
+
+                          {event.address.substring(0, 30)}
+                          {event.address.length > 30 && "..."}
+                        </Text>
+                      </View>
+                    </LinearGradient>
+                  </ImageBackground>
+                </TouchableOpacity>
+              ))}
+            {events.filter(
+              (item) =>
+                item.creator.userID == userID &&
+                item.startDateTime > moment().unix()
+            ).length > limitHosting && (
+              <TouchableOpacity
+                style={[styles.clickable, { flex: 1 }]}
+                onPress={() => {
+                  setLimitHosting(limitHosting + 3);
+                }}
+              >
+                <ListItem
+                  pad={16}
+                  bottomDivide={true}
+                  Component={TouchableScale}
+                  button
+                  friction={90}
+                  tension={100} // These props are passed to the parent component (here TouchableScale)
+                  activeScale={0.95} //
+                  linearGradientProps={{
+                    colors: ["#3B4046", "#3B4046"],
+                    start: { x: 1, y: 0 },
+                    end: { x: 0.2, y: 0 },
+                  }}
+                  ViewComponent={LinearGradient}
+                >
+                  <ListItem.Content>
+                    <ListItem.Title style={styles.listingItem}>
+                      {events.filter(
+                        (item) =>
+                          item.creator.userID == userID &&
+                          item.startDateTime > moment().unix()
+                      ).length - limitHosting}{" "}
+                      more event
+                      {/* puts the 's' at the end if the number of remaining events is not 1 */}
+                      {events.filter(
+                        (item) =>
+                          item.creator.userID == userID &&
+                          item.startDateTime > moment().unix()
+                      ).length -
+                        limitHosting ==
+                      1
+                        ? ""
+                        : "s"}
+                    </ListItem.Title>
+                    <ListItem.Subtitle style={styles.descriptionItem}>
+                      Tap to view
+                    </ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron color="gray" />
+                </ListItem>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
+        )}
+      </View>
 
       {/* 
         <View style={{ backgroundColor: "black" }}>

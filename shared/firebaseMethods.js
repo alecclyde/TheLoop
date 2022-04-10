@@ -746,14 +746,20 @@ export async function setNotifSeen(userID, notifID, notifData) {
           .update({
             seen: true,
           })
-          .then((doc) => {
-            firebase
-              .firestore()
-              .collection("events")
-              .doc(notifData.eventID)
-              .update({
-                newAttendeesNotifID: "0",
-              });
+          .then(() => {
+            // check if document exists
+            firebase.firestore().collection("events").doc(notifData.eventID).get()
+            .then((doc) => {
+              if (doc.exists) { // if the document exists (could've been deleted)
+                firebase
+                .firestore()
+                .collection("events")
+                .doc(notifData.eventID)
+                .update({
+                  newAttendeesNotifID: "0",
+                });
+              }
+            })
           });
         break;
 
@@ -767,14 +773,20 @@ export async function setNotifSeen(userID, notifID, notifData) {
           .update({
             seen: true,
           })
-          .then((doc) => {
-            firebase
-              .firestore()
-              .collection("events")
-              .doc(notifData.eventID)
-              .update({
-                newPostsNotifID: "0",
-              });
+          .then(() => {
+            // check if document exists
+            firebase.firestore().collection("events").doc(notifData.eventID).get()
+            .then((doc) => {
+              if (doc.exists) { // if the document exists (could've been deleted)
+                firebase
+                .firestore()
+                .collection("events")
+                .doc(notifData.eventID)
+                .update({
+                  newPostNotifID: "0",
+                });
+              }
+            })
           });
         break;
 
@@ -890,7 +902,7 @@ export async function setNotifSeen(userID, notifID, notifData) {
     postCollection.get()
     .then((snap) => {
       snap.forEach((doc) => {
-        postCollection.doc(doc).delete()
+        postCollection.doc(doc.id).delete()
       })
     })
 
