@@ -24,6 +24,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
 import { color } from "react-native-elements/dist/helpers";
+import {eventLoopThumbnail, eventLoopIconName} from "../shared/commonMethods"
 
 function Home(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
@@ -46,29 +47,6 @@ function Home(props, { navigation, route }) {
   const [limitHosting, setLimitHosting] = useState(3);
 
   const isFocused = useIsFocused();
-
-  const eventLoopIconName = (eventLoop) => {
-    switch (eventLoop) {
-      case "Sports":
-        return "futbol-o";
-      case "Music":
-        return "music";
-      case "Volunteer":
-        return "plus";
-      case "Game":
-        return "gamepad";
-      case "Social":
-        return "users";
-      case "Arts":
-        return "paint-brush";
-      case "Outdoors":
-        return "pagelines";
-      case "Academic":
-        return "book";
-      case "Media":
-        return "camera";
-    }
-  };
 
   const eventListType = {
     upcoming: {
@@ -172,7 +150,7 @@ function Home(props, { navigation, route }) {
               >
                 <ImageBackground
                   source={{
-                    uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                    uri: eventLoopThumbnail(event.loop),
                   }}
                   style={{ height: "100%", width: "auto", minWidth: 200 }}
                   imageStyle={{ borderRadius: 10 }}
@@ -422,7 +400,7 @@ function Home(props, { navigation, route }) {
                 >
                   <ImageBackground
                     source={{
-                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                      uri: eventLoopThumbnail(event.loop),
                     }}
                     style={{ height: "100%", width: "auto", minWidth: 200 }}
                     imageStyle={{ borderRadius: 10 }}
@@ -587,7 +565,7 @@ function Home(props, { navigation, route }) {
                 >
                   <ImageBackground
                     source={{
-                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                      uri: eventLoopThumbnail(event.loop),
                     }}
                     style={{ height: "100%", width: "auto", minWidth: 200 }}
                     imageStyle={{ borderRadius: 10 }}
@@ -758,7 +736,7 @@ function Home(props, { navigation, route }) {
                 >
                   <ImageBackground
                     source={{
-                      uri: "https://business.twitter.com/content/dam/business-twitter/insights/may-2018/event-targeting.png.twimg.1920.png",
+                      uri: eventLoopThumbnail(event.loop),
                     }}
                     style={{ height: "100%", width: "auto", minWidth: 200 }}
                     imageStyle={{ borderRadius: 10 }}
