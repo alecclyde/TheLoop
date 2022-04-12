@@ -37,6 +37,7 @@ function Home(props, { navigation, route }) {
 
   const [events, setEvents] = useState([]);
   const [allEvents,setAllEvents] = useState([]);
+  const [loopEvents, setLoopEvents] = useState([]);
   const [eventIDs, setEventIDs] = useState([]);
   const [loops, setLoops] = useState([]);
 
@@ -302,32 +303,59 @@ function Home(props, { navigation, route }) {
     //console.log(props.user.joinedLoops);
   },[isFocused]);
 
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     setAllEvents([]);
+  //     firebase
+  //       .firestore()
+  //       .collection("events")
+  //       .get()
+  //       .then((snap) => {
+  //         snap.docs.forEach((doc) => {
+  //           if (doc.exists) {
+  //             setAllEvents((events) => [
+  //               ...events,
+  //               {
+  //                 id: doc.id,
+  //                 loop: doc.data().loop,
+  //                 name: doc.data().name,
+  //                 creator: doc.data().creator,
+  //                 address: doc.data().address,
+  //                 location: doc.data().location,
+  //               },
+  //             ]);
+  //           }
+  //         });
+  //       });
+  //   }
+  // }, [isFocused]);
+
   useEffect(() => {
-    if (isFocused) {
-      setAllEvents([]);
-      firebase
-        .firestore()
-        .collection("events")
-        .get()
-        .then((snap) => {
-          snap.docs.forEach((doc) => {
-            if (doc.exists) {
-              setAllEvents((events) => [
-                ...events,
-                {
-                  id: doc.id,
-                  loop: doc.data().loop,
-                  name: doc.data().name,
-                  creator: doc.data().creator,
-                  address: doc.data().address,
-                  location: doc.data().location,
-                },
-              ]);
-            }
-          });
-        });
+    if (isFocused && loops.length != 0) {
+      setLoopEvents([]);
+      firebase.firestore().collection("events").where("loop", "in", loops).get()
+      .then((snap) => {
+        let eventList = []
+        snap.docs.forEach((doc) => {
+          if (doc.exists) {
+
+            eventList.push(
+              {
+                id: doc.id,
+                loop: doc.data().loop,
+                name: doc.data().name,
+                creator: doc.data().creator,
+                address: doc.data().address,
+                location: doc.data().location,
+              }
+            )
+          }
+        })
+        setLoopEvents([...eventList])
+
+      })
     }
-  }, [isFocused]);
+  }, [isFocused, loops])
 
   return (
     <SafeAreaView
@@ -503,7 +531,7 @@ function Home(props, { navigation, route }) {
 
       <View style={{ flex: 1 }}>
         {/* {events.filter((item) => item.startDateTime <= moment().unix()) */}
-        {allEvents.filter((item) => JSON.stringify(loops).includes(item.loop))
+        {loopEvents
           .length == 0 ? ( // if there are currently no events for this category
           loading ? (
             // if there are no events in the filter and the events are still loading, put an activity indicator
@@ -541,8 +569,7 @@ function Home(props, { navigation, route }) {
         ) : (
           // if there are events in the filter, put them in the ScrollView
           <ScrollView persistentScrollbar={true} horizontal={true}>
-            {allEvents
-              .filter((item) => JSON.stringify(loops).includes(item.loop))
+            {loopEvents
               .sort((item1, item2) => item2.startDateTime - item1.startDateTime)
               .slice(0, limitPrevious)
               .map((event) => (
@@ -612,7 +639,7 @@ function Home(props, { navigation, route }) {
                   </ImageBackground>
                 </TouchableOpacity>
               ))}
-            {allEvents.filter((item) => JSON.stringify(loops).includes(item.loop))
+            {loopEvents
               .length > limitPrevious && (
               <TouchableOpacity
                 style={[styles.clickable, { flex: 1 }]}
@@ -637,14 +664,10 @@ function Home(props, { navigation, route }) {
                 >
                   <ListItem.Content>
                     <ListItem.Title style={styles.listingItem}>
-                      {allEvents.filter(
-                        (item) => JSON.stringify(loops).includes(item.loop)
-                      ).length - limitPrevious}{" "}
+                      {loopEvents.length - limitPrevious}{" "}
                       more event
                       {/* puts the 's' at the end if the number of remaining events is not 1 */}
-                      {allEvents.filter(
-                        (item) => JSON.stringify(loops).includes(item.loop)
-                      ).length -
+                      {loopEvents.length -
                         limitPrevious ==
                       1
                         ? ""
