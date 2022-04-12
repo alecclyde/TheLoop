@@ -456,7 +456,7 @@ function CardDetails(props, { navigation, route }) {
                     />
                   )}
 
-                  <View style={{ flexDirection: "Column", paddingLeft: 5 }}>
+                  <View style={{ flexDirection: "column", paddingLeft: 5 }}>
                     <Text style={{ fontWeight: "bold", color: "white" }}>
                       {item.posterName}
                     </Text>
