@@ -337,14 +337,9 @@ export default function Notifications({ navigation, route }) {
               <TouchableOpacity
                 onPress={() => {
                   if (item.eventID) {
-                    let event = getEventData(item.eventID);
                     navigation.navigate("CardDetails", {
                       id: item.eventID,
-                      name: event.name,
-                      loop: event.loop,
-                      creator: event.creator,
-                      startDateTime: event.startDateTime,
-                      address: event.address,
+                      name: item.eventName
                     });
                   }
                 }}

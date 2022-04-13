@@ -746,14 +746,20 @@ export async function setNotifSeen(userID, notifID, notifData) {
           .update({
             seen: true,
           })
-          .then((doc) => {
-            firebase
-              .firestore()
-              .collection("events")
-              .doc(notifData.eventID)
-              .update({
-                newAttendeesNotifID: "0",
-              });
+          .then(() => {
+            // check if document exists
+            firebase.firestore().collection("events").doc(notifData.eventID).get()
+            .then((doc) => {
+              if (doc.exists) { // if the document exists (could've been deleted)
+                firebase
+                .firestore()
+                .collection("events")
+                .doc(notifData.eventID)
+                .update({
+                  newAttendeesNotifID: "0",
+                });
+              }
+            })
           });
         break;
 
@@ -767,14 +773,20 @@ export async function setNotifSeen(userID, notifID, notifData) {
           .update({
             seen: true,
           })
-          .then((doc) => {
-            firebase
-              .firestore()
-              .collection("events")
-              .doc(notifData.eventID)
-              .update({
-                newPostsNotifID: "0",
-              });
+          .then(() => {
+            // check if document exists
+            firebase.firestore().collection("events").doc(notifData.eventID).get()
+            .then((doc) => {
+              if (doc.exists) { // if the document exists (could've been deleted)
+                firebase
+                .firestore()
+                .collection("events")
+                .doc(notifData.eventID)
+                .update({
+                  newPostNotifID: "0",
+                });
+              }
+            })
           });
         break;
 
@@ -877,6 +889,40 @@ export async function setNotifSeen(userID, notifID, notifData) {
   }
 }
 
+/**
+ * Deletes an event and all associated data safely
+ * @param eventID - The ID of the event being deleted
+ * @param eventAttendees - The attendees of the event
+ * @param eventData - The data for the event to be deleted (should match format in "myEvents" for users)
+ */
+ export async function safeDeleteEvent(eventID, eventAttendees, eventData) {
+  try {
+    let postCollection = firebase.firestore().collection("posts").doc(eventID).collection("posts")
+    // pull all posts, and delete each one
+    postCollection.get()
+    .then((snap) => {
+      snap.forEach((doc) => {
+        postCollection.doc(doc.id).delete()
+      })
+    })
+
+    // edit each user attending and remove the event from their "myEvents"
+    eventAttendees.forEach((attendee) => {
+      firebase.firestore().collection("users").doc(attendee.userID).update(
+        {
+          myEvents: firebase.firestore.FieldValue.arrayRemove(eventData)
+        }
+      )
+    })
+
+    // lastly, delete the event
+    firebase.firestore().collection("events").doc(eventID).delete()
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
 
 
 /**

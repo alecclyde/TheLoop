@@ -10,6 +10,7 @@ import {
   Platform,
   Modal,
   StyleSheet,
+  Image,
 } from "react-native";
 import { globalStyles } from "../styles/global";
 // import Card from '../shared/card';
@@ -33,6 +34,8 @@ import {
   createNotification,
   createReply,
   deleteReply,
+  getMultiplePfps,
+  safeDeleteEvent,
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
 import { makeName, makeTimeDifferenceString } from "../shared/commonMethods";
@@ -41,6 +44,7 @@ import { connect } from "react-redux";
 // import { registerEvent } from "../store/actions/eventActions";
 import { bindActionCreators } from "redux";
 import { Dimensions } from "react-native";
+import { styleProps } from "react-native-web/dist/cjs/modules/forwardedProps";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHight = Dimensions.get("window").height;
@@ -50,7 +54,9 @@ const windowHight = Dimensions.get("window").height;
 //Called by favorite and personal when you click on a card to display the content
 function CardDetails(props, { navigation, route }) {
   const [eventAttendees, setEventAttendees] = useState([]);
-  const [eventCreator, setEventCreator] = useState(props.route.params?.creator || {userID: "", userName: ""});
+  const [eventCreator, setEventCreator] = useState(
+    props.route.params?.creator || { userID: "", userName: "" }
+  );
 
   const [eventID, setEventID] = useState(props.route.params?.id);
   const [eventName, setEventName] = useState(props.route.params?.name || "");
@@ -68,9 +74,12 @@ function CardDetails(props, { navigation, route }) {
   const [editMode, setEditMode] = useState(false);
   const [postEditID, setPostEditID] = useState();
   const [postReplyID, setPostReplyID] = useState();
+  const [profilePics, setProfilePics] = useState({});
 
   const [newPostsNotifID, setNewPostsNotifID] = useState();
   const [newAttendeesNotifID, setNewAttendeesNotifID] = useState();
+
+  var loaded = false
 
   const AuthStateChangedListener = (user) => {
     if (user) {
@@ -86,64 +95,37 @@ function CardDetails(props, { navigation, route }) {
   const onResult = (QuerySnapshot) => {
     const eventData = QuerySnapshot.data();
 
-    setEventName(eventData.name);
-    setEventLoop(eventData.loop);
-    setEventDateTime(eventData.startDateTime);
-    setEventAddress(eventData.address);
-    // SPRINT7: phase out the second half of this
-    // setEventCreator(eventData.creator || {id: eventData.creatorID, name: ""});
-    setEventCreator(eventData.creator)
-    setNewPostsNotifID(
-      eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
-    );
-    setNewAttendeesNotifID(
-      eventData.newAttendeesNotifID != undefined
-        ? eventData.newAttendeesNotifID
-        : "0"
-    );
+    if (eventData != undefined) {
+      setEventName(eventData.name);
+      setEventLoop(eventData.loop);
+      setEventDateTime(eventData.startDateTime);
+      setEventAddress(eventData.address);
 
-    // setEventCreator({id: eventData.creator, name: eventCreator.name})
-    setEventAttendees(eventData.attendees);
+      setEventCreator(eventData.creator);
+      setNewPostsNotifID(
+        eventData.newPostsNotifID != undefined ? eventData.newPostsNotifID : "0"
+      );
+      setNewAttendeesNotifID(
+        eventData.newAttendeesNotifID != undefined
+          ? eventData.newAttendeesNotifID
+          : "0"
+      );
 
-    // updateAttendeeList(eventData.attendees);
+      setEventAttendees(eventData.attendees);
+      loaded = true
+
+    } else {
+      // event cannot be found or doesn't exist
+      if (!loaded) {
+        Alert.alert(
+          "Event Not Found",
+          "That event could not be loaded. It may have been deleted."
+        );
+      }
+      
+      props.navigation.dispatch(StackActions.pop(1));
+    }
   };
-
-  // const updateAttendeeList = (attendees) => {
-  //   eventAtens = eventAtens.filter((attendee) =>
-  //     attendees.includes(attendee.id)
-  //   );
-
-  //   setEventAttendees(eventAtens);
-
-  //   attendees.forEach((attendee) => {
-  //     // if the array of existing attendees doesn't include this possible new one
-  //     if (!eventAtens.some((elem) => elem.id == attendee)) {
-  //       firebase
-  //         .firestore()
-  //         .collection("users")
-  //         .doc(attendee)
-  //         .get()
-  //         .then((snap) => {
-  //           if (snap.exists) {
-  //             // prevents errors if a user gets deleted
-  //             const attendeeName = makeName(snap.data());
-  //             // console.log("new read: " + attendeeName)
-
-  //             setEventAttendees((eventAttendees) => [
-  //               ...eventAttendees,
-  //               { id: snap.id, name: attendeeName },
-  //             ]);
-  //             eventAtens.push({ id: snap.id, name: attendeeName });
-
-  //             // if current ID is the creator, set creator accordingly
-  //             if (snap.id == eventCreator.id) {
-  //               setEventCreator({ id: eventCreator.id, name: attendeeName });
-  //             }
-  //           }
-  //         });
-  //     }
-  //   });
-  // };
 
   const reducer = (state, action) => {
     let newState = state;
@@ -248,11 +230,6 @@ function CardDetails(props, { navigation, route }) {
     setEditMode(false);
     setPostReplyID();
   };
-
-  // const handleEditPost = (post) => {
-  //   editPost(route.params?.id, post.id)
-  //   exitEditMode();
-  // };
 
   const handleDeletePost = (post) => {
     Alert.alert(
@@ -365,13 +342,21 @@ function CardDetails(props, { navigation, route }) {
     }
   }, [eventAttendees, userID]);
 
-  const Replies = (props) => {
-    return (
-      <View>
-        <FlatList />
-      </View>
-    );
-  };
+  // grabs the user profile pics
+  useEffect(() => {
+    let newIDs = [];
+
+    eventAttendees.forEach((attendee) => {
+      if (!profilePics[attendee.userID]) {
+        // if the user pfp is not pulled yet
+        newIDs.push(attendee.userID);
+      }
+    });
+
+    getMultiplePfps(newIDs).then((newPfps) => {
+      setProfilePics({ ...profilePics, ...newPfps });
+    });
+  }, [eventAttendees]);
 
   return (
     <SafeAreaView style={globalStyles.container}>
@@ -386,12 +371,52 @@ function CardDetails(props, { navigation, route }) {
             borderBottomColor: "black",
             borderBottomWidth: 5,
             marginBottom: 15,
+            paddingVertical: 7,
           }}
         >
           <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
             <View>
               <Text style={styles.Title}>{eventName} </Text>
-              <Text style={styles.subt}> By: {eventCreator.userName} </Text>
+              <View style={{ flexDirection: "row" }}>
+                <Text style={[styles.subt, { flex: 1 }]}>
+                  {" "}
+                  By: {eventCreator.userName}{" "}
+                </Text>
+                {eventCreator.userID == userID && (
+                  <Icon
+                    name="trash"
+                    color="white"
+                    size={30}
+                    style={{ position: "absolute", right: 0 }}
+                    onPress={() => {
+                      Alert.alert(
+                        "Really Delete?",
+                        "Are you sure you want to delete your event? This cannot be undone.",
+                        [
+                          {
+                            text: "No",
+                          },
+                          {
+                            text: "Yes",
+                            onPress: () => {
+                              safeDeleteEvent(eventID, eventAttendees, {
+                                address: eventAddress,
+                                creator: eventCreator,
+                                id: eventID,
+                                loop: eventLoop,
+                                name: eventName,
+                                startDateTime: eventDateTime
+                              })
+                              // props.navigation.dispatch(StackActions.pop(1));
+                            },
+                          },
+                        ]
+                      );
+                    }}
+                  />
+                )}
+              </View>
+
               {/* <Text style={{ position: "absolute", right: 0.1 }}> */}
               <Icon
                 name={eventLoopIconName(eventLoop)}
@@ -407,7 +432,6 @@ function CardDetails(props, { navigation, route }) {
                 style={{ position: "absolute", left: 1 }}
               />
             </View>
-            <Divider orientation="horizontal" />
           </ScrollView>
         </View>
 
@@ -421,229 +445,242 @@ function CardDetails(props, { navigation, route }) {
           renderItem={({ item }) => (
             <Card containerStyle={styles.cardDesign}>
               <View style={styles.cardDesign}>
-              {/* poster name and post creation time */}
-              <View style={{ flexDirection: "row" }}>
-                <Text style={{ fontWeight: "bold", color: 'white' }}>{item.posterName}</Text>
-                <View style={{ flex: 1 }} />
-                <Text style={{ color: "white" }}>
-                  {moment
-                    .unix(item.creationTimestamp.seconds)
-                    .format("MMM Do, hh:mm A")}
-                </Text>
-              </View>
-
-              {postEditID != item.id && (
-                <View>
-                  {/* post message */}
-                  <Text style={{color: 'white'}}>{item.message}</Text>
-
-                  {/* 'edited' tag */}
-                  {/* literally the only reason I put this <Text> in a view was because it */}
-                  {/* broke my code coloration in VSCode and it drove me crazy. -Robbie */}
-
-                  {item.edited && (
-                    <View>
-                      <Text style={{ color: "white" }}>(edited)</Text>
-                    </View>
-                  )}
-                </View>
-              )}
-
-              {postEditID == item.id && (
-                <View>
-                  <Formik
-                    initialValues={{
-                      postText: item.message,
-                    }}
-                    onSubmit={(values, actions) => {
-                      if (values.postText === "") {
-                        Alert.alert(
-                          "Error",
-                          "Cannot create a post with no text"
-                        );
-                      } else {
-                        editPost(
-                          props.route.params?.id,
-                          item.id,
-                          values.postText.trim()
-                        );
-                        exitEditMode();
-                      }
-                    }}
-                  >
-                    {(props) => (
-                      <>
-                        <Input
-                          placeholder={"Post in " + eventName}
-                          disabled={!isAttending}
-                          multiline={true}
-                          value={props.values.postText}
-                          onChangeText={props.handleChange("postText")}
-                          onBlur={() => {
-                            props.handleBlur("postText");
-                          }}
-                          style={{ maxHeight: 250, color: 'white' }}
-                        />
-                        <View style={{ flexDirection: "row" }}>
-                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                            <Button
-                              buttonStyle={styles.buttonDesign}
-                              title="Cancel"
-                              onPress={() => exitEditMode()}
-                            />
-                          </View>
-                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                            <Button
-                             buttonStyle={styles.buttonDesign}
-                             title="Edit" onPress={props.handleSubmit} />
-                          </View>
-                        </View>
-                      </>
-                    )}
-                  </Formik>
-                </View>
-              )}
-
-              {/* pencil and trashcan icons */}
-              {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
-              {!editMode && (
-                <View style={{ flexDirection: "row" }}>
-                  {
-                    <Icon
-                      name="comment"
-                      color="#2B7D9C"
-                      size={22}
-                      onPress={() => enterReplyMode(item)}
-                    />
-                  }
-
-                  <View style={{ flex: 1 }} />
-                  {item.posterID == userID && (
-                    <Icon
-                      name="pencil"
-                      color="#2B7D9C"
-                      size={22}
-                      style={{ paddingHorizontal: 5 }}
-                      onPress={() => enterEditMode(item)}
+                {/* poster name and post creation time */}
+                <View style={{ flexDirection: "row", paddingBottom: 10 }}>
+                  {profilePics[item.posterID] && (
+                    <Image
+                      source={{
+                        uri: profilePics[item.posterID],
+                      }}
+                      style={{ width: 40, height: 40, borderRadius: 20 }}
                     />
                   )}
-                  {(item.posterID == userID || isCreator) && (
-                    <Icon
-                      name="trash"
-                      color="#2B7D9C"
-                      size={22}
-                      onPress={() => handleDeletePost(item)}
-                    />
-                  )}
-                </View>
-              )}
 
-              {/* form that appears when replying to a post */}
-              {postReplyID == item.id && (
-                <View>
-                  <Formik
-                    initialValues={{
-                      replyText: "",
-                    }}
-                    onSubmit={(values, actions) => {
-                      if (values.postText === "") {
-                        Alert.alert(
-                          "Error",
-                          "Cannot create a reply with no text"
-                        );
-                      } else {
-                        createReply(
-                          {
-                            postID: item.id,
-                            posterID: item.posterID,
-                            eventID: eventID,
-                            eventName: eventName,
-                          },
-                          {
-                            userID: userID,
-                            userName: userName,
-                          },
-                          values.replyText.trim()
-                        );
-
-                        actions.resetForm();
-                        exitReplyMode();
-                      }
-                    }}
-                    >
-                    {(props) => (
-                      <>
-                        <Input
-                          placeholder={"Reply to " + item.posterName}
-                          // disabled={!isAttending || editMode}
-                          multiline={true}
-                          value={props.values.replyText}
-                          onChangeText={props.handleChange("replyText")}
-                          onBlur={() => {
-                            props.handleBlur("replyText");
-                          }}
-                          style={{ maxHeight: 100, color: 'white' }}
-                        />
-                        <View style={{ flexDirection: "row" }}>
-                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                            <Button
-                            buttonStyle={styles.buttonDesign}
-                              title="Cancel"
-                              onPress={() => exitReplyMode()}
-                            />
-                          </View>
-                          <View style={{ flex: 1, paddingHorizontal: 5 }}>
-                            <Button
-                            buttonStyle={styles.buttonDesign}
-                              title="Reply"
-                              onPress={props.handleSubmit}
-                            />
-                          </View>
-                        </View>
-                      </>
-                    )}
-                  </Formik>
-                </View>
-              )}
-
-              {/* replies start here */}
-              <View style={{ paddingLeft: 20 }}>
-                {item.replies.map((reply) => (
-                  <View key={reply.id}>
-                    <Divider
-                      orientation="horizontal"
-                      style={{ paddingVertical: 5 }}
-                    />
-
-                    <View style={{ flexDirection: "row" }}>
-                      <Text style={{ fontWeight: "bold", color: "white" }}>
-                        {reply.replierName}
-                      </Text>
-
-                      <View style={{ flex: 1 }} />
-
-                      <Text style={{ color: "gray" }}>
-                        {makeTimeDifferenceString(
-                          reply.creationTimestamp.seconds
-                        )}{" "}
-                        ago
-                      </Text>
-
-                      {(reply.replierID == userID || isCreator) && (
-                        <Icon
-                          name="trash"
-                          color="#517fa4"
-                          size={22}
-                          style={{ paddingLeft: 5, alignContent: "center" }}
-                          onPress={() => handleDeleteReply(item.id, reply)}
-                        />
-                      )}
-                    </View>
-                    <Text style={{ color: "white" }}>
-                    {reply.message}</Text>
+                  <View style={{ flexDirection: "column", paddingLeft: 5 }}>
+                    <Text style={{ fontWeight: "bold", color: "white" }}>
+                      {item.posterName}
+                    </Text>
+                    <Text style={{ color: "lightgray" }}>
+                      {moment
+                        .unix(item.creationTimestamp.seconds)
+                        .format("MMM Do, hh:mm A")}
+                    </Text>
                   </View>
-                ))}
-              </View>
+                </View>
+
+                {postEditID != item.id && (
+                  <View>
+                    {/* post message */}
+                    <Text style={{ color: "white" }}>{item.message}</Text>
+
+                    {/* 'edited' tag */}
+                    {/* literally the only reason I put this <Text> in a view was because it */}
+                    {/* broke my code coloration in VSCode and it drove me crazy. -Robbie */}
+
+                    {item.edited && (
+                      <View>
+                        <Text style={{ color: "gray" }}>(edited)</Text>
+                      </View>
+                    )}
+                  </View>
+                )}
+
+                {postEditID == item.id && (
+                  <View>
+                    <Formik
+                      initialValues={{
+                        postText: item.message,
+                      }}
+                      onSubmit={(values, actions) => {
+                        if (values.postText === "") {
+                          Alert.alert(
+                            "Error",
+                            "Cannot create a post with no text"
+                          );
+                        } else {
+                          editPost(
+                            props.route.params?.id,
+                            item.id,
+                            values.postText.trim()
+                          );
+                          exitEditMode();
+                        }
+                      }}
+                    >
+                      {(props) => (
+                        <>
+                          <Input
+                            placeholder={"Post in " + eventName}
+                            disabled={!isAttending}
+                            multiline={true}
+                            value={props.values.postText}
+                            onChangeText={props.handleChange("postText")}
+                            onBlur={() => {
+                              props.handleBlur("postText");
+                            }}
+                            style={{ maxHeight: 250, color: "white" }}
+                          />
+                          <View style={{ flexDirection: "row" }}>
+                            <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                              <Button
+                                buttonStyle={styles.buttonDesign}
+                                title="Cancel"
+                                onPress={() => exitEditMode()}
+                              />
+                            </View>
+                            <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                              <Button
+                                buttonStyle={styles.buttonDesign}
+                                title="Edit"
+                                onPress={props.handleSubmit}
+                              />
+                            </View>
+                          </View>
+                        </>
+                      )}
+                    </Formik>
+                  </View>
+                )}
+
+                {/* pencil and trashcan icons */}
+                {/* If we're editing any post, hide all buttons (too confusing if editing multiple) */}
+                {!editMode && (
+                  <View style={{ flexDirection: "row", paddingTop: 3 }}>
+                    {
+                      <Icon
+                        name="comment"
+                        color="#2B7D9C"
+                        size={21}
+                        onPress={() => enterReplyMode(item)}
+                      />
+                    }
+
+                    <View style={{ flex: 1 }} />
+                    {item.posterID == userID && (
+                      <Icon
+                        name="pencil"
+                        color="#2B7D9C"
+                        size={21}
+                        style={{ paddingHorizontal: 10 }}
+                        onPress={() => enterEditMode(item)}
+                      />
+                    )}
+                    {(item.posterID == userID || isCreator) && (
+                      <Icon
+                        name="trash"
+                        color="#2B7D9C"
+                        size={21}
+                        onPress={() => handleDeletePost(item)}
+                      />
+                    )}
+                  </View>
+                )}
+
+                {/* form that appears when replying to a post */}
+                {postReplyID == item.id && (
+                  <View>
+                    <Formik
+                      initialValues={{
+                        replyText: "",
+                      }}
+                      onSubmit={(values, actions) => {
+                        if (values.postText === "") {
+                          Alert.alert(
+                            "Error",
+                            "Cannot create a reply with no text"
+                          );
+                        } else {
+                          createReply(
+                            {
+                              postID: item.id,
+                              posterID: item.posterID,
+                              eventID: eventID,
+                              eventName: eventName,
+                            },
+                            {
+                              userID: userID,
+                              userName: userName,
+                            },
+                            values.replyText.trim()
+                          );
+
+                          actions.resetForm();
+                          exitReplyMode();
+                        }
+                      }}
+                    >
+                      {(props) => (
+                        <>
+                          <Input
+                            placeholder={"Reply to " + item.posterName}
+                            // disabled={!isAttending || editMode}
+                            multiline={true}
+                            value={props.values.replyText}
+                            onChangeText={props.handleChange("replyText")}
+                            onBlur={() => {
+                              props.handleBlur("replyText");
+                            }}
+                            style={{ maxHeight: 100, color: "white" }}
+                          />
+                          <View style={{ flexDirection: "row" }}>
+                            <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                              <Button
+                                buttonStyle={styles.buttonDesign}
+                                title="Cancel"
+                                onPress={() => exitReplyMode()}
+                              />
+                            </View>
+                            <View style={{ flex: 1, paddingHorizontal: 5 }}>
+                              <Button
+                                buttonStyle={styles.buttonDesign}
+                                title="Reply"
+                                onPress={props.handleSubmit}
+                              />
+                            </View>
+                          </View>
+                        </>
+                      )}
+                    </Formik>
+                  </View>
+                )}
+
+                {/* replies start here */}
+                <View style={{ paddingLeft: 20 }}>
+                  {item.replies.map((reply) => (
+                    <View key={reply.id}>
+                      <Divider
+                        orientation="horizontal"
+                        style={{ paddingVertical: 6 }}
+                      />
+
+                      <View style={{ flexDirection: "row" }}>
+                        <Text style={{ fontWeight: "bold", color: "white", paddingVertical: 7 }}>
+                          {reply.replierName}
+                        </Text>
+
+                        <View style={{ flex: 1 }} />
+
+                        <Text style={{ color: "gray", paddingVertical: 7 }}>
+                          {makeTimeDifferenceString(
+                            reply.creationTimestamp.seconds
+                          )}{" "}
+                          ago
+                        </Text>
+
+                        {(reply.replierID == userID || isCreator) && (
+                          <Icon
+                            name="trash"
+                            color="#2B7D9C"
+                            size={21}
+                            style={{ paddingLeft: 5, alignContent: "center", paddingVertical: 4 }}
+                            onPress={() => handleDeleteReply(item.id, reply)}
+                          />
+                        )}
+                      </View>
+                      <Text style={{ color: "white" }}>{reply.message}</Text>
+                    </View>
+                  ))}
+                </View>
               </View>
             </Card>
           )}
@@ -727,7 +764,13 @@ function CardDetails(props, { navigation, route }) {
             enabled={!editMode}
           >
             {/* May want to fiddle with keyboardVerticalOffeset number a bit */}
-            <Card containerStyle={{...styles.cardDesign, marginBottom:10, marginTop:10}}>
+            <Card
+              containerStyle={{
+                ...styles.cardDesign,
+                marginBottom: 10,
+                marginTop: 10,
+              }}
+            >
               <Formik
                 initialValues={{
                   postText: "",
@@ -770,7 +813,7 @@ function CardDetails(props, { navigation, route }) {
                     actions.resetForm();
                   }
                 }}
-                >
+              >
                 {(props) => (
                   <>
                     <Input
@@ -782,7 +825,7 @@ function CardDetails(props, { navigation, route }) {
                       onBlur={() => {
                         props.handleBlur("postText");
                       }}
-                      style={{ maxHeight: 100, color:'white' }}
+                      style={{ maxHeight: 100, color: "white" }}
                     />
                     <Button
                       titleStyle={{ color: "white" }}
@@ -824,38 +867,41 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
+    paddingTop: 30,
+    paddingVertical: 1,
   },
   titlesub: {
     fontSize: 25,
     paddingBottom: 2,
     fontWeight: "bold",
     textAlign: "center",
-    color:'white'
+    color: "white",
   },
   sub: {
     fontSize: 20,
     textAlign: "center",
     paddingBottom: 10,
-    color:'white'
+    color: "white",
   },
   subt: {
     fontSize: 18,
     textAlign: "center",
     paddingBottom: 10,
-    color:'white'
+    color: "white",
   },
   subp: {
     fontSize: 12,
     textAlign: "center",
     paddingBottom: 5,
-    color: 'white'
+    color: "white",
   },
   cardDesign: {
     backgroundColor: '#3B4046', 
     borderColor: 'black',
+    padding: 7,
   },
   buttonDesign: {
-    backgroundColor: '#2B7D9C', 
-    borderColor: 'black',
-  }
+    backgroundColor: "#2B7D9C",
+    borderColor: "black",
+  },
 });
