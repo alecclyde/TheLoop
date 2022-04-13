@@ -359,6 +359,7 @@ function CardDetails(props, { navigation, route }) {
   }, [eventAttendees]);
 
   return (
+  <View style={{backgroundColor: "#2B7D9C", flex: 1}}>
     <SafeAreaView style={globalStyles.container}>
       <View style={{ backgroundColor: "#2B7D9C", flex: 1 }}>
         {/* // Title Area */}
@@ -847,6 +848,7 @@ function CardDetails(props, { navigation, route }) {
         )}
       </View>
     </SafeAreaView>
+  </View>
   );
 }
 
