@@ -30,7 +30,7 @@ export default function HomeStack() {
           color: "white",
         },
         headerStyle: {
-          backgroundColor: "#2C2C2C",
+          backgroundColor: "#3B4046",
           // height: 100,
           height: Platform.select({
     android: 90

@@ -182,7 +182,7 @@ function UserProfileView(props) {
   // }, [userID, isFocused])
   // props.navigation.navigate("LogIn");
   return (
-    <View style={styles.container}>
+    <View >
       <View>
         {/* modal here */}
         <Modal visible={modalVisible} animationType="fade" transparent={true}>
@@ -204,21 +204,23 @@ function UserProfileView(props) {
               <View
                 style={{
                   // justifyContent: "center",
-                  backgroundColor: "white",
+                  backgroundColor: "#2B7D9C",
                   width: "85%",
                   // height: "80%",
                   borderWidth: windowWidth * 0.05, // used to be percents in quotes, but android did android things
-                  borderColor: "white",
+                  borderColor: "#2B7D9C",
                   borderRadius: windowWidth * 0.05,
                 }}
               >
                 {pfpStep == 1 && (
-                  <View>
+                  <View style={styles.body1}>
                     <Button
                       title="Open Camera"
                       buttonStyle={{
                         height: 50,
                         marginBottom: 10,
+                        backgroundColor: "#3e3e3e",
+                        borderColor: "#2B7D9C"
                       }}
                       onPress={async () => {
                         const { status } =
@@ -240,6 +242,7 @@ function UserProfileView(props) {
                       title="Choose from Photos"
                       buttonStyle={{
                         height: 50,
+                        backgroundColor: "#3e3e3e",
                       }}
                       onPress={async () => {
                         const { status } =
@@ -300,7 +303,7 @@ function UserProfileView(props) {
           </TouchableOpacity>
         </Modal>
       </View>
-      <View style={globalStyles.header}>
+      <View style={styles.body1}>
         <View style={globalStyles.headerContent}>
           {/* Add this -> https://blog.waldo.io/add-an-image-picker-react-native-app/ */}
           <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -493,8 +496,12 @@ function UserProfileView(props) {
 }
 
 const styles = StyleSheet.create({
+  body1: {
+    backgroundColor: "#3B4046",
+
+  },
   body: {
-    backgroundColor: "#DCDCDC",
+    backgroundColor: "#2B7D9C",
     height: 500,
     padding: 5,
   },
@@ -540,7 +547,7 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   Button: {
-    backgroundColor: "#2B7D9C",
+    backgroundColor: "#3B4046",
     height: 45,
     marginVertical: 10,
   },

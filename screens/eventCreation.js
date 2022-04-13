@@ -208,6 +208,7 @@ function EventCreation(props) {
                 {
                   <DateTimePickerModal
                     // value={date}
+                    isDarkModeEnabled
                     mode={mode}
                     isVisible={show}
                     display={Platform.OS === "ios" ? "spinner" : "default"}
