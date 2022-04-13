@@ -25,7 +25,7 @@ export default function EventCreationStack(){
           color: "white",
         },
         headerStyle: {
-          backgroundColor: '#2C2C2C',
+          backgroundColor: '#3B4046',
         }
       }}
     >

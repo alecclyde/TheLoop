@@ -26,7 +26,7 @@ export default function NotificationStack(){
         },
         
         headerStyle: {
-          backgroundColor: '#2C2C2C',
+          backgroundColor: '#3B4046',
         }
       }}
     >

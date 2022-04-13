@@ -56,6 +56,9 @@ function LocationPreferencesPage(props) {
     style={{ ...globalStyles.container, backgroundColor: "#2B7D9C" }}
   >
       <View style={[styles.holder, { flexDirection: "column" }]}>
+        <Text style={globalStyles.titleText}>
+          Type in current city where you will be attending events.
+        </Text>
         <View style={{ flex: 3}}>
           <GooglePlacesAutocomplete
             placeholder="Search"

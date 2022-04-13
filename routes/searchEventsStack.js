@@ -24,7 +24,7 @@ export default function SearchEventsStack() {
           color: "white",
         },
         headerStyle: {
-          backgroundColor: "#2C2C2C",
+          backgroundColor: "#3B4046",
         },
       }}
     >
