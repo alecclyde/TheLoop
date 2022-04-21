@@ -924,6 +924,24 @@ export async function setNotifSeen(userID, notifID, notifData) {
   }
 }
 
+/**
+ * Deletes event data from a user if it didn't delete properly
+ * @param userID - userID
+ * @param eventData - eventData
+ */
+ export async function fixDeletedEvent(userID, eventData) {
+  try {
+    firebase.firestore().collection("users").doc(userID).update(
+      {
+        myEvents: firebase.firestore.FieldValue.arrayRemove(eventData)
+      }
+    )
+  } catch (err) {
+    console.log(err);
+    Alert.alert("something went wrong!", err.message);
+  }
+}
+
 
 /**
  * Copy this template for making new firebase functions
