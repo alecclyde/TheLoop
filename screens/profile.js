@@ -200,7 +200,7 @@ function Profile(props, { navigation, route }) {
                   fontWeight: "bold",
                 }}
               >
-                Use the Event Creation Page to Plan a Banger!
+                Use the Event Creation Page to Plan an Event!
               </Text>
             </View>
           )
