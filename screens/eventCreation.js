@@ -165,6 +165,7 @@ function EventCreation(props) {
                   onChangeText={props.handleChange("eventName")}
                   onBlur={props.handleBlur("eventName")}
                   placeholderTextColor='white'
+                  inputStyle={{ padding: 20, color: 'white'}}
                 />
                 <Text style={globalStyles.errorText}>
                   {props.touched.eventName && props.errors.eventName}
@@ -458,11 +459,12 @@ function EventCreation(props) {
             </View>
             <Input
                   textAlign="center"
-                  placeholder="Location Specifics"
+                  placeholder="*Location Details*"
                   value={props.values.eventAddress}
                   onChangeText={props.handleChange("eventAddress")}
                   onBlur={props.handleBlur("eventAddress")}
                   placeholderTextColor='white'
+                  inputStyle={{ padding: 20, color: 'white'}}
                 />
                 <Text style={globalStyles.errorText}>
                   {props.touched.eventAddress && props.errors.eventAddress}
@@ -481,8 +483,16 @@ function EventCreation(props) {
                       borderRadius: 10,
 
                     }}
-                    style={{ padding: 45 }}
+                    style={{ padding: 5 }}
                     onPress={props.handleSubmit}
+                  />
+                  <Button
+                    title="e"
+
+                    titleStyle={{ fontSize: 5, color: '#2B7D9C', paddingTop: 200 }}
+                    buttonStyle={{
+                      backgroundColor: "#2B7D9C",
+                    }}
                   />
                 </View>
               </>
