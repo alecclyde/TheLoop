@@ -6,9 +6,15 @@ import {
   ScrollView,
   ImageBackground,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { getUserData, getEventData, editPost } from "../shared/firebaseMethods";
+import {
+  getUserData,
+  getEventData,
+  editPost,
+  fixDeletedEvent,
+} from "../shared/firebaseMethods";
 import { globalStyles } from "../styles/global";
 import { Text } from "react-native-elements";
 import { Header } from "react-native-elements";
@@ -24,7 +30,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { connect } from "react-redux";
 import { signOut } from "../store/actions/userActions";
 import { color } from "react-native-elements/dist/helpers";
-import {eventLoopThumbnail, eventLoopIconName} from "../shared/commonMethods"
+import { eventLoopThumbnail, eventLoopIconName } from "../shared/commonMethods";
 
 function Home(props, { navigation, route }) {
   // const email = route.params?.userData.email ?? 'email';
@@ -36,7 +42,7 @@ function Home(props, { navigation, route }) {
   const [userID, setUserID] = useState("");
 
   const [events, setEvents] = useState([]);
-  const [allEvents,setAllEvents] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
   const [loopEvents, setLoopEvents] = useState([]);
   const [eventIDs, setEventIDs] = useState([]);
   const [loops, setLoops] = useState([]);
@@ -287,21 +293,20 @@ function Home(props, { navigation, route }) {
         // console.log("events loaded!")
         // setEventIDs(user.myEvents);
       });
-      
     }
   }, [userID, isFocused]);
 
   //sets the loops the user is in to an array
   useEffect(() => {
-    if(isFocused){
+    if (isFocused) {
       const identifier = Object.keys(props.user.joinedLoops);
-      const active = identifier.filter(function(id){
+      const active = identifier.filter(function (id) {
         return props.user.joinedLoops[id];
       });
       setLoops(active);
     }
     //console.log(props.user.joinedLoops);
-  },[isFocused]);
+  }, [isFocused]);
 
   // useEffect(() => {
   //   if (isFocused) {
@@ -333,29 +338,29 @@ function Home(props, { navigation, route }) {
   useEffect(() => {
     if (isFocused && loops.length != 0) {
       setLoopEvents([]);
-      firebase.firestore().collection("events").where("loop", "in", loops).get()
-      .then((snap) => {
-        let eventList = []
-        snap.docs.forEach((doc) => {
-          if (doc.exists) {
-
-            eventList.push(
-              {
+      firebase
+        .firestore()
+        .collection("events")
+        .where("loop", "in", loops)
+        .get()
+        .then((snap) => {
+          let eventList = [];
+          snap.docs.forEach((doc) => {
+            if (doc.exists) {
+              eventList.push({
                 id: doc.id,
                 loop: doc.data().loop,
                 name: doc.data().name,
                 creator: doc.data().creator,
                 address: doc.data().address,
                 location: doc.data().location,
-              }
-            )
-          }
-        })
-        setLoopEvents([...eventList])
-
-      })
+              });
+            }
+          });
+          setLoopEvents([...eventList]);
+        });
     }
-  }, [isFocused, loops])
+  }, [isFocused, loops]);
 
   return (
     <SafeAreaView
@@ -424,6 +429,29 @@ function Home(props, { navigation, route }) {
                   }
                   onLongPress={() => {
                     console.log(event.id);
+                    Alert.alert(
+                      "Unregister event?",
+                      "Remove this from your list of events?",
+                      [
+                        {
+                          text: "no",
+                        },
+                        {
+                          text: "yes",
+                          onPress: () => {
+                            // put an unregister event here too
+                            fixDeletedEvent(userID, {
+                              id: event.id,
+                              name: event.name,
+                              loop: event.loop,
+                              creator: event.creator,
+                              startDateTime: event.startDateTime,
+                              address: event.address,
+                            });
+                          },
+                        },
+                      ]
+                    );
                   }}
                 >
                   <ImageBackground
@@ -531,8 +559,7 @@ function Home(props, { navigation, route }) {
 
       <View style={{ flex: 1 }}>
         {/* {events.filter((item) => item.startDateTime <= moment().unix()) */}
-        {loopEvents
-          .length == 0 ? ( // if there are currently no events for this category
+        {loopEvents.length == 0 ? ( // if there are currently no events for this category
           loading ? (
             // if there are no events in the filter and the events are still loading, put an activity indicator
             <View
@@ -639,8 +666,7 @@ function Home(props, { navigation, route }) {
                   </ImageBackground>
                 </TouchableOpacity>
               ))}
-            {loopEvents
-              .length > limitPrevious && (
+            {loopEvents.length > limitPrevious && (
               <TouchableOpacity
                 style={[styles.clickable, { flex: 1 }]}
                 onPress={() => {
@@ -664,14 +690,9 @@ function Home(props, { navigation, route }) {
                 >
                   <ListItem.Content>
                     <ListItem.Title style={styles.listingItem}>
-                      {loopEvents.length - limitPrevious}{" "}
-                      more event
+                      {loopEvents.length - limitPrevious} more event
                       {/* puts the 's' at the end if the number of remaining events is not 1 */}
-                      {loopEvents.length -
-                        limitPrevious ==
-                      1
-                        ? ""
-                        : "s"}
+                      {loopEvents.length - limitPrevious == 1 ? "" : "s"}
                     </ListItem.Title>
                     <ListItem.Subtitle style={styles.descriptionItem}>
                       Tap to view

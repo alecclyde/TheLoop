@@ -36,6 +36,7 @@ import {
   deleteReply,
   getMultiplePfps,
   safeDeleteEvent,
+  fixDeletedEvent,
 } from "../shared/firebaseMethods";
 import { Formik } from "formik";
 import { makeName, makeTimeDifferenceString } from "../shared/commonMethods";
@@ -121,6 +122,15 @@ function CardDetails(props, { navigation, route }) {
           "Event Not Found",
           "That event could not be loaded. It may have been deleted."
         );
+        // fixDeletedEvent(props.user.uid, 
+        //   {
+        //     address: props.route.params?.address,
+        //     creator: props.route.params?.creator,
+        //     id: props.route.params?.id,
+        //     loop: props.route.params?.loop,
+        //     name: props.route.params?.name,
+        //     startDateTime: props.route.params?.startDateTime, 
+        //   });
       }
       
       props.navigation.dispatch(StackActions.pop(1));
@@ -359,6 +369,7 @@ function CardDetails(props, { navigation, route }) {
   }, [eventAttendees]);
 
   return (
+  <View style={{backgroundColor: "#2B7D9C", flex: 1}}>
     <SafeAreaView style={globalStyles.container}>
       <View style={{ backgroundColor: "#2B7D9C", flex: 1 }}>
         {/* // Title Area */}
@@ -847,6 +858,7 @@ function CardDetails(props, { navigation, route }) {
         )}
       </View>
     </SafeAreaView>
+  </View>
   );
 }
 

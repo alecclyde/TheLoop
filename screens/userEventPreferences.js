@@ -370,7 +370,7 @@ function UserEventPreferences(props) {
                 <View>
                   <Button
                     title="Save Preferences"
-                    titleStyle={{ fontSize: 26, color: "black" }}
+                    titleStyle={{ fontSize: 26, color: "white" }}
                     buttonStyle={{
                       borderWidth: 10,
                       borderWidth: 1,
